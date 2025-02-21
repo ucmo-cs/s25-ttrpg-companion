@@ -1,4 +1,5 @@
 import json
+import boto3
 
 # import requests
 
@@ -24,6 +25,32 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
+
+    jsonString = json.dumps({
+        "key" : "ricketsonblake@gmail.com",
+        "name" : "Blake Ricketson",
+        "password" : "Block"
+    })
+
+    print("Json string:", jsonString)
+
+    with open("/tmp/tempfile.json", "w") as tempFile:
+        tempFile.write(jsonString)
+
+    print("tempFile written into sucessfully")
+
+    # s3_client = boto3.client("s3",
+    #     endpoint_url = "http://localhost:4566",
+    #     aws_access_key_id = "test",
+    #     aws_secret_access_key = "test",
+    #     region_name='us-east-2')
+
+    # response = s3_client.list_buckets()
+    # print("Buckets:", [bucket["Name"] for bucket in response["Buckets"]])
+
+    # s3_client.upload_file("./tmp/tempfile.json", "ttrpg-bucket", "ricketson.json")
+    # print("Sucessfully Uploaded File")
+
 
     # try:
     #     ip = requests.get("http://checkip.amazonaws.com/")
