@@ -5,9 +5,9 @@ import Home from "@/screens/Home";
 export default function Index() {
   return (
     <View style={styles.container}>
-      {/**** Until we get navigation. Just uncomment what you are working on *****/}
-      {/* <CustomLogin></CustomLogin> */}
-      <Home></Home>
+      {/* *** Until we get navigation. Just uncomment what you are working on **** */}
+      <CustomLogin></CustomLogin>
+      {/* <Home></Home> */}
     </View>
   );
 }

@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  Button,
-  Alert,
-  Platform,
-} from "react-native";
+import {Text,View,TextInput,StyleSheet,Button,Alert,Platform} from "react-native";
 
 export default function CustomLogin() {
   const [username, setUsername] = useState("");
@@ -32,40 +24,55 @@ export default function CustomLogin() {
   };
 
   return (
-    <View style={styles.loginContainer}>
-      <TextInput
-        value={username}
-        onChangeText={setUsername}
-        style={styles.login}
-        placeholder="Username"
-        placeholderTextColor="darkgray"
-      ></TextInput>
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        style={styles.login}
-        placeholder="Password"
-        placeholderTextColor="darkgray"
-      ></TextInput>
-      <Text style={styles.warning}>{message}</Text>
-      <Text style={styles.button} onPress={handleLogin}>
-        Login
-      </Text>
+    <View style={styles.filler}>
+      <View style={styles.loginContainer}>
+        <TextInput
+          value={username}
+          onChangeText={setUsername}
+          style={styles.login}
+          placeholder="Username"
+          placeholderTextColor="darkgray"
+        ></TextInput>
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          style={styles.login}
+          placeholder="Password"
+          placeholderTextColor="darkgray"
+        ></TextInput>
+        <Text style={styles.warning}>{message}</Text>
+        <Text style={styles.button} onPress={handleLogin}>
+          Login
+        </Text>
 
-      <Text
-        style={styles.button}
-        onPress={() => console.log("Register Clicked")}
-      >
-        Register
-      </Text>
+        <Text
+          style={styles.button}
+          onPress={() => console.log("Register Clicked")}
+        >
+          Register
+        </Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+filler: {
+  ...Platform.select({
+    default: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+    }
+  })
+},
+
   loginContainer: {
     //First section are 'global' and affect all platforms
     height: "40%",
+    flexDirection: "column",
+    alignSelf: "center",
+    justifyContent: "center",
 
     //Here is where it gets specific: iOS, Andriod, Default = Web
     ...Platform.select({
@@ -80,6 +87,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
+
   login: {
     color: "white",
     borderColor: "white",
@@ -88,6 +96,7 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 25,
   },
+
   button: {
     backgroundColor: "blue",
     borderColor: "darkblue",
@@ -117,6 +126,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
+
   warning: {
     color: "red",
     textAlign: "center",
