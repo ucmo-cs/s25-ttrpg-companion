@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "row",
-    flex: 0.2,
+    flex: 0.3,
     marginTop: 110,
     padding: 10,
   },
@@ -68,8 +68,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     width: "75%",
-    height: "15%",
     flex: 1,
+    ...Platform.select({
+      ios: {
+        height: "15%",
+      },
+      default: {
+        height: "18%",
+      },
+    }),
   },
   header: {
     fontSize: 20,
@@ -80,14 +87,26 @@ const styles = StyleSheet.create({
   iconWrapper: {
     position: "relative",
     marginRight: 15,
+    alignItems: "center",
   },
   iconText: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: [{ translateX: -20 }, { translateY: -275 }],
     fontSize: 24,
     color: "white",
     fontWeight: "bold",
+
+    ...Platform.select({
+      ios: {
+        position: "relative",
+        top: "50%",
+        left: "50%",
+        transform: [{ translateX: -75 }, { translateY: -375 }],
+      },
+      default: {
+        position: "relative",
+        top: "50%",
+        left: "50%",
+        transform: [{ translateX: -75 }, { translateY: -65 }],
+      },
+    }),
   },
 });
