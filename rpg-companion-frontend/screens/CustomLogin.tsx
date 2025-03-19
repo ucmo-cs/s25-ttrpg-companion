@@ -72,6 +72,9 @@ const styles = StyleSheet.create({
       ios: {
         width: "80%",
       },
+      android: {
+        width: "80%"
+      },
       default: {
         width: "20%",
       },
@@ -98,6 +101,11 @@ const styles = StyleSheet.create({
 
     ...Platform.select({
       ios: {
+        height: "10%",
+        marginTop: 10,
+        fontSize: 20,
+      },
+      android: {
         height: "10%",
         marginTop: 10,
         fontSize: 20,
