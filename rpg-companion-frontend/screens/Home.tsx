@@ -9,11 +9,22 @@ import {
   Button,
   Alert,
   Platform,
+  Image,
 } from "react-native";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import Inventory from "./Inventory";
+import Notes from "./Notes";
+import Spells from "./Spells";
+
+
+const Tab = createBottomTabNavigator();
+
 
 export default function Home() {
   return (
     <View style={styles.container}>
+      {/* Existing Content */}
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Feather name="circle" size={100} color="white" style={styles.icon} />
@@ -21,7 +32,7 @@ export default function Home() {
         </View>
 
         <View style={styles.iconWrapper}>
-          <Feather name="square" size={100} color="white" style={styles.icon} />
+          <Feather name="square" size={100} color="white" style={styles.icon} strokeWidth={0}/>
           <Text style={styles.iconText}>2</Text>
         </View>
 
@@ -41,6 +52,20 @@ export default function Home() {
         <Text style={styles.header}>Species</Text>
         <Text style={styles.header}>Class (SubClass)</Text>
       </View>
+
+      {/* Tab Navigation */}
+      <Tab.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          tabBarActiveTintColor: 'tomato',  // Active tab icon color
+          tabBarInactiveTintColor: 'gray', // Inactive tab icon color
+        }}
+      >
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Notes" component={Notes} />
+        <Tab.Screen name="Spells" component={Spells} />
+        <Tab.Screen name="Inventory" component={Inventory} />
+      </Tab.Navigator>
     </View>
   );
 }
@@ -100,6 +125,7 @@ const styles = StyleSheet.create({
         top: "50%",
         left: "50%",
         transform: [{ translateX: -75 }, { translateY: -375 }],
+
       },
       default: {
         position: "relative",
