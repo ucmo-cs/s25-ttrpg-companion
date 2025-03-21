@@ -1,25 +1,8 @@
 import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  Button,
-  Alert,
-  Platform,
-  Image,
-} from "react-native";
+import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import Inventory from "./Inventory";
-import Notes from "./Notes";
-import Spells from "./Spells";
-
-
-const Tab = createBottomTabNavigator();
-
 
 export default function Home() {
   return (
@@ -53,19 +36,6 @@ export default function Home() {
         <Text style={styles.header}>Class (SubClass)</Text>
       </View>
 
-      {/* Tab Navigation */}
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          tabBarActiveTintColor: 'tomato',  // Active tab icon color
-          tabBarInactiveTintColor: 'gray', // Inactive tab icon color
-        }}
-      >
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Notes" component={Notes} />
-        <Tab.Screen name="Spells" component={Spells} />
-        <Tab.Screen name="Inventory" component={Inventory} />
-      </Tab.Navigator>
     </View>
   );
 }
