@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet } from "react-native";
 import CustomLogin from "@/app/CustomLogin";
 import HomeMobile from "@/app/mobile/HomeMobile";
-import TabNavigation from "./tabNavigation";
+
 
 export default function Index() {
   return (
