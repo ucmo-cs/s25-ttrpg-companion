@@ -1,22 +1,30 @@
 import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  Text,
+  View,
+  TextInput,
+  StyleSheet,
+  Button,
+  Alert,
+  Platform,
+  Image,
+} from "react-native";
+
 
 export default function Home() {
   return (
     <View style={styles.container}>
-      {/* Existing Content */}
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Feather name="circle" size={100} color="white" style={styles.icon} />
-          <Text style={styles.iconText}>1</Text>
+          <Text style={styles.iconText}>100</Text>
         </View>
 
         <View style={styles.iconWrapper}>
           <Feather name="square" size={100} color="white" style={styles.icon} strokeWidth={0}/>
-          <Text style={styles.iconText}>2</Text>
+          <Text style={styles.iconText}>200</Text>
         </View>
 
         <View style={styles.iconWrapper}>
@@ -26,7 +34,7 @@ export default function Home() {
             color="white"
             style={styles.icon}
           />
-          <Text style={styles.iconText}>3</Text>
+          <Text style={styles.iconText}>300</Text>
         </View>
       </View>
 
@@ -47,6 +55,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     justifyContent: "flex-start",
+    textAlignVertical: 'center',
+    display: 'flex',
     alignItems: "center",
     flexDirection: "row",
     flex: 0.3,
@@ -54,7 +64,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   icon: {
-    marginRight: 25,
+    // marginRight: 25,
     width: 100,
     height: 100,
   },
@@ -81,28 +91,30 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     position: "relative",
-    marginRight: 15,
+    // marginRight: 15,
     alignItems: "center",
+    justifyContent: 'center',
   },
   iconText: {
     fontSize: 24,
     color: "white",
     fontWeight: "bold",
+    position: 'absolute',
+  
 
-    ...Platform.select({
-      ios: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -75 }, { translateY: -375 }],
-
+    // ...Platform.select({
+    //   ios: {
+    //     position: "relative",
+    //     top: "50%",
+    //     left: "50%",
+    //     transform: [{ translateX: -75 }, { translateY: -375 }],
+    //   },
+    //   default: {
+    //     position: "relative",
+    //     top: "50%",
+    //     left: "50%",
+    //     transform: [{ translateX: -75 }, { translateY: -65 }],
       },
-      default: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -75 }, { translateY: -65 }],
-      },
-    }),
-  },
+    // }),
+  // },
 });
