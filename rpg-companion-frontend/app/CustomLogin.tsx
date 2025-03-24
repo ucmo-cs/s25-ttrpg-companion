@@ -59,6 +59,7 @@ export default function CustomLogin() {
         }
         catch (error){
           console.log('Login Failed', error);
+          setMessage("Invalid Username and Password");
         }  
 };
 
