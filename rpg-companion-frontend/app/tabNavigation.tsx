@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text } from 'react-native';
-import Home from '@/app/HomeMobile'
+import Home from '@/app/mobile/HomeMobile'
 import Notes from '@/screens/Notes'
 import Inventory from '@/screens/Inventory'
 import Spells from '@/screens/Spells'

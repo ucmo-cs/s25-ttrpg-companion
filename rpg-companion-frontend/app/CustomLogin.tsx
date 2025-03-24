@@ -51,9 +51,9 @@ export default function CustomLogin() {
        
           const nav = Platform.select({
             
-            android: () => router.navigate("/HomeMobile"),
-            ios: () => router.navigate("/HomeMobile"),
-            default: () => router.navigate("/HomeWeb"),
+            android: () => router.navigate("/mobile/HomeMobile"),
+            ios: () => router.navigate("/mobile/HomeMobile"),
+            default: () => router.navigate("/web/HomeWeb"),
           })
           nav();
         }

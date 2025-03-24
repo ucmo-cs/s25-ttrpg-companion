@@ -4,10 +4,9 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export default function Home() {
+export default function HomeMobile() {
   return (
     <View style={styles.container}>
-      {/* Existing Content */}
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Feather name="circle" size={100} color="white" style={styles.icon} />
@@ -39,6 +38,8 @@ export default function Home() {
     </View>
   );
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,6 +48,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     justifyContent: "flex-start",
+    textAlignVertical: 'center',
+    display: 'flex',
     alignItems: "center",
     flexDirection: "row",
     flex: 0.3,
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   icon: {
-    marginRight: 25,
+    // marginRight: 25,
     width: 100,
     height: 100,
   },
@@ -81,28 +84,30 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     position: "relative",
-    marginRight: 15,
+    // marginRight: 15,
     alignItems: "center",
+    justifyContent: 'center',
   },
   iconText: {
     fontSize: 24,
     color: "white",
     fontWeight: "bold",
+    position: 'absolute'
 
-    ...Platform.select({
-      ios: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -75 }, { translateY: -375 }],
 
+    // ...Platform.select({
+    //   ios: {
+    //     position: "relative",
+    //     top: "50%",
+    //     left: "50%",
+    //     transform: [{ translateX: -75 }, { translateY: -375 }],
+    //   },
+    //   default: {
+    //     position: "relative",
+    //     top: "50%",
+    //     left: "50%",
+    //     transform: [{ translateX: -75 }, { translateY: -65 }],
       },
-      default: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -75 }, { translateY: -65 }],
-      },
-    }),
-  },
+    // }),
+  // },
 });
