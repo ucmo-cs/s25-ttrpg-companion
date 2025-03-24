@@ -3,6 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform} from "react-native";
 
+
+
 export default function CustomLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,8 +22,37 @@ export default function CustomLogin() {
     } else if (username == "" && password != "") {
       console.log("No username present");
       setMessage("Please enter a valid username");
+    } else{
+      console.log("Valid username and password");
+      setMessage("");
+      attemptLogin();
     }
   };
+
+
+  const attemptLogin = async () => {
+    try{
+    const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    });
+    
+        if (!response.ok) {
+            console.log("!response.ok");
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Login Response", data);
+        }
+        catch (error){
+          console.log('Login Failed', error);
+        }  
+};
+
 
   return (
     <View style={styles.filler}>
