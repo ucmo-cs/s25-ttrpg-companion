@@ -11,12 +11,31 @@ export default function RootLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Login",
           headerStyle: { backgroundColor: "black" },
           headerTitleStyle: { color: "white" },
         }}
       />
+      <Stack.Screen
+        name="homemobile"
+        options={{
+          headerShown: false,
+          title: "Home",
+          headerStyle: { backgroundColor: "black" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
+      <Stack.Screen
+        name="homeweb"
+        options={{
+          headerShown: false,
+          title: "Home",
+          headerStyle: { backgroundColor: "black" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
     </Stack>
+    
   );
 }

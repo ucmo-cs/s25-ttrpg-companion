@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform} from "react-native";
+
+
 
 export default function CustomLogin() {
   const [username, setUsername] = useState("");
@@ -9,8 +11,8 @@ export default function CustomLogin() {
   const [message, setMessage] = useState("");
 
   const handleLogin = () => {
-    console.log(username);
-    console.log(password);
+    // console.log(username);
+    // console.log(password);
     if (username == "" && password == "") {
       console.log("Neither username or password present");
       setMessage("Please enter a valid username and password");
@@ -20,8 +22,47 @@ export default function CustomLogin() {
     } else if (username == "" && password != "") {
       console.log("No username present");
       setMessage("Please enter a valid username");
+    } else{
+      // console.log("Valid username and password");
+      setMessage("");
+      attemptLogin();
     }
   };
+
+
+  const attemptLogin = async () => {
+    try{
+    const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    });
+    
+        if (!response.ok) {
+            console.log("!response.ok");
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Login Response", data);
+
+       
+          const nav = Platform.select({
+            
+            android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
+            ios: () => router.navigate("/mobile/HomeMobile"),
+            default: () => router.navigate("/web/HomeWeb"),
+          })
+          nav();
+        }
+        catch (error){
+          console.log('Login Failed', error);
+          setMessage("Invalid Username and Password");
+        }  
+};
+
 
   return (
     <View style={styles.filler}>

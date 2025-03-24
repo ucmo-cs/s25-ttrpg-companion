@@ -1,14 +1,14 @@
 import { Text, View, StyleSheet } from "react-native";
-import CustomLogin from "@/screens/CustomLogin";
-import Home from "@/screens/Home";
-import TabNavigation from "./tabNavigation";
+import CustomLogin from "@/app/CustomLogin";
+import HomeMobile from "@/app/mobile/HomeMobile";
+
 
 export default function Index() {
   return (
     <View style={styles.container}>
       {/* *** Until we get navigation. Just uncomment what you are working on **** */}
-      {/* <CustomLogin></CustomLogin> */}
-      <Home></Home>
+      <CustomLogin></CustomLogin>
+      {/* <HomeMobile></HomeMobile> */}
     </View>
   );
 }
@@ -18,10 +18,4 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "#121427",
   },
-  // container: {
-  //   flex: 1,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   backgroundColor: "#121427",
-  // },
 });

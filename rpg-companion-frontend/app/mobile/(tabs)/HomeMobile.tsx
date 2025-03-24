@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 
-export default function Home() {
+export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",
+    backgroundColor: "#121427",
   },
   iconContainer: {
     justifyContent: "flex-start",
