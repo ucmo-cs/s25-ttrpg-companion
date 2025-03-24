@@ -1,14 +1,14 @@
 import { Text, View, StyleSheet } from "react-native";
-import CustomLogin from "@/screens/CustomLogin";
-import Home from "@/screens/Home";
+import CustomLogin from "@/app/CustomLogin";
+import HomeMobile from "@/app/HomeMobile";
 import TabNavigation from "./tabNavigation";
 
 export default function Index() {
   return (
     <View style={styles.container}>
       {/* *** Until we get navigation. Just uncomment what you are working on **** */}
-      {/* <CustomLogin></CustomLogin> */}
-      <Home></Home>
+      <CustomLogin></CustomLogin>
+      {/* <HomeMobile></HomeMobile> */}
     </View>
   );
 }

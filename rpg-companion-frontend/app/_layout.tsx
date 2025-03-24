@@ -18,7 +18,16 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="home"
+        name="homemobile"
+        options={{
+          headerShown: false,
+          title: "Home",
+          headerStyle: { backgroundColor: "black" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
+      <Stack.Screen
+        name="homeweb"
         options={{
           headerShown: false,
           title: "Home",

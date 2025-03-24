@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform} from "react-native";
 
@@ -11,8 +11,8 @@ export default function CustomLogin() {
   const [message, setMessage] = useState("");
 
   const handleLogin = () => {
-    console.log(username);
-    console.log(password);
+    // console.log(username);
+    // console.log(password);
     if (username == "" && password == "") {
       console.log("Neither username or password present");
       setMessage("Please enter a valid username and password");
@@ -23,7 +23,7 @@ export default function CustomLogin() {
       console.log("No username present");
       setMessage("Please enter a valid username");
     } else{
-      console.log("Valid username and password");
+      // console.log("Valid username and password");
       setMessage("");
       attemptLogin();
     }
@@ -47,6 +47,15 @@ export default function CustomLogin() {
 
         const data = await response.json();
         console.log("Login Response", data);
+
+       
+          const nav = Platform.select({
+            
+            android: () => router.navigate("/HomeMobile"),
+            ios: () => router.navigate("/HomeMobile"),
+            default: () => router.navigate("/HomeWeb"),
+          })
+          nav();
         }
         catch (error){
           console.log('Login Failed', error);
