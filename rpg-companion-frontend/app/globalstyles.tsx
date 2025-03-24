@@ -5,8 +5,8 @@ const GlobalStyles = StyleSheet.create({
     page: {
         backgroundColor: "#121427",
         width: "100%",
-      height: "100%",
-      justifyContent: "center",
+        height: "100%",
+        color: "white",
     },
 });
 
