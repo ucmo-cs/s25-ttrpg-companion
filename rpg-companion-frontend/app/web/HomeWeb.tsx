@@ -3,11 +3,12 @@ import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import GlobalStyles from "../globalstyles";
 
 export default function HomeWeb() {
   return (
-    <View style={styles.container}>
-        <Text>This is the web version!</Text>
+    <View style={GlobalStyles.page}>
+        <Text style={GlobalStyles.page}>This is the web version!</Text>
     </View>
   );
 }
