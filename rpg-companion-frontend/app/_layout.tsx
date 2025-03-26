@@ -17,7 +17,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="homemobile"
+        name="mobile/HomeMobile"   //Despite it being name it needs the relative path
         options={{
           headerShown: false,
           title: "Home",
@@ -26,7 +26,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="homeweb"
+        name="web/HomeWeb"
         options={{
           headerShown: false,
           title: "Home",

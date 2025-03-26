@@ -49,9 +49,9 @@ export default function CustomLogin() {
         const data = await response.json();
         console.log("Login Response", data);
 
-       
+          //This is how we can decide which code excutes per platform
           const nav = Platform.select({
-            
+          
             android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
             ios: () => router.navigate("/mobile/HomeMobile"),
             default: () => router.navigate("/web/HomeWeb"),
@@ -100,15 +100,6 @@ export default function CustomLogin() {
 
 const styles = StyleSheet.create({
 filler: {
-  backgroundColor: "#121427",
-  ...Platform.select({
-    default: {
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      
-    }
-  })
 },
 
   loginContainer: {

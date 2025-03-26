@@ -4,22 +4,44 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import GlobalStyles from "../globalstyles";
+import { Assets } from "react-navigation-stack";
 
 export default function HomeWeb() {
   return (
     <View style={GlobalStyles.page}>
-        <Text style={GlobalStyles.page}>This is the web version!</Text>
+      <View style={styles.home}>
+        <header style={styles.header}>
+          <View style={styles.pfpHolder}>
+            <Image source={require("../../assets/images/favicon.png")} style={styles.pfp}  /> 
+            {/* Needs to have character sheets pfp used, placeholder for now */}
+          </View>
+        </header>
+      </View>
     </View>
   );
 }
 
 
 const styles = StyleSheet.create({
-
-      container: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "flex-start",
+      home: {
+        justifyContent: "flex-start",
+        height: "100%",
+        width: "100%"
+      },
+      pfpHolder: {
+        height:"100%",
+        width:"auto",
+        alignContent: "center"
+      },
+      pfp: {
+        height: "100%",
+        width: 200
+      },
+      header: {
+        height: "15%",
+        width: "100%",
+        backgroundColor: "White",
+        color: "black",
       },
       iconContainer: {
         justifyContent: "flex-start",
@@ -29,37 +51,4 @@ const styles = StyleSheet.create({
         marginTop: 110,
         padding: 10,
       },
-      icon: {
-        marginRight: 25,
-        width: 100,
-        height: 100,
-      },
-      staticContainer: {
-        backgroundColor: "#1e1e1e",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "75%",
-        flex: 1,
-        height: "15%",
-      },
-      header: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "white",
-        padding: 5,
-      },
-      iconWrapper: {
-        position: "relative",
-        marginRight: 15,
-        alignItems: "center",
-      },
-      iconText: {
-        fontSize: 24,
-        color: "white",
-        fontWeight: "bold",
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -75 }, { translateY: -375 }],
-      }
 });
