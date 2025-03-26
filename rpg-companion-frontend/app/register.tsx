@@ -9,12 +9,60 @@ import {Text,View,TextInput,Button,Alert,Platform,StyleSheet} from "react-native
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordTwo, setPasswordTwo] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const registerHandler = () => {
-    console.log("Registered")
+  const handleRegistration = () => {
+    if (username == "" || password == "" || email =="") {
+      setMessage("Please fill out all fields");
+    } 
+    else if (password != passwordTwo) {
+      setMessage("Please ensure passwords match");
+      setPassword("");
+      setPasswordTwo("");
+    }
+    else if((password == passwordTwo) && (username != "" || password != "" || email !="")){
+      attemptRegistration();
+    }
   }
+
+  const attemptRegistration = async () => {
+    try{
+        const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/create-user', {
+          method: 'POST',
+          body: JSON.stringify({
+    username : username,
+    email : email,
+    password : password,
+    characters : {}
+          }),
+        });
+        
+            if (!response.ok) {
+                console.log("!response.ok");
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log("Login Response", data);
+    
+              //This is how we can decide which code excutes per platform
+              const nav = Platform.select({
+              
+                android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
+                ios: () => router.navigate("/mobile/HomeMobile"),
+                default: () => router.navigate("/web/HomeWeb"),
+              })
+              nav();
+            }
+            catch (error){
+              console.log('Registration failed', error);
+              setMessage("Sorry an error has occurred");
+            }  
+  }
+
+  
 
   return (
     <View style={GlobalStyles.page}>
@@ -42,8 +90,16 @@ export default function Register() {
           placeholder="Password"
           placeholderTextColor="darkgray"
         ></TextInput>
+        <TextInput
+          value={passwordTwo}
+          onChangeText={setPasswordTwo}
+          style={styles.login}
+          autoCapitalize="none"
+          placeholder="Confirm Password"
+          placeholderTextColor="darkgray"
+        ></TextInput>
         <Text style={styles.warning}>{message}</Text>
-        <Text style={styles.button} onPress={registerHandler}>
+        <Text style={styles.button} onPress={handleRegistration}>
           Sign Up
         </Text>
       </View>
