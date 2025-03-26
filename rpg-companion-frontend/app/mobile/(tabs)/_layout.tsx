@@ -11,6 +11,7 @@ export default function TabLayout() {
         headerStyle: {
           backgroundColor: "#25292e",
         },
+        headerShown: false,
         headerShadowVisible: false,
         headerTintColor: "#fff",
 
@@ -35,7 +36,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Combat"
         options={{
-          title: "Combat",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "cut-outline" : "cut-outline"}

@@ -6,7 +6,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export default function RootLayout() {
   return (
-    <Stack>
+    <Stack
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: "#25292e",
+      },
+      title: "",
+      headerShown: true,
+      headerShadowVisible: false,
+      headerTintColor: "#fff",
+    }}
+    >
       <Stack.Screen
         name="index"
         options={{

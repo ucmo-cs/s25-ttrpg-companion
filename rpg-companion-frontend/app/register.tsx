@@ -6,68 +6,27 @@ import {Text,View,TextInput,Button,Alert,Platform,StyleSheet} from "react-native
 
 
 
-export default function CustomLogin() {
+export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleLogin = () => {
-    // console.log(username);
-    // console.log(password);
-    if (username == "" && password == "") {
-      console.log("Neither username or password present");
-      setMessage("Please enter a valid username and password");
-    } else if (username != "" && password == "") {
-      console.log("No password present");
-      setMessage("Please enter a valid password");
-    } else if (username == "" && password != "") {
-      console.log("No username present");
-      setMessage("Please enter a valid username");
-    } else{
-      // console.log("Valid username and password");
-      setMessage("");
-      attemptLogin();
-    }
-  };
-
-
-  const attemptLogin = async () => {
-    try{
-    const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username.toLowerCase(),
-        password: password,
-      }),
-    });
-    
-        if (!response.ok) {
-            console.log("!response.ok");
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Login Response", data);
-
-       
-          const nav = Platform.select({
-            
-            android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
-            ios: () => router.navigate("/mobile/HomeMobile"),
-            default: () => router.navigate("/web/HomeWeb"),
-          })
-          nav();
-        }
-        catch (error){
-          console.log('Login Failed', error);
-          setMessage("Invalid Username and Password");
-        }  
-};
-
+  const registerHandler = () => {
+    console.log("Registered")
+  }
 
   return (
     <View style={GlobalStyles.page}>
       <View style={styles.loginContainer}>
+      <TextInput
+          value={email}
+          onChangeText={setEmail}
+          style={styles.login}
+          autoCapitalize="none"
+          placeholder="Email"
+          placeholderTextColor="darkgray"
+        ></TextInput>
         <TextInput
           value={username}
           onChangeText={setUsername}
@@ -84,15 +43,8 @@ export default function CustomLogin() {
           placeholderTextColor="darkgray"
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
-        <Text style={styles.button} onPress={handleLogin}>
-          Login
-        </Text>
-
-        <Text
-          style={styles.button}
-          onPress={() => router.navigate("/register")}
-        >
-          Register
+        <Text style={styles.button} onPress={registerHandler}>
+          Sign Up
         </Text>
       </View>
     </View>
