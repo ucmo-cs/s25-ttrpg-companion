@@ -36,7 +36,7 @@ export default function CustomLogin() {
     const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user', {
       method: 'POST',
       body: JSON.stringify({
-        username: username,
+        username: username.toLowerCase(),
         password: password,
       }),
     });
@@ -79,6 +79,7 @@ export default function CustomLogin() {
           value={password}
           onChangeText={setPassword}
           style={styles.login}
+          autoCapitalize="none"
           placeholder="Password"
           placeholderTextColor="darkgray"
         ></TextInput>
