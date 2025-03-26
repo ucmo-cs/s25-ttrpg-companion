@@ -49,9 +49,9 @@ export default function CustomLogin() {
         const data = await response.json();
         console.log("Login Response", data);
 
-       
+          //This is how we can decide which code excutes per platform
           const nav = Platform.select({
-            
+          
             android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
             ios: () => router.navigate("/mobile/HomeMobile"),
             default: () => router.navigate("/web/HomeWeb"),
@@ -74,6 +74,7 @@ export default function CustomLogin() {
           style={styles.login}
           placeholder="Username"
           placeholderTextColor="darkgray"
+          autoFocus={true}
         ></TextInput>
         <TextInput
           value={password}
@@ -82,6 +83,7 @@ export default function CustomLogin() {
           autoCapitalize="none"
           placeholder="Password"
           placeholderTextColor="darkgray"
+          secureTextEntry={true}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
         <Text style={styles.button} onPress={handleLogin}>
@@ -101,15 +103,6 @@ export default function CustomLogin() {
 
 const styles = StyleSheet.create({
 filler: {
-  backgroundColor: "#121427",
-  ...Platform.select({
-    default: {
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      
-    }
-  })
 },
 
   loginContainer: {
