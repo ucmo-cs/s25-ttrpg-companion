@@ -74,6 +74,7 @@ export default function CustomLogin() {
           style={styles.login}
           placeholder="Username"
           placeholderTextColor="darkgray"
+          autoFocus={true}
         ></TextInput>
         <TextInput
           value={password}
@@ -82,6 +83,7 @@ export default function CustomLogin() {
           autoCapitalize="none"
           placeholder="Password"
           placeholderTextColor="darkgray"
+          secureTextEntry={true}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
         <Text style={styles.button} onPress={handleLogin}>
