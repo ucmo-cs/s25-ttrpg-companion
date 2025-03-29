@@ -120,26 +120,31 @@ filler: {
   })
 },
 
-  loginContainer: {
-    //First section are 'global' and affect all platforms
-    height: "40%",
-    flexDirection: "column",
-    alignSelf: "center",
-    justifyContent: "center",
+loginContainer: {
+  //First section are 'global' and affect all platforms
+  height: "40%",
+  flexDirection: "column",
+  alignSelf: "center",
+  justifyContent: "center",
+  minHeight:800,
 
-    //Here is where it gets specific: iOS, Andriod, Default = Web
-    ...Platform.select({
-      ios: {
-        width: "80%",
-      },
-      android: {
-        width: "80%"
-      },
-      default: {
-        width: "20%",
-      },
-    }),
-  },
+  //Here is where it gets specific: iOS, Andriod, Default = Web
+  ...Platform.select({
+    ios: {
+      width: "80%",
+    },
+    android: {
+      width: "80%"
+    },
+    default: {
+      width: "20%",
+      minWidth: 300,
+      maxWidth:400
+      
+    },
+  }),
+},
+
 
   login: {
     color: "white",
@@ -154,7 +159,6 @@ filler: {
     backgroundColor: "blue",
     borderColor: "darkblue",
     textAlign: "center",
-    justifyContent: "center",
     color: "white",
     borderWidth: 2,
     margin: "2.5%",
@@ -173,7 +177,7 @@ filler: {
         fontSize: 20,
       },
       default: {
-        height: "15%",
+        height: 50,
         marginTop: 15,
         fontSize: 32,
       },

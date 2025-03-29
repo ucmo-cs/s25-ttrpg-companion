@@ -13,22 +13,87 @@ export default function HomeWeb() {
             {/* Needs to have character sheets pfp used, placeholder for now */}
           </View>
           <View style={styles.charHeader}>
-            <Text style={styles.headName}>
-            Tareces
+
+            {/* Character Name */}
+            <Text style={styles.headName}> 
+            Legolas
             </Text>
-            <Text style={styles.headSpecies}>
+            {/* Character Species */}
+            <Text style={styles.headSpecies}> 
             Elf
             </Text>
+            {/* Character Class */}
             <Text style={styles.headClass}>
             Ranger
             </Text>
           </View>
           <View style={styles.dropDownContainerHolder}>
             <View style={styles.dropDownContainer}>
+            </View>
+          </View>
+        </View>
+        <View style={styles.body}>
+        <View style={styles.split}>
+          <View style={styles.abilitiesHolder}>
+          
 
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Strength
+            </View>
+            <View style={styles.abilityName}>
+            10
+            </View>
+          </View>
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Dexterity
+            </View>
+            <View style={styles.abilityName}>
+            10
+            </View>
+          </View>
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Constitution
+            </View>
+            <View style={styles.abilityName}>
+            10
+            </View>
+          </View>
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Intelligence
+            </View>
+            <View style={styles.abilityName}>
+            10
+            </View>
+          </View>
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Wisdom
+            </View>
+            <View style={styles.abilityName}>
+            10
+            </View>
+          </View>
+          <View style={styles.ability}>
+            <View style={styles.abilityLev}>
+            Charisma
+            </View>
+            <View style={styles.abilityName}>
+            10
             </View>
           </View>
           
+
+
+          </View>
+
+        </View>
+        <View style={styles.split}>
+        Here is some text on the right!
+        </View>
         </View>
       </View>
     </View>
@@ -104,4 +169,55 @@ const styles = StyleSheet.create({
     borderStyle:"solid",
     borderWidth:5
   },
+  body: {
+    flex:1,
+    flexDirection: "row",
+  },
+  split: {
+    flex:1,
+    width:"50%",
+    height:"100%"
+  },
+  abilitiesHolder: {
+    flexDirection: "row",
+    height:"7%",
+    width:"100%",
+    minHeight:60
+  },
+  ability: {
+    flex:1,
+    flexDirection:"column",
+    justifyContent:"center",
+    textAlign:"center",
+    height: 100,
+    minHeight:60,
+    width:100,
+    minWidth: 80,
+    borderWidth:2,
+    borderStyle:"solid",
+    borderColor: "white",
+    margin:10,
+    borderRadius:40,
+  },
+  abilityLev: {
+    fontWeight:"bold",
+    fontSize:24,
+    fontFamily:"sans-serif",
+    width:"100%",
+    height:"30%",
+    textAlign:"center",
+    justifyContent:"center",
+    borderColor:"white",
+    borderBottomWidth:2,
+    borderStyle:"dashed",
+  },
+  abilityName: {
+    fontWeight:"bold",
+    fontFamily:"sans-serif",
+    textAlign:"center",
+    justifyContent:"center",
+    fontSize:26,
+    height:"70%",
+    width:"100%",
+  }
 });

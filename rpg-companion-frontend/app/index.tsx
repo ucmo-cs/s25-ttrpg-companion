@@ -67,6 +67,7 @@ export default function CustomLogin() {
 
   return (
     <View style={GlobalStyles.page}>
+      <View style={styles.heading}>Welcome!</View>
       <View style={styles.loginContainer}>
         <TextInput
           value={username}
@@ -102,7 +103,11 @@ export default function CustomLogin() {
 }
 
 const styles = StyleSheet.create({
-filler: {
+heading: {
+  fontSize:60,
+  alignSelf:"center",
+  fontFamily:"sans-serif",
+  fontWeight:"100"
 },
 
   loginContainer: {
@@ -122,6 +127,9 @@ filler: {
       },
       default: {
         width: "20%",
+        minWidth: 300,
+        maxWidth:400
+        
       },
     }),
   },
@@ -139,7 +147,6 @@ filler: {
     backgroundColor: "blue",
     borderColor: "darkblue",
     textAlign: "center",
-    justifyContent: "center",
     color: "white",
     borderWidth: 2,
     margin: "2.5%",
@@ -158,7 +165,7 @@ filler: {
         fontSize: 20,
       },
       default: {
-        height: "15%",
+        height: 50,
         marginTop: 15,
         fontSize: 32,
       },
@@ -168,6 +175,6 @@ filler: {
   warning: {
     color: "red",
     textAlign: "center",
-    marginTop: 10,
+    padding: 10,
   },
 });
