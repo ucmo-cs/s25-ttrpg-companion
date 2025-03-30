@@ -23,7 +23,7 @@ export default function HomeWeb() {
             Elf
             </Text>
             {/* Character Class */}
-            <Text style={styles.headClass}>
+            <Text style={styles.headClass} numberOfLines={1} adjustsFontSizeToFit={true}>
             Ranger
             </Text>
           </View>
@@ -37,62 +37,132 @@ export default function HomeWeb() {
           <View style={styles.abilitiesHolder}>
           
 
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Strength
+            <View style={styles.ability}>
+              <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Strength
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
             </View>
-            <View style={styles.abilityName}>
-            10
+            <View style={styles.ability}>
+            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Dexterity
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
+            </View>
+            <View style={styles.ability}>
+              <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Constitution
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
+            </View>
+            <View style={styles.ability}>
+              <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Intelligence
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
+            </View>
+            <View style={styles.ability}>
+              <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Wisdom
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
+            </View>
+            <View style={styles.ability}>
+              <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
+              Charisma
+              </Text>
+              <View style={styles.abilityName}>
+              10
+              </View>
             </View>
           </View>
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Dexterity
+          <View style={styles.skillsHolder}>
+            <View style={styles.skillsTop}>
+              <Text style={styles.skill}>Skill</Text>
+              <Text style={styles.skill}>Ability</Text>
+              <Text style={styles.skill}>Bonus</Text>
             </View>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Constitution
-            </View>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Intelligence
-            </View>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Wisdom
-            </View>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <View style={styles.abilityLev}>
-            Charisma
-            </View>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          
+            <View style={styles.skillsBody}>
+              {/* Will call a component to populate this table with the values of the correct character 
+              for now populated with dummy values*/}
+              <View style={styles.skillsBodyContent}>
 
 
-          </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>
+                    Investigation
+                  </Text>
+                  <Text style={styles.skill}>
+                    Intelligence
+                  </Text>
+                  <Text style={styles.skill}>
+                    +2
+                  </Text>
+                </View>
 
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>
+                    Arcana
+                  </Text>
+                  <Text style={styles.skill}>
+                    Intelligence
+                  </Text>
+                  <Text style={styles.skill}>
+                    +0
+                  </Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>
+                    Deception
+                  </Text>
+                  <Text style={styles.skill}>
+                    Charisma
+                  </Text>
+                  <Text style={styles.skill}>
+                    +1
+                  </Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>
+                    Perception
+                  </Text>
+                  <Text style={styles.skill}>
+                    Wisdom
+                  </Text>
+                  <Text style={styles.skill}>
+                    +3
+                  </Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>
+                    Persuasion
+                  </Text>
+                  <Text style={styles.skill}>
+                    Charisma
+                  </Text>
+                  <Text style={styles.skill}>
+                    -1
+                  </Text>
+                </View>
+
+
+
+              </View>
+            </View>
+          </View>
         </View>
         <View style={styles.split}>
-        Here is some text on the right!
+          
         </View>
         </View>
       </View>
@@ -180,7 +250,7 @@ const styles = StyleSheet.create({
   },
   abilitiesHolder: {
     flexDirection: "row",
-    height:"7%",
+    height:"auto",
     width:"100%",
     minHeight:60
   },
@@ -196,12 +266,13 @@ const styles = StyleSheet.create({
     borderWidth:2,
     borderStyle:"solid",
     borderColor: "white",
-    margin:10,
-    borderRadius:40,
+    margin:15,
+    borderRadius:10,
   },
   abilityLev: {
+    color:"white",
     fontWeight:"bold",
-    fontSize:24,
+    fontSize:20,
     fontFamily:"sans-serif",
     width:"100%",
     height:"30%",
@@ -210,6 +281,7 @@ const styles = StyleSheet.create({
     borderColor:"white",
     borderBottomWidth:2,
     borderStyle:"dashed",
+    margin:1
   },
   abilityName: {
     fontWeight:"bold",
@@ -219,5 +291,43 @@ const styles = StyleSheet.create({
     fontSize:26,
     height:"70%",
     width:"100%",
+  },
+  skillsHolder: {
+    flex:1,
+    margin: 15,
+    borderWidth:2,
+    borderStyle:"solid",
+    borderColor:"white",
+    borderRadius:10,
+    height:"100%"
+  },
+  skillsTop: {
+    flexDirection:"row",
+    height: 36,
+    borderStyle:"dashed",
+    borderBottomWidth:2,
+    borderColor:"white",
+    justifyContent:"space-evenly",
+    
+  },
+  skillRow: {
+    flexDirection:"row",
+    height: 36,
+    borderStyle:"solid",
+    borderBottomWidth:1,
+    borderColor:"gray",
+    justifyContent:"space-evenly",
+  },
+  skill: {
+    flex:1,
+    fontSize:24,
+    textAlign:"center",
+    color:"white"
+  },
+  skillsBody: {
+    flex:1,
+  },
+  skillsBodyContent: {
+
   }
 });
