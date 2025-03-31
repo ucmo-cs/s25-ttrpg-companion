@@ -86,7 +86,7 @@ export default function CustomLogin() {
           onChangeText={setUsername}
           style={styles.login}
           placeholder="Username"
-          placeholderTextColor={"white"}
+          placeholderTextColor={"#888"}
           autoFocus={true}
         ></TextInput>
         <TextInput
@@ -95,7 +95,7 @@ export default function CustomLogin() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
-          placeholderTextColor={"white"}
+          placeholderTextColor={"#888"}
           secureTextEntry={true}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>

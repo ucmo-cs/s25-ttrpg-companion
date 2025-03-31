@@ -85,12 +85,14 @@ export default function Register() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Email"
+          placeholderTextColor={"#888"}
         ></TextInput>
         <TextInput
           value={username}
           onChangeText={setUsername}
           style={styles.login}
           placeholder="Username"
+          placeholderTextColor={"#888"}
         ></TextInput>
         <TextInput
           value={password}
@@ -98,6 +100,7 @@ export default function Register() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
+          placeholderTextColor={"#888"}
         ></TextInput>
         <TextInput
           value={passwordTwo}
@@ -105,6 +108,7 @@ export default function Register() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Confirm Password"
+          placeholderTextColor={"#888"}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
         <Pressable
@@ -204,8 +208,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
       },
       android: {
-        height: "10%",
-        marginTop: 10,
+        height: "5%",
         fontSize: 20,
       },
       default: {
