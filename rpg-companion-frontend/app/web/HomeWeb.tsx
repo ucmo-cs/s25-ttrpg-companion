@@ -1,11 +1,30 @@
 import { useState } from "react";
-import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,} from "react-native";
+import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} from "react-native";
 import { Drawer } from 'expo-router/drawer';
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
 
 
 export default function HomeWeb() {
+  const [hp,setHp] = useState(10);
+
+  
+  const minusHP= () => {
+    if(hp <= 0){
+      setHp(0);
+      return;
+    }
+    setHp(hp-1);
+    console.log(hp);
+  }
+
+  const plusHP= () => {
+    setHp(hp+1);
+    console.log(hp);
+  }
+
+
+
   return (
   <View style={GlobalStyles.page}>
     <View style={styles.home}>
@@ -174,21 +193,25 @@ export default function HomeWeb() {
               <Text style={styles.skill}>5</Text>
           </View>
           
-          <View style={styles.featherWrapper}>
+          
             <View style={styles.healthContainer}>
               <View style={styles.healthItem}>
-                <Feather name="plus" size={100} color="green" style={styles.feather}/>
+                <Pressable onPress={minusHP} style={styles.feather}>
+                  <Feather name="minus" size={80} color="red"/>
+                </Pressable>
               </View>
               <View style={styles.healthItem}>
                 <Text style={styles.healthNum}>
-                  11
+                  {hp}
                 </Text>
               </View>
               <View style={styles.healthItem}>
-                <Feather name="minus" size={100} color="red" style={styles.feather}/>
+                <Pressable onPress={plusHP} style={styles.feather}>
+                  <Feather name="plus" size={80} color="green" style={styles.feather}/>
+                </Pressable>
               </View>
             </View>
-          </View>
+          
           
         </View>
         <View style={styles.skillsHolder}>
@@ -367,13 +390,12 @@ const styles = StyleSheet.create({
   feather: {
     flex:1,
     position:"absolute",
+    alignContent:"center",
+    justifyContent:"center",
     height: 100,
     minHeight:80,
     width:100,
     minWidth: 80,
-    
-    
-   
   },
   featherWrapper: {
     position: "relative",
@@ -382,7 +404,6 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   iconContainer: {
-    
     height:130,
     justifyContent: "space-evenly",
     textAlignVertical: "center",
@@ -391,20 +412,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   healthContainer: {
-    flex:1,
     flexDirection:"row",
-    width:150,
+    width:225,
     height:100,
-    justifyContent:"space-evenly",
+    justifyContent:"flex-start",
     alignContent:"center"
 
   },
   healthItem: {
     flex:1,
+    textAlign:"center",
+    justifyContent:"center"
   },
   healthNum: {
-    height:"auto",
-    width:"auto",
-    color:"white"
+    fontSize:36,
+    height:50,
+    width:75,
+    color:"white",
+    textAlign:"center",
+    justifyContent:"center"
   }
 });
