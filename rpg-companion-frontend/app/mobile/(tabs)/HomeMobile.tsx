@@ -2,7 +2,25 @@ import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Text, View, StyleSheet, Platform } from "react-native";
+import { Text, View, StyleSheet, Platform, FlatList } from "react-native";
+
+const skillsData = [
+  { skill: "Acrobatics", ability: "Dex", bonus: "+0" },
+  { skill: "Animal Handling", ability: "Wis", bonus: "+0" },
+  { skill: "Arcana", ability: "Int", bonus: "+0" },
+  { skill: "Athletics", ability: "Str", bonus: "+0" },
+  { skill: "Deception", ability: "Cha", bonus: "+0" },
+  { skill: "History", ability: "Int", bonus: "+0" },
+  { skill: "Insight", ability: "Wis", bonus: "+0" },
+  { skill: "Intimidation", ability: "Cha", bonus: "+0" },
+  { skill: "Investigation", ability: "Int", bonus: "+0" },
+  { skill: "Medicine", ability: "Wis", bonus: "+0" },
+  { skill: "Nature", ability: "Int", bonus: "+0" },
+  { skill: "Perception", ability: "Wis", bonus: "+0" },
+  { skill: "Religion", ability: "Int", bonus: "+0" },
+  { skill: "Sleight of Hand", ability: "Dex", bonus: "+0" },
+  { skill: "Stealth", ability: "Dex", bonus: "+0" },
+];
 
 export default function HomeMobile() {
   return (
@@ -16,7 +34,7 @@ export default function HomeMobile() {
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Feather name="circle" size={70} color="white" />
-          <Text style={styles.iconText}>1</Text>
+          <Text style={styles.iconText}>10</Text>
         </View>
 
         <View style={styles.iconWrapper}>
@@ -46,16 +64,16 @@ export default function HomeMobile() {
         </View>
       </View>
 
-      <View style={styles.abilityScoresHeader}>
-        <Text style={styles.abilityHeaderText}>Ability</Text>
-        <Text style={styles.abilityHeaderText}>Score</Text>
-        <Text style={styles.abilityHeaderText}>Modifier</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionHeaderText}>Ability</Text>
+        <Text style={styles.sectionHeaderText}>Score</Text>
+        <Text style={styles.sectionHeaderText}>Modifier</Text>
       </View>
 
       <View style={styles.line} />
 
       <View style={styles.abilityScoresContainer}>
-        <View style={styles.abilityContainer}>
+        <View style={styles.sectionContainer}>
           <Text style={styles.abilityText}>Str</Text>
           <Text style={styles.abilityText}>Dex</Text>
           <Text style={styles.abilityText}>Con</Text>
@@ -63,7 +81,7 @@ export default function HomeMobile() {
           <Text style={styles.abilityText}>Int</Text>
           <Text style={styles.abilityText}>Cha</Text>
         </View>
-        <View style={styles.scoresContainer}>
+        <View style={styles.sectionContainer}>
           <Text style={styles.abilityText}>+10</Text>
           <Text style={styles.abilityText}>+10</Text>
           <Text style={styles.abilityText}>+10</Text>
@@ -71,7 +89,7 @@ export default function HomeMobile() {
           <Text style={styles.abilityText}>+10</Text>
           <Text style={styles.abilityText}>+10</Text>
         </View>
-        <View style={styles.modifierContainer}>
+        <View style={styles.sectionContainer}>
           <Text style={styles.abilityText}>+0</Text>
           <Text style={styles.abilityText}>+0</Text>
           <Text style={styles.abilityText}>+0</Text>
@@ -80,6 +98,35 @@ export default function HomeMobile() {
           <Text style={styles.abilityText}>+0</Text>
         </View>
       </View>
+
+      <Text></Text>
+
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionHeaderText}>Skill</Text>
+        <Text style={styles.sectionHeaderText}>Ability</Text>
+        <Text style={styles.sectionHeaderText}>Bonus</Text>
+      </View>
+
+      <View style={styles.line} />
+
+      <FlatList
+        data={skillsData}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.skillsText}>{item.skill}</Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.skillsText}>{item.ability}</Text>
+            </View>
+
+            <View style={styles.sectionContainer}>
+              <Text style={styles.skillsText}>{item.bonus}</Text>
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
 }
@@ -91,39 +138,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#121427",
   },
-  iconContainer: {
-    justifyContent: "flex-start",
-    textAlignVertical: "center",
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row",
-  },
   staticContainer: {
-    // backgroundColor: "#1e1e1e",
     alignSelf: "flex-end",
     width: "70%",
-
-    ...Platform.select({
-      ios: {
-        height: "15%",
-      },
-      default: {
-        height: "18%",
-      },
-    }),
+    height: "15%",
   },
-
   header: {
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
     padding: 5,
-    justifyContent: "center",
     textAlign: "center",
   },
 
+  //Icon Styles
+  iconContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
   iconWrapper: {
-    position: "relative",
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
@@ -138,11 +171,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     fontWeight: "bold",
-    position: "relative",
     padding: 10,
-    flexDirection: "row",
   },
-
   line: {
     borderBottomColor: "white",
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -151,25 +181,27 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
 
-  abilityScoresHeader: {
+  //Section styles
+  sectionHeader: {
     flexDirection: "row",
-    justifyContent: "space-around",
   },
-  abilityHeaderText: {
-    fontSize: 22,
+  sectionHeaderText: {
+    fontSize: 25,
     color: "white",
     flex: 1,
     textAlign: "center",
     paddingVertical: 2.5,
-    // paddingHorizontal: 20,
-    // padding: 2.5,
   },
+  sectionContainer: {
+    alignItems: "center",
+    width: "33%",
+  },
+
+  //Ability section styles
   abilityText: {
     fontSize: 22,
     color: "white",
-    // paddingHorizontal: 40,
     paddingVertical: 2,
-    // marginLeft: 32,
   },
   abilityScoresContainer: {
     flexDirection: "row",
@@ -177,20 +209,13 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-around",
   },
-  abilityContainer: {
-    alignItems: "center",
-    width: "33%",
-    justifyContent: "center",
-  },
-  scoresContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "33%",
-  },
-  modifierContainer: {
-    // flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "33%",
+
+  //Skills section styles
+  //Skills container using section header
+  skillsText: {
+    fontSize: 17,
+    color: "white",
+    paddingVertical: 2,
+    marginLeft: 3.5,
   },
 });
