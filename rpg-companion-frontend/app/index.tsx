@@ -1,16 +1,28 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
+import { useFonts } from "expo-font";
 
-import {Text,View,TextInput,Button,Alert,Platform,StyleSheet} from "react-native";
-
-
+import {
+  Text,
+  View,
+  TextInput,
+  Button,
+  Alert,
+  Platform,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 
 export default function CustomLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isHoveredRegister, setIsHoveredRegister] = useState(false);
 
+  const [fontsLoaded] = useFonts({
+    "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
+  });
   const handleLogin = () => {
     // console.log(username);
     // console.log(password);
@@ -23,50 +35,50 @@ export default function CustomLogin() {
     } else if (username == "" && password != "") {
       console.log("No username present");
       setMessage("Please enter a valid username");
-    } else{
+    } else {
       // console.log("Valid username and password");
       setMessage("");
       attemptLogin();
     }
   };
 
-
   const attemptLogin = async () => {
-    try{
-    const response = await fetch('https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username.toLowerCase(),
-        password: password,
-      }),
-    });
-    
-        if (!response.ok) {
-            console.log("!response.ok");
-            throw new Error(`HTTP error! Status: ${response.status}`);
+    try {
+      const response = await fetch(
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/validate-user",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            username: username.toLowerCase(),
+            password: password,
+          }),
         }
+      );
 
-        const data = await response.json();
-        console.log("Login Response", data);
+      if (!response.ok) {
+        console.log("!response.ok");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-          //This is how we can decide which code excutes per platform
-          const nav = Platform.select({
-          
-            android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
-            ios: () => router.navigate("/mobile/HomeMobile"),
-            default: () => router.navigate("/web/HomeWeb"),
-          })
-          nav();
-        }
-        catch (error){
-          console.log('Login Failed', error);
-          setMessage("Invalid Username and Password");
-        }  
-};
+      const data = await response.json();
+      console.log("Login Response", data);
 
+      //This is how we can decide which code excutes per platform
+      const nav = Platform.select({
+        android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
+        ios: () => router.navigate("/mobile/HomeMobile"),
+        default: () => router.navigate("/web/HomeWeb"),
+      });
+      nav();
+    } catch (error) {
+      console.log("Login Failed", error);
+      setMessage("Invalid Username and Password");
+    }
+  };
 
   return (
     <View style={GlobalStyles.page}>
+      <View style={styles.title}>TTRPG Companion App</View>
       <View style={styles.heading}>Welcome!</View>
       <View style={styles.loginContainer}>
         <TextInput
@@ -74,7 +86,6 @@ export default function CustomLogin() {
           onChangeText={setUsername}
           style={styles.login}
           placeholder="Username"
-          placeholderTextColor="darkgray"
           autoFocus={true}
         ></TextInput>
         <TextInput
@@ -83,32 +94,52 @@ export default function CustomLogin() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
-          placeholderTextColor="darkgray"
           secureTextEntry={true}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
-        <Text style={styles.button} onPress={handleLogin}>
-          Login
-        </Text>
 
-        <Text
-          style={styles.button}
+        <Pressable
+          style={({ hovered }) => [
+            styles.button,
+            hovered && styles.hoverStyle, // Apply hover style conditionally
+          ]}
+          onHoverIn={() => setIsHoveredRegister(true)}
+          onHoverOut={() => setIsHoveredRegister(false)}
+          onPress={handleLogin}
+        >
+          Login
+        </Pressable>
+
+        <Pressable
+          style={({ hovered }) => [
+            styles.button,
+            hovered && styles.hoverStyle, // Apply hover style conditionally
+          ]}
+          onHoverIn={() => setIsHoveredRegister(true)}
+          onHoverOut={() => setIsHoveredRegister(false)}
           onPress={() => router.navigate("/register")}
         >
           Register
-        </Text>
+        </Pressable>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-heading: {
-  fontSize:60,
-  alignSelf:"center",
-  fontFamily:"sans-serif",
-  fontWeight:"100"
-},
+  title: {
+    fontSize: 60,
+    alignSelf: "center",
+    fontFamily: "Sora-Regular",
+    fontWeight: "100",
+    paddingBottom: 25,
+  },
+  heading: {
+    fontSize: 60,
+    alignSelf: "center",
+    fontFamily: "Sora-Regular",
+    fontWeight: "100",
+  },
 
   loginContainer: {
     //First section are 'global' and affect all platforms
@@ -116,6 +147,7 @@ heading: {
     flexDirection: "column",
     alignSelf: "center",
     justifyContent: "center",
+    fontFamily: "Sora-Regular",
 
     //Here is where it gets specific: iOS, Andriod, Default = Web
     ...Platform.select({
@@ -123,13 +155,12 @@ heading: {
         width: "80%",
       },
       android: {
-        width: "80%"
+        width: "80%",
       },
       default: {
         width: "20%",
         minWidth: 300,
-        maxWidth:400
-        
+        maxWidth: 400,
       },
     }),
   },
@@ -137,21 +168,31 @@ heading: {
   login: {
     color: "white",
     borderColor: "white",
-    borderWidth: 1,
+    borderWidth: 2,
     padding: 5,
     margin: 5,
-    borderRadius: 25,
+    borderRadius: 15,
+    fontWeight: "200",
+    fontFamily: "Sora-Regular",
+    height: "12%",
   },
 
+  hoverStyle: {
+    backgroundColor: "#4B5563",
+    borderColor: "#4B5563",
+  },
   button: {
-    backgroundColor: "blue",
-    borderColor: "darkblue",
+    backgroundColor: "#6B728C",
+    borderColor: "#6B728C",
     textAlign: "center",
     color: "white",
     borderWidth: 2,
     margin: "2.5%",
     width: "95%",
     borderRadius: 25,
+    fontFamily: "Sora-Regular",
+    cursor: "pointer",
+    transitionDelay: "background-color 0.3s ease",
 
     ...Platform.select({
       ios: {
