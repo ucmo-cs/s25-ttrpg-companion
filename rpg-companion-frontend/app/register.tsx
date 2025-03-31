@@ -116,7 +116,7 @@ export default function Register() {
           onHoverOut={() => setIsHovered(false)}
           onPress={handleRegistration}
         >
-          Sign Up
+          <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
       </View>
     </View>
@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
 
     ...Platform.select({
       ios: {
-        height: "10%",
-        marginTop: 10,
+        height: "5%",
+        // marginTop: 10,
         fontSize: 20,
       },
       android: {
@@ -215,7 +215,14 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
+  buttonText: {
+    color: "white",
+    alignSelf: "center",
+    fontSize: 22,
+    // textAlign: "center",
+    // justifyContent: "center",
+    paddingTop: 3,
+  },
   warning: {
     color: "red",
     textAlign: "center",

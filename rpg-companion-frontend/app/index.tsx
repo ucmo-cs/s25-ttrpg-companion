@@ -107,7 +107,7 @@ export default function CustomLogin() {
           onHoverOut={() => setIsHoveredRegister(false)}
           onPress={handleLogin}
         >
-          Login
+          <Text style={styles.buttonText}>Login</Text>
         </Pressable>
 
         <Pressable
@@ -119,7 +119,7 @@ export default function CustomLogin() {
           onHoverOut={() => setIsHoveredRegister(false)}
           onPress={() => router.navigate("/register")}
         >
-          Register
+          <Text style={styles.buttonText}>Register</Text>
         </Pressable>
       </View>
     </View>
@@ -211,6 +211,12 @@ const styles = StyleSheet.create({
         fontSize: 32,
       },
     }),
+  },
+
+  buttonText: {
+    color: "white",
+    alignSelf: "center",
+    fontSize: 22,
   },
 
   warning: {
