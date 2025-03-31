@@ -78,14 +78,15 @@ export default function CustomLogin() {
 
   return (
     <View style={GlobalStyles.page}>
-      <View style={styles.title}>TTRPG Companion App</View>
-      <View style={styles.heading}>Welcome!</View>
+      <View><Text style={styles.title}>TTRPG Companion App</Text></View>
+      <View><Text style={styles.heading}>Welcome!</Text></View>
       <View style={styles.loginContainer}>
         <TextInput
           value={username}
           onChangeText={setUsername}
           style={styles.login}
           placeholder="Username"
+          placeholderTextColor={"white"}
           autoFocus={true}
         ></TextInput>
         <TextInput
@@ -94,6 +95,7 @@ export default function CustomLogin() {
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
+          placeholderTextColor={"white"}
           secureTextEntry={true}
         ></TextInput>
         <Text style={styles.warning}>{message}</Text>
@@ -128,17 +130,40 @@ export default function CustomLogin() {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 60,
+    ...Platform.select({
+      ios: {
+        fontSize: 30,
+      },
+      android: {
+        fontSize: 30,
+      },
+      default: {
+        fontSize: 60,
+      }
+    }),
+    
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
     paddingBottom: 25,
+    color: "white",
   },
   heading: {
-    fontSize: 60,
+      ...Platform.select({
+        ios: {
+          fontSize: 30,
+        },
+        android: {
+          fontSize: 30,
+        },
+        default: {
+          fontSize: 60,
+        }
+      }),
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
+    color: "white",
   },
 
   loginContainer: {
