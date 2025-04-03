@@ -1,16 +1,13 @@
 import { useState } from "react";
-import Feather from "@expo/vector-icons/Feather";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Circle, Square, Shield } from "lucide-react-native";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Platform,
-  FlatList,
-  Image,
-} from "react-native";
+  Circle,
+  Square,
+  Shield,
+  PanelTopDashed,
+  RectangleHorizontal,
+} from "lucide-react-native";
+import { Text, View, StyleSheet, FlatList, Image } from "react-native";
 
 const skillsData = [
   { skill: "Acrobatics", ability: "Dex", bonus: "+0" },
@@ -75,39 +72,114 @@ export default function HomeMobile() {
           <AntDesign name="minus" size={35} color="red" />
         </View>
       </View>
-
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionHeaderText}>Ability</Text>
-        <Text style={styles.sectionHeaderText}>Score</Text>
-        <Text style={styles.sectionHeaderText}>Modifier</Text>
-      </View>
-
-      <View style={styles.line} />
-
-      <View style={styles.abilityScoresContainer}>
-        <View style={styles.sectionContainer}>
+      <View style={styles.iconContainer}>
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
           <Text style={styles.abilityText}>Str</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
+        </View>
+
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
           <Text style={styles.abilityText}>Dex</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
+        </View>
+
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
           <Text style={styles.abilityText}>Con</Text>
-          <Text style={styles.abilityText}>Wis</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
+        </View>
+      </View>
+      <View style={styles.iconContainer}>
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
           <Text style={styles.abilityText}>Int</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
+        </View>
+
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <Text style={styles.abilityText}>Wis</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
+        </View>
+
+        <View style={styles.iconWrapper}>
+          <PanelTopDashed
+            style={styles.abilityIcons}
+            size={100}
+            color="white"
+            strokeWidth={0.5}
+          />
+          <RectangleHorizontal
+            size={75}
+            style={styles.rectangleIcons}
+            color="white"
+            strokeWidth={0.5}
+          />
           <Text style={styles.abilityText}>Cha</Text>
-        </View>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.abilityText}>+10</Text>
-          <Text style={styles.abilityText}>+10</Text>
-          <Text style={styles.abilityText}>+10</Text>
-          <Text style={styles.abilityText}>+10</Text>
-          <Text style={styles.abilityText}>+10</Text>
-          <Text style={styles.abilityText}>+10</Text>
-        </View>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.abilityText}>+0</Text>
-          <Text style={styles.abilityText}>+0</Text>
-          <Text style={styles.abilityText}>+0</Text>
-          <Text style={styles.abilityText}>+0</Text>
-          <Text style={styles.abilityText}>+0</Text>
-          <Text style={styles.abilityText}>+0</Text>
+          <Text style={styles.abilityScore}>+10</Text>
+          <Text style={styles.modifierScore}>10</Text>
         </View>
       </View>
 
@@ -118,8 +190,6 @@ export default function HomeMobile() {
         <Text style={styles.sectionHeaderText}>Ability</Text>
         <Text style={styles.sectionHeaderText}>Bonus</Text>
       </View>
-
-      <View style={styles.line} />
 
       <FlatList
         data={skillsData}
@@ -152,7 +222,7 @@ const styles = StyleSheet.create({
   },
   staticContainer: {
     alignSelf: "flex-end",
-    width: "70%",
+    width: "60%",
     height: "15%",
   },
   header: {
@@ -172,6 +242,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
+    flexDirection: "row",
   },
   iconText: {
     fontSize: 20,
@@ -210,16 +281,38 @@ const styles = StyleSheet.create({
   },
 
   //Ability section styles
-  abilityText: {
-    fontSize: 22,
-    color: "white",
-    paddingVertical: 2,
+  abilityIcons: {
+    position: "relative",
+    justifyContent: "center",
+    paddingHorizontal: 60,
   },
-  abilityScoresContainer: {
-    flexDirection: "row",
-    paddingTop: 3,
-    width: "100%",
-    justifyContent: "space-around",
+  abilityScore: {
+    fontSize: 25,
+    color: "white",
+    fontWeight: "500",
+    position: "absolute",
+    alignSelf: "baseline",
+    margin: 47,
+  },
+  modifierScore: {
+    fontSize: 19,
+    color: "white",
+    fontWeight: "400",
+    position: "absolute",
+    alignSelf: "baseline",
+    margin: 94,
+  },
+  abilityText: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "500",
+    position: "absolute",
+    alignSelf: "flex-start",
+    paddingTop: 16,
+  },
+  rectangleIcons: {
+    position: "absolute",
+    top: "61%",
   },
 
   //Skills section styles
@@ -233,15 +326,16 @@ const styles = StyleSheet.create({
 
   //Character pfp styles
   pfpHolder: {
-    height: 90,
-    width: 105,
-    margin: 10,
+    height: 92,
+    width: 110,
+    margin: 5,
     position: "absolute",
     alignSelf: "flex-start",
+    paddingLeft: 30,
   },
   pfp: {
-    height: 90,
-    width: 105,
+    height: 92,
+    width: 110,
     // alignSelf: "center",
     borderRadius: 10,
     borderColor: "black",
