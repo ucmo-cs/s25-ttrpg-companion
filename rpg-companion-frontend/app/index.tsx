@@ -78,13 +78,18 @@ export default function CustomLogin() {
 
   return (
     <View style={GlobalStyles.page}>
-      <View><Text style={styles.title}>TTRPG Companion App</Text></View>
-      <View><Text style={styles.heading}>Welcome!</Text></View>
+      <View>
+        <Text style={styles.title}>TTRPG Companion App</Text>
+      </View>
+      <View>
+        <Text style={styles.heading}>Welcome!</Text>
+      </View>
       <View style={styles.loginContainer}>
         <TextInput
           value={username}
           onChangeText={setUsername}
           style={styles.login}
+          autoCapitalize="none"
           placeholder="Username"
           placeholderTextColor={"#888"}
           autoFocus={true}
@@ -139,9 +144,9 @@ const styles = StyleSheet.create({
       },
       default: {
         fontSize: 60,
-      }
+      },
     }),
-    
+
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
@@ -149,17 +154,17 @@ const styles = StyleSheet.create({
     color: "white",
   },
   heading: {
-      ...Platform.select({
-        ios: {
-          fontSize: 30,
-        },
-        android: {
-          fontSize: 30,
-        },
-        default: {
-          fontSize: 60,
-        }
-      }),
+    ...Platform.select({
+      ios: {
+        fontSize: 30,
+      },
+      android: {
+        fontSize: 30,
+      },
+      default: {
+        fontSize: 60,
+      },
+    }),
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",

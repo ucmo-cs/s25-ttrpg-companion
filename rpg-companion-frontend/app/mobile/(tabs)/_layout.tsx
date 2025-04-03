@@ -2,6 +2,15 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Background } from "@react-navigation/elements";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import {
+  Backpack,
+  Swords,
+  Notebook,
+  House,
+  Activity,
+  FlaskConical,
+} from "lucide-react-native";
 
 export default function TabLayout() {
   return (
@@ -25,11 +34,23 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
-              color={color}
-              size={24}
-            />
+            <House color={color} strokeWidth={1.7} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Notes"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <Notebook color={color} strokeWidth={1.7} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Spells"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <FlaskConical color={color} strokeWidth={1.7} />
           ),
         }}
       />
@@ -37,11 +58,23 @@ export default function TabLayout() {
         name="Combat"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "cut-outline" : "cut-outline"}
-              color={color}
-              size={24}
-            />
+            <Swords color={color} strokeWidth={1.7} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Status"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <Activity color={color} strokeWidth={1.7} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Inventory"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <Backpack size={24} color={color} strokeWidth={1.7} />
           ),
         }}
       />

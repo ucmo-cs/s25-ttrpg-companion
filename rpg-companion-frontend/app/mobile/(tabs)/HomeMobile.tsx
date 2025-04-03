@@ -2,7 +2,15 @@ import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Text, View, StyleSheet, Platform, FlatList } from "react-native";
+import { Circle, Square, Shield } from "lucide-react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  FlatList,
+  Image,
+} from "react-native";
 
 const skillsData = [
   { skill: "Acrobatics", ability: "Dex", bonus: "+0" },
@@ -25,6 +33,14 @@ const skillsData = [
 export default function HomeMobile() {
   return (
     <View style={styles.container}>
+      <View style={styles.pfpHolder}>
+        <Image
+          source={require("../../../assets/images/placeholderDND.png")}
+          style={styles.pfp}
+          resizeMode="cover"
+        />
+        {/* Needs to have character sheets pfp used, placeholder for now */}
+      </View>
       <View style={styles.staticContainer}>
         <Text style={styles.header}>Character Name</Text>
         <Text style={styles.header}>Species</Text>
@@ -33,21 +49,17 @@ export default function HomeMobile() {
 
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
-          <Feather name="circle" size={70} color="white" />
+          <Circle size={70} strokeWidth={1.5} color={"white"} />
           <Text style={styles.iconText}>10</Text>
         </View>
 
         <View style={styles.iconWrapper}>
-          <Feather name="square" size={70} color="white" />
+          <Square size={70} color="white" strokeWidth={1.5} />
           <Text style={styles.iconText}>20</Text>
         </View>
 
         <View style={styles.iconWrapper}>
-          <MaterialCommunityIcons
-            name="shield-outline"
-            size={70}
-            color="white"
-          />
+          <Shield size={70} color="white" strokeWidth={1.5} />
           <Text style={styles.iconText}>30</Text>
         </View>
 
@@ -217,5 +229,23 @@ const styles = StyleSheet.create({
     color: "white",
     paddingVertical: 2,
     marginLeft: 3.5,
+  },
+
+  //Character pfp styles
+  pfpHolder: {
+    height: 90,
+    width: 105,
+    margin: 10,
+    position: "absolute",
+    alignSelf: "flex-start",
+  },
+  pfp: {
+    height: 90,
+    width: 105,
+    // alignSelf: "center",
+    borderRadius: 10,
+    borderColor: "black",
+    borderStyle: "solid",
+    borderWidth: 5,
   },
 });
