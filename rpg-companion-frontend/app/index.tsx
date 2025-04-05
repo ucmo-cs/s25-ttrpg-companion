@@ -62,6 +62,7 @@ export default function CustomLogin() {
 
       const data = await response.json();
       console.log("Login Response", data);
+      console.log("Login Data", data.characters);
 
       //This is how we can decide which code excutes per platform
       const nav = Platform.select({
