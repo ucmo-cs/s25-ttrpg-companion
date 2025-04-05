@@ -89,6 +89,7 @@ export default function CustomLogin() {
         <TextInput
           value={username}
           onChangeText={setUsername}
+          onSubmitEditing={handleLogin}
           style={styles.login}
           autoCapitalize="none"
           placeholder="Username"
@@ -98,6 +99,7 @@ export default function CustomLogin() {
         <TextInput
           value={password}
           onChangeText={setPassword}
+          onSubmitEditing={handleLogin}
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
