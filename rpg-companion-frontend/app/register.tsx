@@ -82,6 +82,7 @@ export default function Register() {
         <TextInput
           value={email}
           onChangeText={setEmail}
+          onSubmitEditing={handleRegistration}
           style={styles.login}
           autoCapitalize="none"
           placeholder="Email"
@@ -90,6 +91,7 @@ export default function Register() {
         <TextInput
           value={username}
           onChangeText={setUsername}
+          onSubmitEditing={handleRegistration}
           style={styles.login}
           placeholder="Username"
           placeholderTextColor={"#888"}
@@ -97,6 +99,7 @@ export default function Register() {
         <TextInput
           value={password}
           onChangeText={setPassword}
+          onSubmitEditing={handleRegistration}
           style={styles.login}
           autoCapitalize="none"
           placeholder="Password"
@@ -105,6 +108,7 @@ export default function Register() {
         <TextInput
           value={passwordTwo}
           onChangeText={setPasswordTwo}
+          onSubmitEditing={handleRegistration}
           style={styles.login}
           autoCapitalize="none"
           placeholder="Confirm Password"
