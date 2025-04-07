@@ -256,13 +256,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     padding: 10,
   },
-  line: {
-    borderBottomColor: "white",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    alignSelf: "stretch",
-    width: "100%",
-    paddingTop: 8,
-  },
+  // line: {
+  //   borderBottomColor: "white",
+  //   borderBottomWidth: StyleSheet.hairlineWidth,
+  //   alignSelf: "stretch",
+  //   width: "100%",
+  //   paddingTop: 8,
+  // },
 
   //Section styles
   sectionHeader: {
@@ -303,12 +303,13 @@ const styles = StyleSheet.create({
     margin: 94,
   },
   abilityText: {
+    // flex: 1,
     fontSize: 20,
     color: "white",
     fontWeight: "500",
     position: "absolute",
     alignSelf: "flex-start",
-    paddingTop: 16,
+    paddingTop: "16%",
   },
   rectangleIcons: {
     position: "absolute",
