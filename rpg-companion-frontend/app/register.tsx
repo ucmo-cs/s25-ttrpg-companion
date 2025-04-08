@@ -49,7 +49,6 @@ export default function Register() {
             username: username,
             email: email,
             password: password,
-            characters: {},
           }),
         }
       );
