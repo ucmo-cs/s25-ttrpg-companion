@@ -24,8 +24,7 @@ export default function CustomLogin() {
     "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
   });
   const handleLogin = () => {
-    // console.log(email);
-    // console.log(password);
+    const regex = new RegExp("^[\\w-\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     if (email == "" && password == "") {
       console.log("Neither email or password present");
       setMessage("Please enter a valid email and password");
@@ -35,6 +34,8 @@ export default function CustomLogin() {
     } else if (email == "" && password != "") {
       console.log("No email present");
       setMessage("Please enter a valid email");
+    } else if(!regex.test(email)){
+      setMessage("Please enter a valid email address (example@gmail.com)")
     } else {
       // console.log("Valid email and password");
       setMessage("");
@@ -72,7 +73,7 @@ export default function CustomLogin() {
       nav();
     } catch (error) {
       console.log("Login Failed", error);
-      setMessage("Invalid Username and Password");
+      setMessage("Invalid Email or Password");
     }
   };
 
@@ -85,7 +86,7 @@ export default function CustomLogin() {
           value={email}
           onChangeText={setEmail}
           style={styles.login}
-          placeholder="Username"
+          placeholder="Email"
           placeholderTextColor={"#888"}
           autoFocus={true}
         ></TextInput>
