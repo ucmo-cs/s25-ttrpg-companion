@@ -15,7 +15,7 @@ import {
 } from "react-native";
 
 export default function CustomLogin() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isHoveredRegister, setIsHoveredRegister] = useState(false);
@@ -24,19 +24,20 @@ export default function CustomLogin() {
     "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
   });
   const handleLogin = () => {
-    // console.log(username);
-    // console.log(password);
-    if (username == "" && password == "") {
-      console.log("Neither username or password present");
-      setMessage("Please enter a valid username and password");
-    } else if (username != "" && password == "") {
+    const regex = new RegExp("^[\\w-\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    if (email == "" && password == "") {
+      console.log("Neither email or password present");
+      setMessage("Please enter a valid email and password");
+    } else if (email != "" && password == "") {
       console.log("No password present");
       setMessage("Please enter a valid password");
-    } else if (username == "" && password != "") {
-      console.log("No username present");
-      setMessage("Please enter a valid username");
+    } else if (email == "" && password != "") {
+      console.log("No email present");
+      setMessage("Please enter a valid email");
+    } else if(!regex.test(email)){
+      setMessage("Please enter a valid email address (example@gmail.com)")
     } else {
-      // console.log("Valid username and password");
+      // console.log("Valid email and password");
       setMessage("");
       attemptLogin();
     }
@@ -49,7 +50,7 @@ export default function CustomLogin() {
         {
           method: "POST",
           body: JSON.stringify({
-            username: username.toLowerCase(),
+            email: email.toLowerCase(),
             password: password,
           }),
         }
@@ -62,7 +63,6 @@ export default function CustomLogin() {
 
       const data = await response.json();
       console.log("Login Response", data);
-      console.log("Login Data", data.characters);
 
       //This is how we can decide which code excutes per platform
       const nav = Platform.select({
@@ -73,26 +73,20 @@ export default function CustomLogin() {
       nav();
     } catch (error) {
       console.log("Login Failed", error);
-      setMessage("Invalid Username and Password");
+      setMessage("Invalid Email or Password");
     }
   };
 
   return (
     <View style={GlobalStyles.page}>
-      <View>
-        <Text style={styles.title}>TTRPG Companion App</Text>
-      </View>
-      <View>
-        <Text style={styles.heading}>Welcome!</Text>
-      </View>
+      <View><Text style={styles.title}>TTRPG Companion App</Text></View>
+      <View><Text style={styles.heading}>Welcome!</Text></View>
       <View style={styles.loginContainer}>
         <TextInput
-          value={username}
-          onChangeText={setUsername}
-          onSubmitEditing={handleLogin}
+          value={email}
+          onChangeText={setEmail}
           style={styles.login}
-          autoCapitalize="none"
-          placeholder="Username"
+          placeholder="Email"
           placeholderTextColor={"#888"}
           autoFocus={true}
         ></TextInput>
@@ -147,9 +141,9 @@ const styles = StyleSheet.create({
       },
       default: {
         fontSize: 60,
-      },
+      }
     }),
-
+    
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
@@ -157,17 +151,17 @@ const styles = StyleSheet.create({
     color: "white",
   },
   heading: {
-    ...Platform.select({
-      ios: {
-        fontSize: 30,
-      },
-      android: {
-        fontSize: 30,
-      },
-      default: {
-        fontSize: 60,
-      },
-    }),
+      ...Platform.select({
+        ios: {
+          fontSize: 30,
+        },
+        android: {
+          fontSize: 30,
+        },
+        default: {
+          fontSize: 60,
+        }
+      }),
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
@@ -226,7 +220,7 @@ const styles = StyleSheet.create({
     fontFamily: "Sora-Regular",
     cursor: "pointer",
     transitionDelay: "background-color 0.3s ease",
-
+    
     ...Platform.select({
       ios: {
         height: "10%",

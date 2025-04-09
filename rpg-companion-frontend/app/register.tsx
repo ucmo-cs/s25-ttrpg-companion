@@ -25,12 +25,17 @@ export default function Register() {
     "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
   });
   const handleRegistration = () => {
+    const regex = new RegExp("^[\\w-\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+
+
     if (username == "" || password == "" || email == "") {
       setMessage("Please fill out all fields");
     } else if (password != passwordTwo) {
       setMessage("Please ensure passwords match");
       setPassword("");
       setPasswordTwo("");
+    }else if(!regex.test(email)){
+      setMessage("Please enter a valid email address (JohnDoe@gmail.com)")
     } else if (
       password == passwordTwo &&
       (username != "" || password != "" || email != "")
@@ -46,10 +51,9 @@ export default function Register() {
         {
           method: "POST",
           body: JSON.stringify({
-            username: username,
-            email: email,
+            username: username.toLowerCase(),
+            email: email.toLowerCase(),
             password: password,
-            characters: {},
           }),
         }
       );
