@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+=======
+// //Use a flat list with a view with borders that holds the spell information
+// //Once the card is clicked
+// //Hold one view (like the thumbnal) then when clicked have the height scales to bring out the information
+// import { View, Text, StyleSheet, FlatList } from "react-native";
+
+>>>>>>> mobile-dev
 import React from "react";
 import { FlatList, View, Text, Dimensions, StyleSheet } from "react-native";
 
@@ -7,6 +15,7 @@ const SPACING = (width - CARD_WIDTH) / 2;
 
 export default function Spells() {
   const data = [
+<<<<<<< HEAD
     {
       id: "1",
       title: "Card 1",
@@ -19,6 +28,9 @@ export default function Spells() {
       discription:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
     },
+=======
+    { id: "1", title: "Card 1" },
+>>>>>>> mobile-dev
     { id: "2", title: "Card 2" },
     { id: "3", title: "Card 3" },
     { id: "4", title: "Card 4" },
