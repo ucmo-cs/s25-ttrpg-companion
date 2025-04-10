@@ -128,7 +128,7 @@ export default function Combat() {
           <View style={styles.abilityScoreWrapper}>
             <View style={styles.abilityRow}>
               <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>STR</Text>
+                <Text style={styles.abilityLabel}>Str</Text>
                 <TextInput
                   style={styles.abilityScoreControl}
                   placeholder="10"

@@ -7,30 +7,32 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 export default function RootLayout() {
   return (
     <Stack
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: "#25292e",
-      },
-      title: "",
-      headerShown: true,
-      headerShadowVisible: false,
-      headerTintColor: "#fff",
-    }}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#25292e",
+        },
+        title: "",
+        headerShown: true,
+        headerShadowVisible: false,
+        headerTintColor: "#fff",
+      }}
     >
       <Stack.Screen
         name="index"
         options={{
           headerShown: false,
+          gestureEnabled: false,
           title: "Login",
           headerStyle: { backgroundColor: "black" },
           headerTitleStyle: { color: "white" },
         }}
       />
       <Stack.Screen
-        name="mobile/HomeMobile"   //Despite it being name it needs the relative path
+        name="mobile/HomeMobile" //Despite it being name it needs the relative path
         options={{
           headerShown: false,
           title: "Home",
+          gestureEnabled: false,
           headerStyle: { backgroundColor: "black" },
           headerTitleStyle: { color: "white" },
         }}
@@ -45,6 +47,5 @@ export default function RootLayout() {
         }}
       />
     </Stack>
-    
   );
 }

@@ -26,7 +26,7 @@ export default function CustomLogin() {
     "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
   });
   const handleLogin = () => {
-    const regex = new RegExp("^[\\w-\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    const regex = new RegExp("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     if (email == "" && password == "") {
       console.log("Neither email or password present");
       setMessage("Please enter a valid email and password");
@@ -36,8 +36,8 @@ export default function CustomLogin() {
     } else if (email == "" && password != "") {
       console.log("No email present");
       setMessage("Please enter a valid email");
-    } else if(!regex.test(email)){
-      setMessage("Please enter a valid email address (example@gmail.com)")
+    } else if (!regex.test(email)) {
+      setMessage("Please enter a valid email address (example@gmail.com)");
     } else {
       // console.log("Valid email and password");
       setMessage("");
@@ -82,13 +82,18 @@ export default function CustomLogin() {
 
   return (
     <View style={GlobalStyles.page}>
-      <View><Text style={styles.title}>TTRPG Companion App</Text></View>
-      <View><Text style={styles.heading}>Welcome!</Text></View>
+      <View>
+        <Text style={styles.title}>TTRPG Companion App</Text>
+      </View>
+      <View>
+        <Text style={styles.heading}>Welcome!</Text>
+      </View>
       <View style={styles.loginContainer}>
         <TextInput
           value={email}
           onChangeText={setEmail}
           style={styles.login}
+          autoCapitalize="none"
           placeholder="Email"
           placeholderTextColor={"#888"}
           autoFocus={true}
@@ -144,9 +149,9 @@ const styles = StyleSheet.create({
       },
       default: {
         fontSize: 60,
-      }
+      },
     }),
-    
+
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
@@ -154,17 +159,17 @@ const styles = StyleSheet.create({
     color: "white",
   },
   heading: {
-      ...Platform.select({
-        ios: {
-          fontSize: 30,
-        },
-        android: {
-          fontSize: 30,
-        },
-        default: {
-          fontSize: 60,
-        }
-      }),
+    ...Platform.select({
+      ios: {
+        fontSize: 30,
+      },
+      android: {
+        fontSize: 30,
+      },
+      default: {
+        fontSize: 60,
+      },
+    }),
     alignSelf: "center",
     fontFamily: "Sora-Regular",
     fontWeight: "100",
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
     fontFamily: "Sora-Regular",
     cursor: "pointer",
     transitionDelay: "background-color 0.3s ease",
-    
+
     ...Platform.select({
       ios: {
         height: "10%",
