@@ -1,6 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Sword, Wand, Axe, Circle } from "lucide-react-native";
+import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
 import { useState } from "react";
 
 const globalText = {
@@ -12,6 +18,41 @@ const colorOptions = [
   { color: "white", fill: "#121427" },
   { color: "green", fill: "green" },
   { color: "red", fill: "red" },
+];
+
+const actions = [
+  {
+    title: "Shortbow",
+    hit: "+5",
+    damage: "1d6",
+    icon: <MaterialCommunityIcons name="bow-arrow" size={50} color="white" />,
+  },
+  {
+    title: "Melee",
+    hit: "+7",
+    damage: "1d8",
+    icon: <Axe size={50} color="white" />,
+  },
+  {
+    title: "Shortsword",
+    hit: "+5",
+    damage: "1d6",
+    icon: <Sword size={50} color="white" />,
+  },
+];
+const bonusActions = [
+  {
+    title: "Spell",
+    hit: "+4",
+    damage: "1d10",
+    icon: <Wand size={50} color="white" />,
+  },
+  {
+    title: "Class Feature",
+    hit: "+4",
+    damage: "1d10",
+    icon: <Zap size={50} color="white" />,
+  },
 ];
 export default function Combat() {
   //The array allows us to invidualize the circles
@@ -32,22 +73,34 @@ export default function Combat() {
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Combat</Text>
       <Text style={styles.sectionHeader}>Actions</Text>
-
-      <View style={styles.infoBox}>
-        <MaterialCommunityIcons name="bow-arrow" size={50} color="white" />
-        <Text style={styles.boxTitle}>Shortbow</Text>
-      </View>
-
-      <View style={styles.infoBox}>
-        <Sword color="white" size={50} />
-        <Text style={styles.boxTitle}>Shortsword</Text>
+      <View>
+        <FlatList
+          data={actions}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <>
+              <View style={styles.infoBox}>
+                {item.icon}
+                <Text style={styles.boxTitle}>{item.title}</Text>
+              </View>
+            </>
+          )}
+        />
       </View>
       <View>
         <Text style={styles.sectionHeader}>Bonus Actions</Text>
-
-        <Sword color="white" />
-        <Wand color="white" />
-        <Axe color="white" />
+        <FlatList
+          data={bonusActions}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <>
+              <View style={styles.infoBox}>
+                {item.icon}
+                <Text style={styles.boxTitle}>{item.title}</Text>
+              </View>
+            </>
+          )}
+        />
       </View>
       <Text style={styles.sectionHeader}>Death Saves</Text>
       <View style={styles.deathSaveContainer}>
