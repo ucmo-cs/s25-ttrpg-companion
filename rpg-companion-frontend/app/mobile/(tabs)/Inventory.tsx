@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
 
+const globalText = {
+  color: "white",
+  fontFamily: "Sora",
+};
+
 export default function Inventory() {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Inventory Screen</Text>
+      <Text style={styles.pageHeader}>Inventory Screen</Text>
     </View>
   );
 }
@@ -20,11 +25,11 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "15%",
   },
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+  pageHeader: {
+    ...globalText,
+    fontSize: 30,
     padding: 5,
     textAlign: "center",
+    marginTop: 7,
   },
 });

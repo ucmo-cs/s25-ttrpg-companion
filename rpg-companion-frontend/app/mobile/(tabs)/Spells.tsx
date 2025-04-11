@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
   pageHeader: {
     ...globalText,
     fontSize: 30,
-    fontWeight: "bold",
     padding: 5,
     textAlign: "center",
     marginTop: 7,

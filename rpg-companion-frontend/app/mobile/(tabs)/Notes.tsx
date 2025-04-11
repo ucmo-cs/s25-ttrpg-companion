@@ -11,6 +11,11 @@ import {
 } from "react-native";
 import { useState } from "react";
 
+const globalText = {
+  color: "white",
+  fontFamily: "Sora",
+};
+
 export default function Notes() {
   const [note, setNote] = useState("");
 
@@ -26,7 +31,7 @@ export default function Notes() {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <View style={styles.border}>
-          <Text style={styles.header}>Notes</Text>
+          <Text style={styles.pageHeader}>Notes</Text>
           <TextInput
             style={styles.textInput}
             multiline={true}
@@ -56,12 +61,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#121427",
     justifyContent: "flex-end",
   },
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+  pageHeader: {
+    ...globalText,
+    fontSize: 30,
     padding: 5,
     textAlign: "center",
+    marginTop: 7,
   },
   border: {
     flex: 1,

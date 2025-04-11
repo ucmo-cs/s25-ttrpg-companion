@@ -11,6 +11,11 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 
+const globalText = {
+  color: "white",
+  fontFamily: "Sora",
+};
+
 export default function Combat() {
   console.log("Running on:", Platform.OS);
 
@@ -86,7 +91,7 @@ export default function Combat() {
     >
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.container}>
-          <Text style={styles.header}>Create Character</Text>
+          <Text style={styles.pageHeader}>Create Character</Text>
           <TextInput
             placeholder="Name"
             style={styles.formControl}
@@ -203,10 +208,10 @@ export default function Combat() {
 
 const styles = StyleSheet.create({
   globalContainer: {
+    ...globalText,
     flex: 1,
     flexDirection: "column",
     backgroundColor: "#121427",
-    fontFamily: "Sora",
   },
   container: {
     flex: 1,
@@ -218,20 +223,18 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "15%",
   },
-  header: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "white",
+  pageHeader: {
+    ...globalText,
+    fontSize: 30,
     padding: 5,
     textAlign: "center",
-    fontFamily: "Sora",
+    marginTop: 7,
   },
   formControl: {
-    fontFamily: "Sora",
+    ...globalText,
     padding: 10,
     margin: 10,
     fontSize: 24,
-    color: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#fff",
     width: "100%",
@@ -240,7 +243,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   AbilityScores: {
-    fontFamily: "Sora",
+    ...globalText,
     padding: 10,
     margin: 10,
     fontSize: 24,
@@ -261,9 +264,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   abilityScoreControl: {
-    fontFamily: "Sora",
+    ...globalText,
     fontSize: 32,
-    color: "#fff",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#fff",
@@ -274,11 +276,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   abilityLabel: {
+    ...globalText,
     fontSize: 24,
-    color: "#fff",
     marginBottom: 4,
     marginTop: 4,
-    fontFamily: "Sora",
   },
   abilityBox: {
     alignItems: "center",
@@ -294,12 +295,12 @@ const styles = StyleSheet.create({
     width: "75%",
   },
   buttonText: {
-    color: "white",
+    ...globalText,
     alignSelf: "center",
     fontSize: 22,
   },
   Inventory: {
-    fontFamily: "Sora",
+    ...globalText,
     padding: 10,
     margin: 10,
     fontSize: 24,

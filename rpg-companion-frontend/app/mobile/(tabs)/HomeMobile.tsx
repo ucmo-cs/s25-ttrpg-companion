@@ -11,7 +11,6 @@ import { Text, View, StyleSheet, FlatList, Image } from "react-native";
 
 const skillsData = [
   { skill: "Acrobatics", ability: "Dex", bonus: "+0" },
-  { skill: "Animal Handling", ability: "Wis", bonus: "+0" },
   { skill: "Arcana", ability: "Int", bonus: "+0" },
   { skill: "Athletics", ability: "Str", bonus: "+0" },
   { skill: "Deception", ability: "Cha", bonus: "+0" },
@@ -23,9 +22,15 @@ const skillsData = [
   { skill: "Nature", ability: "Int", bonus: "+0" },
   { skill: "Perception", ability: "Wis", bonus: "+0" },
   { skill: "Religion", ability: "Int", bonus: "+0" },
-  { skill: "Sleight of Hand", ability: "Dex", bonus: "+0" },
   { skill: "Stealth", ability: "Dex", bonus: "+0" },
+  { skill: "Sleight of Hand", ability: "Dex", bonus: "+0" },
+  { skill: "Animal Handling", ability: "Wis", bonus: "+0" },
 ];
+
+const globalText = {
+  color: "white",
+  fontFamily: "Sora",
+};
 
 export default function HomeMobile() {
   return (
@@ -226,9 +231,8 @@ const styles = StyleSheet.create({
     height: "15%",
   },
   header: {
+    ...globalText,
     fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
     padding: 5,
     textAlign: "center",
   },
@@ -245,14 +249,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   iconText: {
+    ...globalText,
     fontSize: 20,
-    color: "white",
     fontWeight: "bold",
     position: "absolute",
   },
   hp: {
+    ...globalText,
     fontSize: 30,
-    color: "white",
     fontWeight: "bold",
     padding: 10,
   },
@@ -269,8 +273,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   sectionHeaderText: {
+    ...globalText,
     fontSize: 25,
-    color: "white",
     flex: 1,
     textAlign: "center",
     paddingVertical: 2.5,
@@ -287,26 +291,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 60,
   },
   abilityScore: {
+    ...globalText,
     fontSize: 25,
-    color: "white",
-    fontWeight: "500",
     position: "absolute",
     alignSelf: "baseline",
     margin: 47,
   },
   modifierScore: {
+    ...globalText,
     fontSize: 19,
     color: "white",
-    fontWeight: "400",
     position: "absolute",
     alignSelf: "baseline",
     margin: 94,
   },
   abilityText: {
+    ...globalText,
     // flex: 1,
     fontSize: 20,
-    color: "white",
-    fontWeight: "500",
     position: "absolute",
     alignSelf: "flex-start",
     paddingTop: "16%",
@@ -319,8 +321,8 @@ const styles = StyleSheet.create({
   //Skills section styles
   //Skills container using section header
   skillsText: {
-    fontSize: 17,
-    color: "white",
+    ...globalText,
+    fontSize: 15.75,
     paddingVertical: 2,
     marginLeft: 3.5,
   },

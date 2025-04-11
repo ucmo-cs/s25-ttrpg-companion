@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
 import { useFonts } from "expo-font";
-import SessionStorage from 'react-native-session-storage';
-
+import SessionStorage from "react-native-session-storage";
 
 import {
   Text,
@@ -64,7 +63,7 @@ export default function CustomLogin() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem('characters', data.characters);
+      SessionStorage.setItem("characters", data.characters);
       console.log("Login Response", data);
 
       //This is how we can decide which code excutes per platform
