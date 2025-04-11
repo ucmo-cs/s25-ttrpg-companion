@@ -1,5 +1,5 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "nope_mopdules/expo/tsconfig.base",
   "compilerOptions": {
     "noImplicitAny": false,
     "strict": true,

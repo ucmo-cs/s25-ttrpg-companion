@@ -8,12 +8,12 @@ interface NotesProps {
     note: String;
 }
 
-const [title, setTitle] = useState("");
-const [note, setNote] = useState("");
 
 const Notes = (props: NotesProps) => {
 
-
+    const [title, setTitle] = useState("");
+    const [note, setNote] = useState("");
+    
     
 
     const submitNoteChange = () => {
@@ -27,8 +27,8 @@ const Notes = (props: NotesProps) => {
 
      <View style={GlobalStyles.dynamicHolder}>
         <View style={styles.noteHolder}>
-            <TextInput textAlign='left' multiline={true} style={styles.title} maxFontSizeMultiplier={2} onChangeText={setTitle}></TextInput>
-            <TextInput scrollEnabled={true} textAlign='left' multiline={true} style={styles.textArea} onChangeText={setNote}></TextInput>
+            <TextInput textAlign='left' multiline={true} style={styles.title} maxFontSizeMultiplier={2}></TextInput>
+            <TextInput scrollEnabled={true} textAlign='left' multiline={true} style={styles.textArea}></TextInput>
             <Pressable onPress={submitNoteChange}>
                 <View style={styles.submit}></View>
             </Pressable>

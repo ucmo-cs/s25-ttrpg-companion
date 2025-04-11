@@ -1,20 +1,5 @@
 import { useState } from "react";
-<<<<<<< HEAD
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} from "react-native";
-=======
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  Button,
-  Alert,
-  Platform,
-  Image,
-  Pressable,
-} from "react-native";
-import { Drawer } from "expo-router/drawer";
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
 import {Backpack,Swords,Notebook,House,Activity,FlaskConical,} from "lucide-react-native";
@@ -26,12 +11,10 @@ import Inventory from "./components/Inventory";
  
 
 export default function HomeWeb() {
-<<<<<<< HEAD
+
   const [hp,setHp] = useState(10);
   const [tab, setTab] = useState("notes");
-=======
-  const [hp, setHp] = useState(10);
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
+
 
   const minusHP = () => {
     if (hp <= 0) {
@@ -45,7 +28,6 @@ export default function HomeWeb() {
   const plusHP = () => {
     setHp(hp + 1);
     console.log(hp);
-<<<<<<< HEAD
   }
 
 
@@ -65,9 +47,6 @@ export default function HomeWeb() {
   }
 
 
-=======
-  };
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 
   return (
     <View style={GlobalStyles.page}>
@@ -163,31 +142,6 @@ export default function HomeWeb() {
                 <View style={styles.abilityName}>10</View>
               </View>
             </View>
-<<<<<<< HEAD
-          
-          
-        </View>
-        <View style={styles.skillsHolder}>
-          <View style={styles.dynamicSelector}> 
-            <View style={styles.tabOption}>
-              <Notebook size={100} strokeWidth={0.75} onPress={() => setTab("notes")}></Notebook>
-            </View>
-            <View style={styles.tabOption}>
-              <FlaskConical size={100} strokeWidth={0.75} onPress={() => setTab("spells")}></FlaskConical>
-            </View>
-            <View style={styles.tabOption}>
-              <Swords size={100} strokeWidth={0.75} onPress={() => setTab("combat")}></Swords>
-            </View>
-            <View style={styles.tabOption}>
-              <Activity size={100} strokeWidth={0.75} onPress={() => setTab("status")}></Activity>
-            </View>
-            <View style={styles.tabOption}>
-              <Backpack size={100} strokeWidth={0.75} onPress={() => setTab("inventory")}></Backpack>
-            </View>
-          </View>
-          <View style={styles.dynamicHolder}>
-            {renderTab()}
-=======
             <View style={styles.skillsHolder}>
               <View style={styles.skillsTop}>
                 <Text style={styles.skill}>Skill</Text>
@@ -226,7 +180,8 @@ export default function HomeWeb() {
                 </View>
               </View>
             </View>
-          </View>
+          
+        </View>
           <View style={styles.split}>
             <View style={styles.iconContainer}>
               <View style={styles.featherWrapper}>
@@ -278,8 +233,29 @@ export default function HomeWeb() {
                 </View>
               </View>
             </View>
-            <View style={styles.skillsHolder}></View>
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
+            <View style={styles.dynamicSelector}> 
+            <View style={styles.tabOption}>
+              <Notebook size={100} strokeWidth={0.75} onPress={() => setTab("notes")}></Notebook>
+            </View>
+            <View style={styles.tabOption}>
+              <FlaskConical size={100} strokeWidth={0.75} onPress={() => setTab("spells")}></FlaskConical>
+            </View>
+            <View style={styles.tabOption}>
+              <Swords size={100} strokeWidth={0.75} onPress={() => setTab("combat")}></Swords>
+            </View>
+            <View style={styles.tabOption}>
+              <Activity size={100} strokeWidth={0.75} onPress={() => setTab("status")}></Activity>
+            </View>
+            <View style={styles.tabOption}>
+              <Backpack size={100} strokeWidth={0.75} onPress={() => setTab("inventory")}></Backpack>
+            </View>
+            
+          </View>
+          <View style={styles.dynamicHolder}>
+            
+          
+          {renderTab()}
+          </View>
           </View>
         </View>
       </View>
@@ -359,17 +335,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   split: {
-<<<<<<< HEAD
-    flex:1,
-    width:"50%",
-    height:"100%",
-    minWidth: 750,
-    minHeight: 422
-=======
     flex: 1,
     width: "50%",
     height: "100%",
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
   },
   abilitiesHolder: {
     flexDirection: "row",
@@ -394,20 +362,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   abilityLev: {
-<<<<<<< HEAD
-    color:"white",
-    fontWeight:"bold",
-    fontSize: 18,
-    fontFamily:"sans-serif",
-    width:"100%",
-    height:"30%",
-    textAlign:"center",
-    justifyContent:"center",
-    borderColor:"white",
-    borderBottomWidth:2,
-    borderStyle:"dashed",
-    margin:1
-=======
+
     color: "white",
     fontWeight: "bold",
     fontSize: 20,
@@ -420,7 +375,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderStyle: "dashed",
     margin: 1,
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
   },
   abilityName: {
     fontWeight: "bold",
@@ -511,7 +465,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   healthNum: {
-<<<<<<< HEAD
     fontSize:36,
     height:50,
     width:75,
@@ -544,13 +497,4 @@ const styles = StyleSheet.create({
     alignItems:"center"
   }
 
-=======
-    fontSize: 36,
-    height: 50,
-    width: 75,
-    color: "white",
-    textAlign: "center",
-    justifyContent: "center",
-  },
->>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 });
