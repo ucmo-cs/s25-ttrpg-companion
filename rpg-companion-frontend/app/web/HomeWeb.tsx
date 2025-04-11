@@ -1,5 +1,20 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} from "react-native";
+=======
+import {
+  Text,
+  View,
+  TextInput,
+  StyleSheet,
+  Button,
+  Alert,
+  Platform,
+  Image,
+  Pressable,
+} from "react-native";
+import { Drawer } from "expo-router/drawer";
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
 import {Backpack,Swords,Notebook,House,Activity,FlaskConical,} from "lucide-react-native";
@@ -10,24 +25,27 @@ import Status from "./components/Status";
 import Inventory from "./components/Inventory";
  
 
-
 export default function HomeWeb() {
+<<<<<<< HEAD
   const [hp,setHp] = useState(10);
   const [tab, setTab] = useState("notes");
+=======
+  const [hp, setHp] = useState(10);
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 
-  
-  const minusHP= () => {
-    if(hp <= 0){
+  const minusHP = () => {
+    if (hp <= 0) {
       setHp(0);
       return;
     }
-    setHp(hp-1);
+    setHp(hp - 1);
     console.log(hp);
-  }
+  };
 
-  const plusHP= () => {
-    setHp(hp+1);
+  const plusHP = () => {
+    setHp(hp + 1);
     console.log(hp);
+<<<<<<< HEAD
   }
 
 
@@ -47,193 +65,105 @@ export default function HomeWeb() {
   }
 
 
+=======
+  };
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 
   return (
-  <View style={GlobalStyles.page}>
-    <View style={styles.home}>
-      <View style={styles.header}>
-        <View style={styles.pfpHolder}>
-          <Image source={require("../../assets/images/placeholderDND.png")} style={styles.pfp} resizeMode="cover" /> 
-          {/* Needs to have character sheets pfp used, placeholder for now */}
-        </View>
-        <View style={styles.charHeader}>
-
-          {/* Character Name */}
-          <Text style={styles.headName}> 
-          Legolas
-          </Text>
-          {/* Character Species */}
-          <Text style={styles.headSpecies}> 
-          Elf
-          </Text>
-          {/* Character Class */}
-          <Text style={styles.headClass} numberOfLines={1} adjustsFontSizeToFit={true}>
-          Ranger
-          </Text>
-        </View>
-        <View style={styles.dropDownContainerHolder}>
-          <View style={styles.dropDownContainer}>
+    <View style={GlobalStyles.page}>
+      <View style={styles.home}>
+        <View style={styles.header}>
+          <View style={styles.pfpHolder}>
+            <Image
+              source={require("../../assets/images/placeholderDND.png")}
+              style={styles.pfp}
+              resizeMode="cover"
+            />
+            {/* Needs to have character sheets pfp used, placeholder for now */}
           </View>
-        </View>
-      </View>
-      <View style={styles.body}>
-      <View style={styles.split}>
-        <View style={styles.abilitiesHolder}>
-        
-
-          <View style={styles.ability}>
-            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Strength
+          <View style={styles.charHeader}>
+            {/* Character Name */}
+            <Text style={styles.headName}>Legolas</Text>
+            {/* Character Species */}
+            <Text style={styles.headSpecies}>Elf</Text>
+            {/* Character Class */}
+            <Text
+              style={styles.headClass}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+            >
+              Ranger
             </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
           </View>
-          <View style={styles.ability}>
-          <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Dexterity
-            </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Constitution
-            </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Intelligence
-            </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Wisdom
-            </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
-          </View>
-          <View style={styles.ability}>
-            <Text style={styles.abilityLev} numberOfLines={1} adjustsFontSizeToFit={true}>
-            Charisma
-            </Text>
-            <View style={styles.abilityName}>
-            10
-            </View>
+          <View style={styles.dropDownContainerHolder}>
+            <View style={styles.dropDownContainer}></View>
           </View>
         </View>
-        <View style={styles.skillsHolder}>
-          <View style={styles.skillsTop}>
-            <Text style={styles.skill}>Skill</Text>
-            <Text style={styles.skill}>Ability</Text>
-            <Text style={styles.skill}>Bonus</Text>
-          </View>
-          <View style={styles.skillsBody}>
-            {/* Will call a component to populate this table with the values of the correct character 
-            for now populated with dummy values*/}
-
-              <View style={styles.skillRow}>
-                <Text style={styles.skill}>
-                  Investigation
+        <View style={styles.body}>
+          <View style={styles.split}>
+            <View style={styles.abilitiesHolder}>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
+                  Strength
                 </Text>
-                <Text style={styles.skill}>
+                <View style={styles.abilityName}>10</View>
+              </View>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
+                  Dexterity
+                </Text>
+                <View style={styles.abilityName}>10</View>
+              </View>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
+                  Constitution
+                </Text>
+                <View style={styles.abilityName}>10</View>
+              </View>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
                   Intelligence
                 </Text>
-                <Text style={styles.skill}>
-                  +2
-                </Text>
+                <View style={styles.abilityName}>10</View>
               </View>
-
-              <View style={styles.skillRow}>
-                <Text style={styles.skill}>
-                  Arcana
-                </Text>
-                <Text style={styles.skill}>
-                  Intelligence
-                </Text>
-                <Text style={styles.skill}>
-                  +0
-                </Text>
-              </View>
-              <View style={styles.skillRow}>
-                <Text style={styles.skill}>
-                  Deception
-                </Text>
-                <Text style={styles.skill}>
-                  Charisma
-                </Text>
-                <Text style={styles.skill}>
-                  +1
-                </Text>
-              </View>
-              <View style={styles.skillRow}>
-                <Text style={styles.skill}>
-                  Perception
-                </Text>
-                <Text style={styles.skill}>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
                   Wisdom
                 </Text>
-                <Text style={styles.skill}>
-                  +3
-                </Text>
+                <View style={styles.abilityName}>10</View>
               </View>
-              <View style={styles.skillRow}>
-                <Text style={styles.skill}>
-                  Persuasion
-                </Text>
-                <Text style={styles.skill}>
+              <View style={styles.ability}>
+                <Text
+                  style={styles.abilityLev}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                >
                   Charisma
                 </Text>
-                <Text style={styles.skill}>
-                  -1
-                </Text>
-              </View>
-          </View>
-        </View>
-      </View>
-      <View style={styles.split}>
-
-
-        <View style={styles.iconContainer}>
-          <View style={styles.featherWrapper}>
-              <Feather name="circle" size={100} color="white" style={styles.feather}/>
-              <Text style={styles.skill}>5</Text>
-          </View>
-          <View style={styles.featherWrapper}>
-              <Feather name="square" size={100} color="white" style={styles.feather}/>
-              <Text style={styles.skill}>5</Text>
-          </View>
-          <View style={styles.featherWrapper}>
-              <Feather name="shield" size={100} color="white" style={styles.feather}/>
-              <Text style={styles.skill}>5</Text>
-          </View>
-          
-          
-            <View style={styles.healthContainer}>
-              <View style={styles.healthItem}>
-                <Pressable onPress={minusHP} style={styles.feather}>
-                  <Feather name="minus" size={80} color="red"/>
-                </Pressable>
-              </View>
-              <View style={styles.healthItem}>
-                <Text style={styles.healthNum}>
-                  {hp}
-                </Text>
-              </View>
-              <View style={styles.healthItem}>
-                <Pressable onPress={plusHP} style={styles.feather}>
-                  <Feather name="plus" size={80} color="green" style={styles.feather}/>
-                </Pressable>
+                <View style={styles.abilityName}>10</View>
               </View>
             </View>
+<<<<<<< HEAD
           
           
         </View>
@@ -257,12 +187,103 @@ export default function HomeWeb() {
           </View>
           <View style={styles.dynamicHolder}>
             {renderTab()}
+=======
+            <View style={styles.skillsHolder}>
+              <View style={styles.skillsTop}>
+                <Text style={styles.skill}>Skill</Text>
+                <Text style={styles.skill}>Ability</Text>
+                <Text style={styles.skill}>Bonus</Text>
+              </View>
+              <View style={styles.skillsBody}>
+                {/* Will call a component to populate this table with the values of the correct character 
+            for now populated with dummy values*/}
+
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>Investigation</Text>
+                  <Text style={styles.skill}>Intelligence</Text>
+                  <Text style={styles.skill}>+2</Text>
+                </View>
+
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>Arcana</Text>
+                  <Text style={styles.skill}>Intelligence</Text>
+                  <Text style={styles.skill}>+0</Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>Deception</Text>
+                  <Text style={styles.skill}>Charisma</Text>
+                  <Text style={styles.skill}>+1</Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>Perception</Text>
+                  <Text style={styles.skill}>Wisdom</Text>
+                  <Text style={styles.skill}>+3</Text>
+                </View>
+                <View style={styles.skillRow}>
+                  <Text style={styles.skill}>Persuasion</Text>
+                  <Text style={styles.skill}>Charisma</Text>
+                  <Text style={styles.skill}>-1</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={styles.split}>
+            <View style={styles.iconContainer}>
+              <View style={styles.featherWrapper}>
+                <Feather
+                  name="circle"
+                  size={100}
+                  color="white"
+                  style={styles.feather}
+                />
+                <Text style={styles.skill}>5</Text>
+              </View>
+              <View style={styles.featherWrapper}>
+                <Feather
+                  name="square"
+                  size={100}
+                  color="white"
+                  style={styles.feather}
+                />
+                <Text style={styles.skill}>5</Text>
+              </View>
+              <View style={styles.featherWrapper}>
+                <Feather
+                  name="shield"
+                  size={100}
+                  color="white"
+                  style={styles.feather}
+                />
+                <Text style={styles.skill}>5</Text>
+              </View>
+
+              <View style={styles.healthContainer}>
+                <View style={styles.healthItem}>
+                  <Pressable onPress={minusHP} style={styles.feather}>
+                    <Feather name="minus" size={80} color="red" />
+                  </Pressable>
+                </View>
+                <View style={styles.healthItem}>
+                  <Text style={styles.healthNum}>{hp}</Text>
+                </View>
+                <View style={styles.healthItem}>
+                  <Pressable onPress={plusHP} style={styles.feather}>
+                    <Feather
+                      name="plus"
+                      size={80}
+                      color="green"
+                      style={styles.feather}
+                    />
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+            <View style={styles.skillsHolder}></View>
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
           </View>
         </View>
       </View>
     </View>
-  </View>
-</View>
   );
 }
 
@@ -270,59 +291,58 @@ const styles = StyleSheet.create({
   home: {
     flex: 1,
     height: "100%",
-    width: "100%"
+    width: "100%",
   },
   headName: {
-    fontSize:20,
+    fontSize: 20,
     fontWeight: "bold",
   },
   headClass: {
-    fontSize:16,
-    color:"#505C50",
+    fontSize: 16,
+    color: "#505C50",
   },
   headSpecies: {
-    fontSize:16,
-    color:"#505C50",
+    fontSize: 16,
+    color: "#505C50",
   },
   header: {
-    flexDirection:"row",
-    justifyContent:"flex-start",
-    alignContent:"flex-start",
-    alignItems:"flex-start",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "flex-start",
+    alignItems: "flex-start",
     height: 100,
     width: "100%",
     backgroundColor: "white",
     color: "black",
-    borderBottomLeftRadius:10,
-    borderBottomRightRadius:10
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
-  charHeader:{
-    flexDirection:"column",
-    alignContent:"space-around",
-    justifyContent:"space-around",
-    height:80,
-    width:"20%",
-    color:"green",
-    marginTop:10,
-    paddingLeft:10
-
+  charHeader: {
+    flexDirection: "column",
+    alignContent: "space-around",
+    justifyContent: "space-around",
+    height: 80,
+    width: "20%",
+    color: "green",
+    marginTop: 10,
+    paddingLeft: 10,
   },
-  dropDownContainerHolder:{
-    flex:1
+  dropDownContainerHolder: {
+    flex: 1,
   },
   dropDownContainer: {
     alignSelf: "flex-end",
-    flexDirection:"row-reverse",
-    width:80,
-    height:80,
+    flexDirection: "row-reverse",
+    width: 80,
+    height: 80,
     margin: 10,
-    backgroundColor:"green",
-    justifyContent:"center",
-    alignContent:"center"
+    backgroundColor: "green",
+    justifyContent: "center",
+    alignContent: "center",
   },
   pfpHolder: {
-    width:80,
-    height:80,
+    width: 80,
+    height: 80,
     margin: 10,
   },
   pfp: {
@@ -330,44 +350,51 @@ const styles = StyleSheet.create({
     width: 80,
     alignSelf: "center",
     borderRadius: 10,
-    borderColor:"black",
-    borderStyle:"solid",
-    borderWidth:5
+    borderColor: "black",
+    borderStyle: "solid",
+    borderWidth: 5,
   },
   body: {
-    flex:1,
+    flex: 1,
     flexDirection: "row",
   },
   split: {
+<<<<<<< HEAD
     flex:1,
     width:"50%",
     height:"100%",
     minWidth: 750,
     minHeight: 422
+=======
+    flex: 1,
+    width: "50%",
+    height: "100%",
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
   },
   abilitiesHolder: {
     flexDirection: "row",
-    height:"auto",
-    width:"100%",
-    minHeight:60,
-    justifyContent:"space-around"
+    height: "auto",
+    width: "100%",
+    minHeight: 60,
+    justifyContent: "space-around",
   },
   ability: {
-    flex:1,
-    flexDirection:"column",
-    justifyContent:"center",
-    textAlign:"center",
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    textAlign: "center",
     height: 100,
-    minHeight:60,
-    width:100,
+    minHeight: 60,
+    width: 100,
     minWidth: 80,
-    borderWidth:2,
-    borderStyle:"solid",
+    borderWidth: 2,
+    borderStyle: "solid",
     borderColor: "white",
-    margin:15,
-    borderRadius:10,
+    margin: 15,
+    borderRadius: 10,
   },
   abilityLev: {
+<<<<<<< HEAD
     color:"white",
     fontWeight:"bold",
     fontSize: 18,
@@ -380,66 +407,79 @@ const styles = StyleSheet.create({
     borderBottomWidth:2,
     borderStyle:"dashed",
     margin:1
+=======
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+    fontFamily: "sans-serif",
+    width: "100%",
+    height: "30%",
+    textAlign: "center",
+    justifyContent: "center",
+    borderColor: "white",
+    borderBottomWidth: 2,
+    borderStyle: "dashed",
+    margin: 1,
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
   },
   abilityName: {
-    fontWeight:"bold",
-    fontFamily:"sans-serif",
-    textAlign:"center",
-    justifyContent:"center",
-    fontSize:26,
-    height:"70%",
-    width:"100%",
+    fontWeight: "bold",
+    fontFamily: "sans-serif",
+    textAlign: "center",
+    justifyContent: "center",
+    fontSize: 26,
+    height: "70%",
+    width: "100%",
   },
   skillsHolder: {
-    flex:1,
+    flex: 1,
     margin: 15,
-    borderWidth:2,
-    borderStyle:"solid",
-    borderColor:"white",
-    borderRadius:10,
-    height:"100%"
+    borderWidth: 2,
+    borderStyle: "solid",
+    borderColor: "white",
+    borderRadius: 10,
+    height: "100%",
   },
   skillsTop: {
-    flexDirection:"row",
+    flexDirection: "row",
     height: 36,
-    borderStyle:"dashed",
-    borderBottomWidth:2,
-    borderColor:"white",
-    justifyContent:"space-evenly",
+    borderStyle: "dashed",
+    borderBottomWidth: 2,
+    borderColor: "white",
+    justifyContent: "space-evenly",
   },
   skillRow: {
-    flexDirection:"row",
+    flexDirection: "row",
     height: 36,
-    borderStyle:"solid",
-    borderBottomWidth:1,
-    borderColor:"gray",
-    justifyContent:"space-evenly",
+    borderStyle: "solid",
+    borderBottomWidth: 1,
+    borderColor: "gray",
+    justifyContent: "space-evenly",
   },
   skill: {
-    flex:1,
-    fontSize:24,
-    textAlign:"center",
-    color:"white"
+    flex: 1,
+    fontSize: 24,
+    textAlign: "center",
+    color: "white",
   },
   skillsBody: {
-    flex:1,
-
+    flex: 1,
   },
   featherHolder: {
     position: "relative",
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
-    margin:10
+    margin: 10,
   },
   feather: {
-    flex:1,
-    position:"absolute",
-    alignContent:"center",
-    justifyContent:"center",
+    flex: 1,
+    position: "absolute",
+    alignContent: "center",
+    justifyContent: "center",
     height: 100,
-    minHeight:80,
-    width:100,
+    minHeight: 80,
+    width: 100,
     minWidth: 80,
   },
   featherWrapper: {
@@ -449,7 +489,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   iconContainer: {
-    height:130,
+    height: 130,
     justifyContent: "space-evenly",
     textAlignVertical: "center",
     display: "flex",
@@ -459,19 +499,19 @@ const styles = StyleSheet.create({
     overflow:"hidden"
   },
   healthContainer: {
-    flexDirection:"row",
-    width:225,
-    height:100,
-    justifyContent:"flex-start",
-    alignContent:"center"
-
+    flexDirection: "row",
+    width: 225,
+    height: 100,
+    justifyContent: "flex-start",
+    alignContent: "center",
   },
   healthItem: {
-    flex:1,
-    textAlign:"center",
-    justifyContent:"center"
+    flex: 1,
+    textAlign: "center",
+    justifyContent: "center",
   },
   healthNum: {
+<<<<<<< HEAD
     fontSize:36,
     height:50,
     width:75,
@@ -504,4 +544,13 @@ const styles = StyleSheet.create({
     alignItems:"center"
   }
 
+=======
+    fontSize: 36,
+    height: 50,
+    width: 75,
+    color: "white",
+    textAlign: "center",
+    justifyContent: "center",
+  },
+>>>>>>> f94bcc3f650a57425aa000b63564fe75776bbf40
 });

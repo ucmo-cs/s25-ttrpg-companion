@@ -2,7 +2,6 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Background } from "@react-navigation/elements";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   Backpack,
   Swords,
@@ -11,6 +10,7 @@ import {
   Activity,
   FlaskConical,
 } from "lucide-react-native";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   return (
@@ -19,6 +19,11 @@ export default function TabLayout() {
         tabBarActiveTintColor: "#ffd33d",
         headerStyle: {
           backgroundColor: "#25292e",
+          ...Platform.select({
+            ios: {
+              gestureEnabled: false,
+            },
+          }),
         },
         headerShown: false,
         headerShadowVisible: false,
@@ -36,6 +41,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <House color={color} strokeWidth={1.7} />
           ),
+          ...Platform.select({
+            ios: {
+              gestureEnabled: false,
+            },
+          }),
         }}
       />
       <Tabs.Screen

@@ -25,15 +25,19 @@ export default function Register() {
     "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
   });
   const handleRegistration = () => {
-    if (username == "" || password == "" || email == "") {
+    const regex = new RegExp("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+
+    if (username == "" || password == "" || passwordTwo == "" || email == "") {
       setMessage("Please fill out all fields");
-    } else if (password != passwordTwo) {
+    } else if (passwordTwo != password) {
       setMessage("Please ensure passwords match");
       setPassword("");
       setPasswordTwo("");
+    } else if (!regex.test(email)) {
+      setMessage("Please enter a valid email address (JohnDoe@gmail.com)");
     } else if (
       password == passwordTwo &&
-      (username != "" || password != "" || email != "")
+      (username != "" || password != "" || passwordTwo != "" || email != "")
     ) {
       attemptRegistration();
     }
@@ -46,10 +50,9 @@ export default function Register() {
         {
           method: "POST",
           body: JSON.stringify({
-            username: username,
-            email: email,
+            username: username.toLowerCase(),
+            email: email.toLowerCase(),
             password: password,
-            characters: {},
           }),
         }
       );
@@ -100,8 +103,8 @@ export default function Register() {
           value={password}
           onChangeText={setPassword}
           onSubmitEditing={handleRegistration}
-          style={styles.login}
           autoCapitalize="none"
+          style={styles.login}
           placeholder="Password"
           placeholderTextColor={"#888"}
         ></TextInput>

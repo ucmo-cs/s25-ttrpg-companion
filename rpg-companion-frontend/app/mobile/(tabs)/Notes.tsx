@@ -1,3 +1,4 @@
+//Have it send to an api when there have been no changes for 5 seconds
 import {
   View,
   Text,
@@ -12,6 +13,7 @@ import { useState } from "react";
 
 export default function Notes() {
   const [note, setNote] = useState("");
+
   const [saving, setSaving] = useState(false);
 
   const saveNote = () => {
