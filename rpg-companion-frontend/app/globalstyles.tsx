@@ -10,6 +10,13 @@ const GlobalStyles = StyleSheet.create({
     fontFamily: "Sora-Regular",
     fontSize: 16,
   },
+  dynamicHolder: {
+    flex: 1,
+    flexDirection:"column",
+    backgroundColor:"green",
+    marginHorizontal:10,
+    marginBottom:10
+  }
 });
 
 export default GlobalStyles;
