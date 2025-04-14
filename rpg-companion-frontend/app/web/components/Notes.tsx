@@ -3,13 +3,10 @@ import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} fr
 import GlobalStyles from '@/app/globalstyles';
 import { useState } from "react";
 
-interface NotesProps {
-    title: string;
-    note: String;
-}
 
 
-const Notes = (props: NotesProps) => {
+
+const Notes = () => {
 
     const [title, setTitle] = useState("");
     const [note, setNote] = useState("");
@@ -17,6 +14,7 @@ const Notes = (props: NotesProps) => {
     
 
     const submitNoteChange = () => {
+
         console.log(title +": "+note)
     };
 
@@ -27,10 +25,10 @@ const Notes = (props: NotesProps) => {
 
      <View style={GlobalStyles.dynamicHolder}>
         <View style={styles.noteHolder}>
-            <TextInput textAlign='left' multiline={true} style={styles.title} maxFontSizeMultiplier={2}></TextInput>
-            <TextInput scrollEnabled={true} textAlign='left' multiline={true} style={styles.textArea}></TextInput>
-            <Pressable onPress={submitNoteChange}>
-                <View style={styles.submit}></View>
+            <TextInput textAlign='left' style={styles.title} maxFontSizeMultiplier={2} onChangeText={setTitle} placeholder='Title' placeholderTextColor={'gray'}></TextInput>
+            <TextInput scrollEnabled={true} textAlign='left' multiline={true} style={styles.textArea} onChangeText={setNote} placeholder='Write anything' placeholderTextColor={'gray'} maxLength={512}></TextInput>
+            <Pressable onPress={submitNoteChange} style={styles.submitArea}>
+                <View style={styles.submit}> Submit</View>
             </Pressable>
         </View>
         <View>
@@ -64,10 +62,20 @@ const styles = StyleSheet.create({
         margin:10,
     },
     submit: {
-        flex:0.1,
-        backgroundColor: "blue",
+        flex:1,
+        backgroundColor: "white",
         margin:10,
-        marginTop:0
+        marginTop:0,
+        borderRadius:5,
+        textAlign:"center",
+        justifyContent:"center",
+        color: "black",
+        fontSize:48,
+        fontFamily:"sora-regular"
+    },
+    submitArea: {
+        display: "flex",
+        flex:0.1
     }
 
 });

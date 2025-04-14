@@ -4,6 +4,7 @@ import GlobalStyles from "./globalstyles";
 import { useFonts } from "expo-font";
 import SessionStorage from 'react-native-session-storage';
 import characters from './characters.json'//had to use this to test because of hyphens in the response message
+import { storeCharacterFromUID } from "./globalCharacterFunctions";
 
 
 import {
@@ -20,9 +21,7 @@ import {
 } from "react-native";
 
 export default function CharacterSelect(){
-  //Uncomment next line once response messages are fixed and it should all work
-  //const characters = SessionStorage.getItem('characters');
-  const [characterList, setCharacterList]  = useState(characters);
+  const characters = SessionStorage.getItem('characters');
   
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
@@ -31,8 +30,8 @@ export default function CharacterSelect(){
      });
 
     const pressHandler = (key) => {
-      SessionStorage.setItem("SelectedCharacter", key);
-      console.log(key);
+      SessionStorage.setItem("selectedCharacter", key);
+      storeCharacterFromUID();
       nav();
     }
 
@@ -40,15 +39,15 @@ export default function CharacterSelect(){
 
     return (
         <View style={GlobalStyles.page}>
-            <Text style = {styles.heading} onPress={pressHandler}>Select your character</Text>
+            <Text style = {styles.heading} >Select your character</Text>
             <FlatList
-              data={characterList.characters}
+              data={characters}
               renderItem={({item}) => (
-                <TouchableHighlight onPress={() => pressHandler(item.character_uid)}>
+                <Pressable onPress={() => pressHandler(item.character_uid)}>
                   <View style={styles.item}>
                     <Text style = {styles.buttonText}>{item.character_name}</Text>
                   </View>
-                </TouchableHighlight>
+                </Pressable>
               )}
             />  
         </View>

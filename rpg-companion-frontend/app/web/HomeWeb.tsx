@@ -34,7 +34,7 @@ export default function HomeWeb() {
   const renderTab = () => {
     switch (tab) {
       case "notes":
-        return <Notes title="enterTitle of last used or first note here" note="same with the note"/>;
+        return <Notes/>;
       case "spells":
         return <Spells test="test" />;
       case "combat":
@@ -149,8 +149,7 @@ export default function HomeWeb() {
                 <Text style={styles.skill}>Bonus</Text>
               </View>
               <View style={styles.skillsBody}>
-                {/* Will call a component to populate this table with the values of the correct character 
-            for now populated with dummy values*/}
+
 
                 <View style={styles.skillRow}>
                   <Text style={styles.skill}>Investigation</Text>

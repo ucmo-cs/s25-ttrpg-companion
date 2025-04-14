@@ -21,9 +21,7 @@ export default function CustomLogin() {
   const [message, setMessage] = useState("");
   const [isHoveredRegister, setIsHoveredRegister] = useState(false);
 
-  const [fontsLoaded] = useFonts({
-    "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
-  });
+  
   const handleLogin = () => {
     const regex = new RegExp("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     if (email == "" && password == "") {
@@ -64,8 +62,10 @@ export default function CustomLogin() {
 
       const data = await response.json();
       SessionStorage.setItem("characters", data.characters);
-      sessionStorage.setItem("UserUID", data.UserUID);
+      SessionStorage.setItem("userUID", data.user_uid);
       console.log("Login Response", data);
+      console.log("userUID: " + data.user_uid);
+      console.log(SessionStorage.getItem("characters"));
 
       //This is how we can decide which code excutes per platform
       const nav = Platform.select({
