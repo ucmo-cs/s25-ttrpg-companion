@@ -64,13 +64,14 @@ export default function CustomLogin() {
 
       const data = await response.json();
       SessionStorage.setItem("characters", data.characters);
+      sessionStorage.setItem("UserUID", data.UserUID);
       console.log("Login Response", data);
 
       //This is how we can decide which code excutes per platform
       const nav = Platform.select({
         android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
         ios: () => router.navigate("/mobile/HomeMobile"),
-        default: () => router.navigate("/web/HomeWeb"),
+        default: () => router.navigate("/CharacterSelection"),
       });
       nav();
     } catch (error) {

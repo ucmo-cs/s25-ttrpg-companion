@@ -31,7 +31,9 @@ export default function CharacterSelect(){
      });
 
     const pressHandler = (key) => {
+      SessionStorage.setItem("SelectedCharacter", key);
       console.log(key);
+      nav();
     }
 
     
