@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
 import { useFonts } from "expo-font";
 import SessionStorage from 'react-native-session-storage';
-import characters from './characters.json'//had to use this to test because of hyphens in the response message
 
 
 import {
@@ -19,10 +18,12 @@ import {
   TouchableHighlight,
 } from "react-native";
 
+
+
 export default function CharacterSelect(){
   //Uncomment next line once response messages are fixed and it should all work
-  //const characters = SessionStorage.getItem('characters');
-  const [characterList, setCharacterList]  = useState(characters);
+  const characters = SessionStorage.getItem('characters');
+  const userUid = SessionStorage.getItem('userUid');
   
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
@@ -30,8 +31,36 @@ export default function CharacterSelect(){
       default: () => router.navigate("/web/HomeWeb"),
      });
 
-    const pressHandler = (key) => {
-      console.log(key);
+    const pressHandler = async (key) => {
+      try {
+ 
+        console.log("start of storeCharacterFromUID");
+        console.log("user_uid: " + userUid);
+        console.log("character_uid:" + key);
+
+        const response = await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-character",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              user_uid: userUid,
+              character_uid: key,
+            }),
+          }
+        );
+  
+        if (!response.ok) {
+          console.log("!response.ok");
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const character = await response.json();
+        SessionStorage.setItem("selectedCharacterData", character);
+        console.log("Character Recieved", character);
+    }
+    catch (error) {
+        console.log("Could not recieve character: ", error);
+    }
     }
 
     
@@ -40,7 +69,7 @@ export default function CharacterSelect(){
         <View style={GlobalStyles.page}>
             <Text style = {styles.heading} onPress={pressHandler}>Select your character</Text>
             <FlatList
-              data={characterList.characters}
+              data={characters}
               renderItem={({item}) => (
                 <TouchableHighlight onPress={() => pressHandler(item.character_uid)}>
                   <View style={styles.item}>
