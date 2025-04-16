@@ -127,8 +127,8 @@ export default function Spells() {
                 </View>
               </View>
               <Text style={styles.componentText}>
-                <Text style={styles.boxTitle}>School </Text>
-                {item.school}
+                <Text style={styles.boxTitle}>Class(es) </Text>
+                {item.classes}
               </Text>
               <Text style={styles.componentText}>
                 <Text style={styles.boxTitle}>Target </Text>
@@ -260,6 +260,6 @@ const styles = StyleSheet.create({
     ...globalText,
     fontSize: 20,
     position: "absolute", // pull it out of the normal row flow
-    right: 8, // nudge it in from the right edge
+    right: 8,
   },
 });

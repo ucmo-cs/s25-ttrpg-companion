@@ -86,19 +86,15 @@ export default function HomeMobile() {
     return isNaN(num) ? 1 : num;
   };
 
-  // const handleHpIncrease = () => {
-  //   setHp(hp + getCustomHp());
-  // };
-  // const handleHpDecrease = () => {
-  //   setHp(hp - getCustomHp());
-  // };
-
+  //If the plus/minus is touched it will increase/decrease 1
+  //If the Hp textArea is touched the user will enter a number then click plus/minus
+  //That will add/subtract the number entered from the current Hp
   const handleHp = (type) => {
     const amount = getCustomHp();
     setHp((prev) => (type === "add" ? prev + amount : prev - amount));
     setCustomHp("");
     setEditHp(false);
-    Keyboard.dismiss(); // Hide the keyboard
+    Keyboard.dismiss(); // Hide the keyboard after clicking plus/minus
   };
 
   return (
@@ -133,8 +129,6 @@ export default function HomeMobile() {
           <Shield size={70} color="white" strokeWidth={1} fill="#3E4A59" />
           <Text style={styles.iconText}>30</Text>
         </View>
-        {/* <View style={styles.row}> */}
-        {/* <View style={styles.iconWrapper}> */}
         <TouchableOpacity
           onPress={() => handleHp("add")}
           style={styles.iconWrapper}
@@ -142,7 +136,10 @@ export default function HomeMobile() {
           <AntDesign name="plus" size={35} color="green" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setEditHp(true)}>
+        <TouchableOpacity
+          onPress={() => setEditHp(true)}
+          style={styles.iconWrapper}
+        >
           {editHp ? (
             <TextInput
               style={styles.hp}
