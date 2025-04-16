@@ -136,7 +136,7 @@ export default function CharacterSelect(){
               Platform.select({
                 android: () => router.navigate("/mobile/(tabs)/CharacterCreation"),
                 ios: () => router.navigate("/mobile/CharacterCreation"),
-                default: () => router.navigate("/web/HomeWeb"),//This will be up to nick how we do this
+                default: () => router.navigate("/web/CharacterCreation"),//This will be up to nick how we do this
               })
             }
             >
