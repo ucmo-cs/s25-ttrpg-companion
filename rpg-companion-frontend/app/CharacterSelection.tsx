@@ -57,6 +57,7 @@ export default function CharacterSelect(){
         const character = await response.json();
         SessionStorage.setItem("selectedCharacterData", character);
         console.log("Character Recieved", character);
+        nav();
     }
     catch (error) {
         console.log("Could not recieve character: ", error);
