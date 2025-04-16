@@ -29,10 +29,10 @@ export default function CharacterSelect(){
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
       ios: () => router.navigate("/mobile/HomeMobile"),
-      default: () => router.navigate("/web/HomeWeb"),
+      default: () => router.navigate("/web/CharacterCreation"),
      });
 
-    const deleteCharacterHandler = (key) => {
+    const deleteCharacterMobileHandler = (key) => {
       Alert.alert('Delete Character', 'Are you sure you want to delete this character?', [
         {text: 'Yes', onPress: () => deleteCharacter(key)},
         {
@@ -43,6 +43,15 @@ export default function CharacterSelect(){
       ]);
     }
 
+    const deleteCharacterWebHandler = (key, name) => {
+      const userClick = confirm("Are you sure you want to delete " + name);
+      if (userClick){
+        deleteCharacter(key);
+      }
+      else{
+        console.log('Character not deleted');
+      }
+    }
     const deleteCharacter = async (key) => {
       try {
         console.log("user_uid: " + userUid);
@@ -123,7 +132,13 @@ export default function CharacterSelect(){
                     <Pressable
                       onHoverIn={() => setTrashColor('#cf1f11')}
                       onHoverOut={() => setTrashColor('#af1f31')}
-                      onPress={() => deleteCharacterHandler(item.character_uid)}>
+                      onPress={Platform.select({
+                        ios: () => deleteCharacterMobileHandler(item.character_uid),
+                        android: () => deleteCharacterMobileHandler(item.character_uid),
+                        web: () => deleteCharacterWebHandler(item.character_uid, item.character_name)
+                        })
+                      }
+                      >
                             
                       <Trash2 color={trashColor} strokeWidth={1.7}/>
                     </Pressable>
