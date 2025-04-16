@@ -10,15 +10,14 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
+import SessionStorage from "react-native-session-storage";
 
 const globalText = {
   color: "white",
   fontFamily: "Sora",
 };
 
-export default function Combat() {
-  console.log("Running on:", Platform.OS);
-
+export default function CharacterCreation() {
   const initialCharacterData = {
     name: "",
     species: "",
@@ -40,9 +39,8 @@ export default function Combat() {
       [key]: value,
     }));
   };
-
   const payload = {
-    username: "leejac608", // Will be replaced with the logged in user
+    user_uid: "", // Will be replaced with the logged in user
     character: {
       name: characterData.name,
       hp: characterData.str, // placeholder
@@ -120,14 +118,13 @@ export default function Combat() {
             value={characterData.subclass}
             onChangeText={(text) => handleChange("subclass", text)}
           />
-          <Text style={styles.Inventory}>Inventory</Text>
           <TextInput
             style={[styles.formControl, { height: 100 }]}
             placeholderTextColor="#ccc"
             multiline={true}
             value={characterData.inventoryNotes}
             onChangeText={(text) => handleChange("inventoryNotes", text)}
-            placeholder="Inventory Notes"
+            placeholder="Inventory"
           />
           <Text style={styles.AbilityScores}>Ability Scores</Text>
           <View style={styles.abilityScoreWrapper}>
@@ -237,10 +234,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     borderBottomWidth: 1,
     borderBottomColor: "#fff",
-    width: "100%",
+    width: "95%",
     marginBottom: 24,
     textAlign: "left",
     marginTop: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#fff",
   },
   AbilityScores: {
     ...globalText,
