@@ -86,7 +86,7 @@ export default function Combat() {
             {actions.map((item, index) => (
               <View key={index} style={styles.infoBox}>
                 {item.icon}
-                <View style={styles.boxText}>
+                <View>
                   <Text style={styles.boxTitle}>{item.title}</Text>
                   <View style={styles.statRow}>
                     <Text style={styles.boxSubtitle}>Hit</Text>
@@ -110,7 +110,7 @@ export default function Combat() {
             {bonusActions.map((item, index) => (
               <View key={index} style={styles.infoBox}>
                 {item.icon}
-                <View style={styles.boxText}>
+                <View>
                   <Text style={styles.boxTitle}>{item.title}</Text>
                   <View style={styles.statRow}>
                     <Text style={styles.boxSubtitle}>Hit</Text>
@@ -146,12 +146,25 @@ export default function Combat() {
 }
 
 const styles = StyleSheet.create({
+  //Container Styles
   container: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     backgroundColor: "#121427",
   },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    marginHorizontal: 5,
+  },
+  deathSaveContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+
+  //Header Styles
   pageHeader: {
     ...globalText,
     fontSize: 30,
@@ -163,24 +176,17 @@ const styles = StyleSheet.create({
     ...globalText,
     fontSize: 25,
     padding: 5,
-    textAlign: "center",
     marginTop: 7,
   },
 
-  deathSaveContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-  },
+  //Box Styles
   infoBox: {
     flexDirection: "row",
     backgroundColor: "#3E4A59",
     borderRadius: 10,
     padding: 10,
-    // alignSelf: "center",
-    alignSelf: "flex-start",
-    height: 75,
     width: 175,
-    marginBottom: 20,
+    marginBottom: 15,
     marginHorizontal: 7,
   },
   boxTitle: {
@@ -188,52 +194,28 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#A8FFFC",
     marginBottom: 4,
-    // alignSelf: "center",
     marginLeft: 10,
   },
-  // row: {
-  //   flexDirection: "row",
-  //   marginBottom: 5,
-  // },
   boxSubtitle: {
     ...globalText,
     fontSize: 12,
     marginLeft: 10,
-    textAlign: "left",
-    // flex: 1,
   },
   boxValue: {
     color: "#A8FFFC",
-    // alignSelf: "flex-end",
-    justifyContent: "flex-end",
     marginHorizontal: "15%",
-    textAlign: "right",
   },
-  boxText: {},
-  flatListContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+  statRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
+
+  //Scrolling Styles
   scrollArea: {
     width: "100%",
   },
   scrollSection: {
     height: 180,
-    borderRadius: 10,
-    // overflow: "hidden",
     marginBottom: 15,
-  },
-  gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-start", // or 'space-between' or 'center'
-    // justifyContent: "center", // or 'space-between' or 'center'
-    marginHorizontal: 5,
-    // padding: 5,
-  },
-  statRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 2,
   },
 });
