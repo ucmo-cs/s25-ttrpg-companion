@@ -39,8 +39,10 @@ export default function CharacterCreation() {
       [key]: value,
     }));
   };
+  const user_uid = SessionStorage.getItem("userUid");
+  console.log("user_uid", user_uid);
   const payload = {
-    user_uid: "", // Will be replaced with the logged in user
+    user_uid: user_uid, // Will be replaced with the logged in user
     character: {
       name: characterData.name,
       hp: characterData.str, // placeholder
