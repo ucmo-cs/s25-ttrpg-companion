@@ -27,6 +27,39 @@ const skillsData = [
   { skill: "Animal Handling", ability: "Wis", bonus: "+0" },
 ];
 
+const abilityData = [
+  {
+    title: "Str",
+    modifier: "+10",
+    score: 10,
+  },
+  {
+    title: "Dex",
+    modifier: "+10",
+    score: 10,
+  },
+  {
+    title: "Con",
+    modifier: "+10",
+    score: 10,
+  },
+  {
+    title: "Int",
+    modifier: "+10",
+    score: 10,
+  },
+  {
+    title: "Wis",
+    modifier: "+10",
+    score: 10,
+  },
+  {
+    title: "Cha",
+    modifier: "+10",
+    score: 10,
+  },
+];
+
 const globalText = {
   color: "white",
   fontFamily: "Sora",
@@ -78,114 +111,26 @@ export default function HomeMobile() {
         </View>
       </View>
       <View style={styles.iconContainer}>
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Str</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
+        {abilityData.map((item, index) => (
+          <View style={styles.iconWrapper}>
+            <PanelTopDashed
+              style={styles.abilityIcons}
+              size={100}
+              color="white"
+              strokeWidth={0.5}
+            />
+            <RectangleHorizontal
+              size={75}
+              style={styles.rectangleIcons}
+              color="white"
+              strokeWidth={0.5}
+            />
 
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Dex</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
-
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Con</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
-      </View>
-      <View style={styles.iconContainer}>
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Int</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
-
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Wis</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
-
-        <View style={styles.iconWrapper}>
-          <PanelTopDashed
-            style={styles.abilityIcons}
-            size={100}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <RectangleHorizontal
-            size={75}
-            style={styles.rectangleIcons}
-            color="white"
-            strokeWidth={0.5}
-          />
-          <Text style={styles.abilityText}>Cha</Text>
-          <Text style={styles.abilityScore}>+10</Text>
-          <Text style={styles.modifierScore}>10</Text>
-        </View>
+            <Text style={styles.abilityText}>{item.title}</Text>
+            <Text style={styles.abilityScore}>{item.modifier}</Text>
+            <Text style={styles.modifierScore}>{item.score}</Text>
+          </View>
+        ))}
       </View>
 
       <Text></Text>
@@ -241,6 +186,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: "center",
     flexDirection: "row",
+    flexWrap: "wrap",
   },
   iconWrapper: {
     alignItems: "center",
@@ -260,13 +206,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     padding: 10,
   },
-  // line: {
-  //   borderBottomColor: "white",
-  //   borderBottomWidth: StyleSheet.hairlineWidth,
-  //   alignSelf: "stretch",
-  //   width: "100%",
-  //   paddingTop: 8,
-  // },
 
   //Section styles
   sectionHeader: {
@@ -307,7 +246,6 @@ const styles = StyleSheet.create({
   },
   abilityText: {
     ...globalText,
-    // flex: 1,
     fontSize: 20,
     position: "absolute",
     alignSelf: "flex-start",
@@ -315,7 +253,7 @@ const styles = StyleSheet.create({
   },
   rectangleIcons: {
     position: "absolute",
-    top: "61%",
+    top: "30%",
   },
 
   //Skills section styles

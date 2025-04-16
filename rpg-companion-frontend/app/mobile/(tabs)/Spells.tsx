@@ -57,7 +57,7 @@ export default function Spells() {
       duration: "Instantaneous",
       target: "Self",
       materials: "",
-      classes: "Sorcerer, Warlock,Wizard",
+      classes: "Sorcerer, Warlock, Wizard",
       description:
         "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space that you can see.",
       school: "conjuration",
@@ -71,7 +71,7 @@ export default function Spells() {
       duration: "1 Minute",
       target: "See text",
       materials: "A bit of fleece",
-      classes: "Sorcerer, Warlock,Wizard,Bard",
+      classes: "Sorcerer, Warlock, Wizard, Bard",
       description:
         "You create a sound or an image of an object within range that lasts for the duration. The illusion also ends if you dismiss it as an action or cast this spell again. If you create a sound, its volume can range from a whisper to a scream. It can be your voice, someone else’s voice, a lion’s roar, a beating of drums, or any other sound you choose. The sound continues unabated throughout the duration, or you can make discrete sounds at different times before the spell ends.       If you create an image of an object—such as a chair, muddy footprints, or a small chest—it must be no larger than a 5-foot cube. The image can’t create sound, light, smell, or any other sensory effect. Physical interaction with the image reveals it to be an illusion, because things can pass through it.       If a creature uses its action to examine the sound or image, the creature can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the illusion becomes faint to the creature.",
       school: "illusion",
@@ -97,15 +97,22 @@ export default function Spells() {
         renderItem={({ item }) => (
           <View style={styles.cardFrame}>
             <View style={styles.card}>
-              <Text style={styles.spellTitle}>{item.title}</Text>
+              <View style={styles.statRow}>
+                <Text
+                  style={[styles.spellTitle, { flex: 1, textAlign: "center" }]}
+                >
+                  {item.title}
+                </Text>
+                <Text style={styles.spellLevel}>{item.level}</Text>
+              </View>
               <View style={styles.row}>
                 <View style={styles.infoBox}>
                   <Text style={styles.boxTitle}>Casting</Text>
                   <Text style={styles.boxValue}>{item.casting}</Text>
                 </View>
                 <View style={styles.infoBox}>
-                  <Text style={styles.boxTitle}>Level</Text>
-                  <Text style={styles.boxValue}>{item.level}</Text>
+                  <Text style={styles.boxTitle}>Duration</Text>
+                  <Text style={styles.boxValue}>{item.duration}</Text>
                 </View>
               </View>
 
@@ -120,8 +127,8 @@ export default function Spells() {
                 </View>
               </View>
               <Text style={styles.componentText}>
-                <Text style={styles.boxTitle}>Duration </Text>
-                {item.duration}
+                <Text style={styles.boxTitle}>School </Text>
+                {item.school}
               </Text>
               <Text style={styles.componentText}>
                 <Text style={styles.boxTitle}>Target </Text>
@@ -186,6 +193,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 25,
     marginBottom: 5,
+    // marginLeft: 50,
   },
 
   //Casting, level, component, range
@@ -239,5 +247,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     backgroundColor: "#3E4A59",
     borderRadius: 10,
+  },
+  statRow: {
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    // paddingVertical: 5,
+  },
+  spellLevel: {
+    ...globalText,
+    fontSize: 20,
+    position: "absolute", // pull it out of the normal row flow
+    right: 8, // nudge it in from the right edge
   },
 });
