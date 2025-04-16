@@ -46,6 +46,17 @@ export default function RootLayout() {
           headerTitleStyle: { color: "white" },
         }}
       />
+      <Stack.Screen
+        name="web/CharacterCreation"
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+          title: "Login",
+          headerStyle: { backgroundColor: "black" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
     </Stack>
+    
   );
 }
