@@ -17,7 +17,7 @@ const globalText = {
 };
 
 export default function Combat() {
-  console.log("Running on:", Platform.OS);
+  // console.log("Running on:", Platform.OS);
 
   const initialCharacterData = {
     name: "",

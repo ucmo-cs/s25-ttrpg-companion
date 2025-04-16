@@ -1,35 +1,80 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
-import { useFonts } from "expo-font";
 import SessionStorage from 'react-native-session-storage';
 
+import {
+  Trash2
+} from "lucide-react-native";
 
 import {
   FlatList,
   Text,
   View,
-  TextInput,
-  Button,
-  Alert,
   Platform,
   StyleSheet,
-  Pressable,
   TouchableHighlight,
+  Pressable,
+  Alert,
 } from "react-native";
 
 
 
 export default function CharacterSelect(){
   //Uncomment next line once response messages are fixed and it should all work
-  const characters = SessionStorage.getItem('characters');
+  const [characters, setCharacters] = useState(SessionStorage.getItem('characters'));
   const userUid = SessionStorage.getItem('userUid');
+  const [trashColor, setTrashColor] = useState('#af1f31')
   
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
       ios: () => router.navigate("/mobile/HomeMobile"),
       default: () => router.navigate("/web/HomeWeb"),
      });
+
+    const deleteCharacterHandler = (key) => {
+      Alert.alert('Delete Character', 'Are you sure you want to delete this character?', [
+        {text: 'Yes', onPress: () => deleteCharacter(key)},
+        {
+          text: 'No',
+          onPress: () => console.log('Character not deleted - uid: ' + key),
+          style: 'cancel',
+        },
+      ]);
+    }
+
+    const deleteCharacter = async (key) => {
+      try {
+        console.log("user_uid: " + userUid);
+        console.log("character_uid:" + key);
+
+        const response =  await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/delete-character",
+          {
+            method: "DELETE",
+            body: JSON.stringify({
+              user_uid: userUid,
+              character_uid: key,
+            }),
+          }
+        );
+  
+        if (!response.ok) {
+          console.log("!response.ok");
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    }
+    catch (error) {
+        console.log("Could not delete character: ", error);
+    }
+    console.log('Character Deleted')
+    //removing the character from current object
+    setCharacters((prevCharacters) => {
+      return prevCharacters.filter(characters => characters.character_uid != key)
+    })
+    sessionStorage.setItem("characters", characters)
+    console.log(characters)
+    }
 
     const pressHandler = async (key) => {
       try {
@@ -68,17 +113,36 @@ export default function CharacterSelect(){
 
     return (
         <View style={GlobalStyles.page}>
-            <Text style = {styles.heading} onPress={pressHandler}>Select your character</Text>
+            <Text style = {styles.heading}>Select your character</Text>
             <FlatList
               data={characters}
               renderItem={({item}) => (
                 <TouchableHighlight onPress={() => pressHandler(item.character_uid)}>
                   <View style={styles.item}>
                     <Text style = {styles.buttonText}>{item.character_name}</Text>
+                    <Pressable
+                      onHoverIn={() => setTrashColor('#cf1f11')}
+                      onHoverOut={() => setTrashColor('#af1f31')}
+                      onPress={() => deleteCharacterHandler(item.character_uid)}>
+                            
+                      <Trash2 color={trashColor} strokeWidth={1.7}/>
+                    </Pressable>
                   </View>
                 </TouchableHighlight>
               )}
-            />  
+            />
+          <View style={styles.buttonContainer}>
+            <Pressable style={styles.button} onPress={
+              Platform.select({
+                android: () => router.navigate("/mobile/(tabs)/CharacterCreation"),
+                ios: () => router.navigate("/mobile/CharacterCreation"),
+                default: () => router.navigate("/web/HomeWeb"),//This will be up to nick how we do this
+              })
+            }
+            >
+              <Text style={styles.buttonText}>Create Character</Text>
+            </Pressable>
+          </View>  
         </View>
     );
 }
@@ -110,11 +174,9 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderRadius: 10,
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
 },
-  hoverStyle: {
-    backgroundColor: "#4B5563",
-    borderColor: "#4B5563",
-  },
   buttonText: {
     color: "white",
     alignSelf: "center",
@@ -135,12 +197,12 @@ const styles = StyleSheet.create({
 
     ...Platform.select({
       ios: {
-        height: "10%",
+        height: "20%",
         marginTop: 10,
         fontSize: 20,
       },
       android: {
-        height: "10%",
+        height: "20%",
         marginTop: 10,
         fontSize: 20,
       },
@@ -156,5 +218,25 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     padding: 10,
+  },
+  buttonContainer: {
+    height: "20%",
+    flexDirection: "column",
+    alignSelf: "center",
+    justifyContent: "center",
+    fontFamily: "Sora-Regular",
+    ...Platform.select({
+      ios: {
+        width: "80%",
+      },
+      android: {
+        width: "80%",
+      },
+      default: {
+        width: "20%",
+        minWidth: 300,
+        maxWidth: 400,
+      },
+    }),
   },
 });
