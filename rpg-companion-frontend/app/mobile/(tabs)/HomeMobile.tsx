@@ -84,17 +84,18 @@ export default function HomeMobile() {
 
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
-          <Circle size={70} strokeWidth={1.5} color={"white"} />
+          <Circle size={70} strokeWidth={1} color={"white"} fill="#3E4A59" />
           <Text style={styles.iconText}>10</Text>
         </View>
 
         <View style={styles.iconWrapper}>
-          <Square size={70} color="white" strokeWidth={1.5} />
+          <Square size={70} color="white" strokeWidth={1} fill="#3E4A59" />
           <Text style={styles.iconText}>20</Text>
         </View>
 
         <View style={styles.iconWrapper}>
-          <Shield size={70} color="white" strokeWidth={1.5} />
+          {/*Need to check in with inventory if equipped with a shield*/}
+          <Shield size={70} color="white" strokeWidth={1} fill="#3E4A59" />
           <Text style={styles.iconText}>30</Text>
         </View>
 
@@ -117,12 +118,14 @@ export default function HomeMobile() {
               style={styles.abilityIcons}
               size={100}
               color="white"
+              fill="#3E4A59"
               strokeWidth={0.5}
             />
             <RectangleHorizontal
               size={75}
               style={styles.rectangleIcons}
               color="white"
+              fill="#3E4A59"
               strokeWidth={0.5}
             />
 
@@ -141,6 +144,7 @@ export default function HomeMobile() {
         <Text style={styles.sectionHeaderText}>Bonus</Text>
       </View>
 
+      {/*if they are proficent in it then the circle is added to the bonus*/}
       <FlatList
         data={skillsData}
         keyExtractor={(item, index) => index.toString()}
@@ -205,6 +209,10 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     padding: 10,
+    backgroundColor: "#3E4A59",
+    borderRadius: 10,
+    borderWidth: 2.5,
+    borderColor: "white",
   },
 
   //Section styles
@@ -242,7 +250,8 @@ const styles = StyleSheet.create({
     color: "white",
     position: "absolute",
     alignSelf: "baseline",
-    margin: 94,
+    margin: 85,
+    right: -32,
   },
   abilityText: {
     ...globalText,
@@ -253,7 +262,7 @@ const styles = StyleSheet.create({
   },
   rectangleIcons: {
     position: "absolute",
-    top: "30%",
+    top: "28%",
   },
 
   //Skills section styles
