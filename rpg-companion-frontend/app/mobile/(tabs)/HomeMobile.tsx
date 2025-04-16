@@ -7,7 +7,16 @@ import {
   PanelTopDashed,
   RectangleHorizontal,
 } from "lucide-react-native";
-import { Text, View, StyleSheet, FlatList, Image } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Keyboard,
+} from "react-native";
 
 const skillsData = [
   { skill: "Acrobatics", ability: "Dex", bonus: "+0" },
@@ -66,6 +75,32 @@ const globalText = {
 };
 
 export default function HomeMobile() {
+  //Adjusting HP
+  const [hp, setHp] = useState(0);
+  const [customHp, setCustomHp] = useState("");
+  const [editHp, setEditHp] = useState(false);
+
+  const getCustomHp = () => {
+    const num = parseInt(customHp);
+    //isNaN (is not a number) if not a number return 1 otherwise return num
+    return isNaN(num) ? 1 : num;
+  };
+
+  // const handleHpIncrease = () => {
+  //   setHp(hp + getCustomHp());
+  // };
+  // const handleHpDecrease = () => {
+  //   setHp(hp - getCustomHp());
+  // };
+
+  const handleHp = (type) => {
+    const amount = getCustomHp();
+    setHp((prev) => (type === "add" ? prev + amount : prev - amount));
+    setCustomHp("");
+    setEditHp(false);
+    Keyboard.dismiss(); // Hide the keyboard
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.pfpHolder}>
@@ -98,19 +133,42 @@ export default function HomeMobile() {
           <Shield size={70} color="white" strokeWidth={1} fill="#3E4A59" />
           <Text style={styles.iconText}>30</Text>
         </View>
-
-        <View style={styles.iconWrapper}>
+        {/* <View style={styles.row}> */}
+        {/* <View style={styles.iconWrapper}> */}
+        <TouchableOpacity
+          onPress={() => handleHp("add")}
+          style={styles.iconWrapper}
+        >
           <AntDesign name="plus" size={35} color="green" />
-        </View>
+        </TouchableOpacity>
 
-        <View>
-          <Text style={styles.hp}>HP</Text>
-        </View>
+        <TouchableOpacity onPress={() => setEditHp(true)}>
+          {editHp ? (
+            <TextInput
+              style={styles.hp}
+              value={customHp}
+              onChangeText={setCustomHp}
+              keyboardType="numeric"
+              autoFocus
+              returnKeyType="done"
+              onBlur={() => setEditHp(false)}
+            />
+          ) : (
+            <Text style={styles.hp}>{hp}</Text>
+          )}
+        </TouchableOpacity>
 
-        <View>
+        <TouchableOpacity
+          onPress={() => handleHp("subtract")}
+          style={styles.iconWrapper}
+        >
           <AntDesign name="minus" size={35} color="red" />
-        </View>
+        </TouchableOpacity>
       </View>
+
+      {/* </View> */}
+
+      {/* </View> */}
       <View style={styles.iconContainer}>
         {abilityData.map((item, index) => (
           <View style={styles.iconWrapper}>
@@ -195,7 +253,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    padding: 4,
     flexDirection: "row",
   },
   iconText: {
@@ -208,7 +266,7 @@ const styles = StyleSheet.create({
     ...globalText,
     fontSize: 30,
     fontWeight: "bold",
-    padding: 10,
+    padding: 6.5,
     backgroundColor: "#3E4A59",
     borderRadius: 10,
     borderWidth: 2.5,
@@ -291,5 +349,10 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderStyle: "solid",
     borderWidth: 5,
+  },
+
+  row: {
+    flexDirection: "row",
+    // flexWrap: "wrap",
   },
 });
