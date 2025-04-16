@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
@@ -25,19 +26,19 @@ const actions = [
     title: "Shortbow",
     hit: "+5",
     damage: "1d6",
-    icon: <MaterialCommunityIcons name="bow-arrow" size={50} color="white" />,
+    icon: <MaterialCommunityIcons name="bow-arrow" size={45} color="white" />,
   },
   {
     title: "Melee",
     hit: "+7",
     damage: "1d8",
-    icon: <Axe size={50} color="white" />,
+    icon: <Axe size={45} color="white" />,
   },
   {
     title: "Shortsword",
     hit: "+5",
     damage: "1d6",
-    icon: <Sword size={50} color="white" />,
+    icon: <Sword size={45} color="white" />,
   },
 ];
 const bonusActions = [
@@ -45,13 +46,19 @@ const bonusActions = [
     title: "Spell",
     hit: "+4",
     damage: "1d10",
-    icon: <Wand size={50} color="white" />,
+    icon: <Wand size={45} color="white" />,
   },
   {
     title: "Class Feature",
     hit: "+4",
     damage: "1d10",
-    icon: <Zap size={50} color="white" />,
+    icon: <Zap size={45} color="white" />,
+  },
+  {
+    title: "Class Feature",
+    hit: "+4",
+    damage: "1d10",
+    icon: <Zap size={45} color="white" />,
   },
 ];
 export default function Combat() {
@@ -73,34 +80,51 @@ export default function Combat() {
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Combat</Text>
       <Text style={styles.sectionHeader}>Actions</Text>
-      <View>
-        <FlatList
-          data={actions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <>
-              <View style={styles.infoBox}>
+      <View style={styles.scrollSection}>
+        <ScrollView style={styles.scrollArea}>
+          <View style={styles.gridContainer}>
+            {actions.map((item, index) => (
+              <View key={index} style={styles.infoBox}>
                 {item.icon}
-                <Text style={styles.boxTitle}>{item.title}</Text>
+                <View style={styles.boxText}>
+                  <Text style={styles.boxTitle}>{item.title}</Text>
+                  <View style={styles.statRow}>
+                    <Text style={styles.boxSubtitle}>Hit</Text>
+                    <Text style={styles.boxValue}>{item.hit}</Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={styles.boxSubtitle}>Damage</Text>
+                    <Text style={styles.boxValue}>{item.damage}</Text>
+                  </View>
+                </View>
               </View>
-            </>
-          )}
-        />
+            ))}
+          </View>
+        </ScrollView>
       </View>
-      <View>
-        <Text style={styles.sectionHeader}>Bonus Actions</Text>
-        <FlatList
-          data={bonusActions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <>
-              <View style={styles.infoBox}>
+      <Text style={styles.sectionHeader}>Bonus Actions</Text>
+
+      <View style={styles.scrollSection}>
+        <ScrollView style={styles.scrollArea}>
+          <View style={styles.gridContainer}>
+            {bonusActions.map((item, index) => (
+              <View key={index} style={styles.infoBox}>
                 {item.icon}
-                <Text style={styles.boxTitle}>{item.title}</Text>
+                <View style={styles.boxText}>
+                  <Text style={styles.boxTitle}>{item.title}</Text>
+                  <View style={styles.statRow}>
+                    <Text style={styles.boxSubtitle}>Hit</Text>
+                    <Text style={styles.boxValue}>{item.hit}</Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={styles.boxSubtitle}>Damage</Text>
+                    <Text style={styles.boxValue}>{item.damage}</Text>
+                  </View>
+                </View>
               </View>
-            </>
-          )}
-        />
+            ))}
+          </View>
+        </ScrollView>
       </View>
       <Text style={styles.sectionHeader}>Death Saves</Text>
       <View style={styles.deathSaveContainer}>
@@ -152,37 +176,64 @@ const styles = StyleSheet.create({
     backgroundColor: "#3E4A59",
     borderRadius: 10,
     padding: 10,
-    marginHorizontal: 25,
     // alignSelf: "center",
     alignSelf: "flex-start",
     height: 75,
     width: 175,
     marginBottom: 20,
+    marginHorizontal: 7,
   },
   boxTitle: {
     ...globalText,
-    fontSize: 17,
+    fontSize: 15,
     color: "#A8FFFC",
     marginBottom: 4,
     // alignSelf: "center",
     marginLeft: 10,
   },
-  // boxValue: {
-  //   ...globalText,
-  //   fontSize: 14,
-  //   alignSelf: "center",
+  // row: {
+  //   flexDirection: "row",
+  //   marginBottom: 5,
   // },
-  // iconContainer: {
-  //   // justifyContent: "s",
-  // },
-  // textContainer: {
-  //   // flex: 1,
-  //   marginLeft: 75,
-  //   alignSelf: "center",
-  //   // position: "absolute",
-  // },
-  row: {
+  boxSubtitle: {
+    ...globalText,
+    fontSize: 12,
+    marginLeft: 10,
+    textAlign: "left",
+    // flex: 1,
+  },
+  boxValue: {
+    color: "#A8FFFC",
+    // alignSelf: "flex-end",
+    justifyContent: "flex-end",
+    marginHorizontal: "15%",
+    textAlign: "right",
+  },
+  boxText: {},
+  flatListContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollArea: {
+    width: "100%",
+  },
+  scrollSection: {
+    height: 180,
+    borderRadius: 10,
+    // overflow: "hidden",
+    marginBottom: 15,
+  },
+  gridContainer: {
     flexDirection: "row",
-    marginBottom: 5,
+    flexWrap: "wrap",
+    justifyContent: "flex-start", // or 'space-between' or 'center'
+    // justifyContent: "center", // or 'space-between' or 'center'
+    marginHorizontal: 5,
+    // padding: 5,
+  },
+  statRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 2,
   },
 });
