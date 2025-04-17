@@ -29,7 +29,7 @@ export default function CharacterSelect(){
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
       ios: () => router.navigate("/mobile/HomeMobile"),
-      default: () => router.navigate("/web/CharacterCreation"),
+      default: () => router.navigate("/web/HomeWeb"),
      });
 
     const deleteCharacterMobileHandler = (key) => {
@@ -96,6 +96,9 @@ export default function CharacterSelect(){
           "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-character",
           {
             method: "POST",
+            headers: {
+              'session_token': SessionStorage.getItem("token")
+            },
             body: JSON.stringify({
               user_uid: userUid,
               character_uid: key,
@@ -108,9 +111,11 @@ export default function CharacterSelect(){
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
   
-        const character = await response.json();
-        SessionStorage.setItem("selectedCharacterData", character);
-        console.log("Character Recieved", character);
+        const data = await response.json();
+        SessionStorage.setItem("selectedCharacterData", data.character);
+        SessionStorage.setItem("token", data.session_token);
+        console.log("Character Recieved", data.character);
+        console.log("Session Token Recieved: " + data.session_token);
         nav();
     }
     catch (error) {
