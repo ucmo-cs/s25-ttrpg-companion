@@ -24,7 +24,7 @@ export default function CharacterSelect(){
   //Uncomment next line once response messages are fixed and it should all work
   const [characters, setCharacters] = useState(SessionStorage.getItem('characters'));
   const userUid = SessionStorage.getItem('userUid');
-  const [trashColor, setTrashColor] = useState('#af1f31')
+  const [trashColor, setTrashColor] = useState('#af1f31');
   
     const nav = Platform.select({
       android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
@@ -149,7 +149,7 @@ export default function CharacterSelect(){
           <View style={styles.buttonContainer}>
             <Pressable style={styles.button} onPress={
               Platform.select({
-                android: () => router.navigate("/mobile/(tabs)/CharacterCreation"),
+                android: () => router.navigate("/mobile/CharacterCreation"),
                 ios: () => router.navigate("/mobile/CharacterCreation"),
                 default: () => router.navigate("/web/CharacterCreation"),//This will be up to nick how we do this
               })

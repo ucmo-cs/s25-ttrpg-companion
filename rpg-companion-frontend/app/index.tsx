@@ -63,9 +63,10 @@ export default function CustomLogin() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem("characters", data.characters);
-      SessionStorage.setItem("userUid", data.user_uid)
-      console.log("Login Response", data);
+      SessionStorage.setItem("characters", data.user.characters);
+      SessionStorage.setItem("userUid", data.user.user_uid)
+      SessionStorage.setItem("token", data.session_token)
+      console.log("Login Response", data, "\n", "User UID: " + SessionStorage.getItem("userUid") + "\n", "Token: " + SessionStorage.getItem("token"));
 
       //This is how we can decide which code excutes per platform
       const nav =
