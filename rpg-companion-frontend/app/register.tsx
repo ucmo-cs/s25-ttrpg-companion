@@ -66,11 +66,9 @@ export default function Register() {
       console.log("Login Response", data);
 
       //This is how we can decide which code excutes per platform
-      const nav = Platform.select({
-        android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
-        ios: () => router.navigate("/mobile/HomeMobile"),
-        default: () => router.navigate("/web/HomeWeb"),
-      });
+      const nav  =
+        () => router.navigate("/CharacterSelection")
+      ;
       nav();
     } catch (error) {
       console.log("Registration failed", error);

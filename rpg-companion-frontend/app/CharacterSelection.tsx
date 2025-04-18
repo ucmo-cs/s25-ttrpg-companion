@@ -61,6 +61,9 @@ export default function CharacterSelect(){
           "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/delete-character",
           {
             method: "DELETE",
+            headers: {
+              'session_token': SessionStorage.getItem("token")
+            }, 
             body: JSON.stringify({
               user_uid: userUid,
               character_uid: key,
@@ -72,6 +75,8 @@ export default function CharacterSelect(){
           console.log("!response.ok");
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        const data = await response.json()
+        SessionStorage.setItem("token", data.session_token);
     }
     catch (error) {
         console.log("Could not delete character: ", error);
@@ -114,6 +119,7 @@ export default function CharacterSelect(){
         const data = await response.json();
         SessionStorage.setItem("selectedCharacterData", data.character);
         SessionStorage.setItem("token", data.session_token);
+        SessionStorage.setItem("charInventory", data.character.inventory);
         console.log("Character Recieved", data.character);
         console.log("Session Token Recieved: " + data.session_token);
         nav();

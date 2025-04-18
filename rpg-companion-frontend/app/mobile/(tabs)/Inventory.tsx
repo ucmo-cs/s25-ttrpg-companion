@@ -19,43 +19,8 @@ const globalText = {
 export default function Inventory() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  type InventoryItem = {
-    attributes: (string | number)[];
-    properties?: string;
-    armor_class?: number;
-    damage_type?: string;
-    description: string;
-    name: string;
-    type: string;
-  };
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const inventory =   SessionStorage.getItem("charInventory");
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const res = await fetch(
-          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-character",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              session_token: "cooper_is_slow",
-            },
-            body: JSON.stringify({
-              user_uid: SessionStorage.getItem("userUid"),
-              character_uid: "f5774f3e-ee6e-43b4-ac9e-d44f6863a196",
-            }),
-          }
-        );
-        const data = await res.json();
-        console.log("Inventory Data:", data.character.inventory);
-        setInventory(data.character.inventory);
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
-      }
-    };
-    fetchInventory();
-  }, []);
   const handleItemPress = (myItem) => {
     setSelectedItem(myItem);
     setModalVisible(true);
