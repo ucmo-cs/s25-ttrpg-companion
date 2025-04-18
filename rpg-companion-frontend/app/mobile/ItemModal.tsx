@@ -28,16 +28,23 @@ const ItemModal = ({ item, visible, onClose }) => {
           <Text style={styles.modalTextHeader}>{item.name}</Text>
           <MaterialCommunityIcons name={item.icon} size={80} color="white" />
           <View style={styles.attributesContainer}>
-            <View style={styles.attributesTextContainer}>
-              <Text style={styles.attributeText}>Piercing</Text>
-            </View>
-            <View style={styles.attributesTextContainer}>
-              <Text style={styles.attributeText}>Slow</Text>
-            </View>
-            <View style={styles.attributesTextContainer}>
-              <Text style={styles.attributeText}>1d6</Text>
-            </View>
+            {item.attributes?.map((attr, i) => (
+              <View key={i} style={styles.attributesTextContainer}>
+                <Text style={styles.attributeText}>{String(attr)}</Text>
+              </View>
+            ))}
+            {item.damage_type && (
+              <View style={styles.attributesTextContainer}>
+                <Text style={styles.attributeText}>{item.damage_type}</Text>
+              </View>
+            )}
+            {item.armor_class && (
+              <View style={styles.attributesTextContainer}>
+                <Text style={styles.attributeText}>AC +{item.armor_class}</Text>
+              </View>
+            )}
           </View>
+
           <Text style={styles.modalText}>{item.description}</Text>
           <Pressable
             style={styles.buttonClose}
@@ -61,6 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
+    backgroundColor: "#121427",
     margin: 20,
     width: "90%",
     borderWidth: 1,

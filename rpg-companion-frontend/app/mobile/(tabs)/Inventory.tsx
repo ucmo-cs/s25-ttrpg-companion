@@ -1,8 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import ItemModal from "../ItemModal";
+import SessionStorage from "react-native-session-storage";
 const globalText = {
   color: "white",
   fontFamily: "Sora",
@@ -11,13 +19,45 @@ const globalText = {
 export default function Inventory() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [inventory, setInventory] = useState({
-    name: "",
-    amount: "",
-    notes: "",
-  });
-  const handleItemPress = (item) => {
-    setSelectedItem(item);
+  type InventoryItem = {
+    attributes: (string | number)[];
+    properties?: string;
+    armor_class?: number;
+    damage_type?: string;
+    description: string;
+    name: string;
+    type: string;
+  };
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const res = await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-character",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              session_token: "cooper_is_slow",
+            },
+            body: JSON.stringify({
+              user_uid: SessionStorage.getItem("userUid"),
+              character_uid: "f5774f3e-ee6e-43b4-ac9e-d44f6863a196",
+            }),
+          }
+        );
+        const data = await res.json();
+        console.log("Inventory Data:", data.character.inventory);
+        setInventory(data.character.inventory);
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+      }
+    };
+    fetchInventory();
+  }, []);
+  const handleItemPress = (myItem) => {
+    setSelectedItem(myItem);
     setModalVisible(true);
   };
 
@@ -25,68 +65,70 @@ export default function Inventory() {
     setModalVisible(false);
     setSelectedItem(null);
   };
+  const getIconForItem = (item) => {
+    if (item.type === "weapon") {
+      if (item.name.toLowerCase().includes("bow")) return "bow-arrow";
+      if (item.name.toLowerCase().includes("sword")) return "sword";
+      if (item.name.toLowerCase().includes("axe")) return "axe";
+      if (item.name.toLowerCase().includes("wand")) return "wand";
+      return "sword-cross";
+    }
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await fetch(
-          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-character"
-        );
-        const data = await response.json();
-        console.log("fetchInventory data", data);
-        setInventory(data.inventory);
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
-      }
-    };
+    if (item.type === "armor") {
+      if (item.name.toLowerCase().includes("shield")) return "shield-half-full";
+      if (item.name.toLowerCase().includes("helmet")) return "helmet";
+      if (item.name.toLowerCase().includes("leather")) return "tshirt-v";
+      return "shield";
+    }
 
-    fetchInventory();
-  }, []);
-
+    return "help-circle"; // fallback
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Inventory Screen</Text>
-      <View style={styles.staticContainer}>
-        <View style={styles.itemContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              handleItemPress({
-                name: "Shortbow",
-                description:
-                  "The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil. The rest of the armor is made of softer and more flexible materials.",
-                icon: "bow-arrow",
-              })
-            }
-          >
-            <MaterialCommunityIcons name="bow-arrow" size={50} color="white" />
-          </TouchableOpacity>
-          {selectedItem && (
-            <ItemModal
-              item={selectedItem}
-              visible={modalVisible}
-              onClose={handleCloseModal}
-            />
-          )}
-          <View style={styles.itemContent}>
-            <Text style={styles.itemText}>Shortbow</Text>
-            <Text style={styles.itemText}>Simple Martial Weapon</Text>
-            <View style={styles.attributesContainer}>
-              <View style={styles.attributesTextContainer}>
-                <Text style={styles.attributeText}>Piercing</Text>
-              </View>
-              <View style={styles.attributesTextContainer}>
-                <Text style={styles.attributeText}>Slow</Text>
-              </View>
-              <View style={styles.attributesTextContainer}>
-                <Text style={styles.attributeText}>1d6</Text>
+
+      <ScrollView style={styles.staticContainer}>
+        {inventory.map((item, index) => (
+          <View key={index} style={styles.itemContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                handleItemPress({
+                  ...item,
+                  icon: getIconForItem(item),
+                  description: item.description || "No description available",
+                })
+              }
+            >
+              <MaterialCommunityIcons
+                name={getIconForItem(item)}
+                size={50}
+                color="white"
+              />
+            </TouchableOpacity>
+            {selectedItem && (
+              <ItemModal
+                item={selectedItem}
+                visible={modalVisible}
+                onClose={handleCloseModal}
+              />
+            )}
+            <View style={styles.itemContent}>
+              <Text style={styles.itemText}>{item.name}</Text>
+              <Text style={styles.itemText}>{item.properties}</Text>
+              <View style={styles.attributesContainer}>
+                {item.attributes?.map((attr, i) => (
+                  <View style={styles.attributesTextContainer}>
+                    <Text style={styles.attributeText}>{attr || ""}</Text>
+                  </View>
+                ))}
               </View>
             </View>
+            <TouchableOpacity style={styles.equipContainer}>
+              <Text style={styles.equipButton}>Equip</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.equipContainer}>
-            <Text style={styles.equipButton}>Equip</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
