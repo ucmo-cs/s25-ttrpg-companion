@@ -19,8 +19,27 @@ const globalText = {
 export default function Inventory() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const inventory = SessionStorage.getItem("charInventory");
 
+  useEffect(() => {
+    const raw = SessionStorage.getItem("charInventory");
+    try {
+      const parsed = JSON.parse(raw);
+      const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
+      setInventory(flat);
+      console.log("Parsed inventory:", flat);
+    } catch (err) {
+      console.error("Failed to parse inventory:", err);
+    }
+
+    // const raw2 = SessionStorage.getItem("selectedCharacterData");
+    // try {
+    //   const parsed = JSON.parse(raw2);
+    //   console.log("Parsed selected character data:", parsed);
+    // } catch (err) {
+    //   console.error("Failed to parse selected character data:", err);
+    // }
+  }, []);
+  const [inventory, setInventory] = useState<Array<any>>([]);
   const handleItemPress = (myItem) => {
     setSelectedItem(myItem);
     setModalVisible(true);
