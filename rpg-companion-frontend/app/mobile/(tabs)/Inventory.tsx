@@ -19,7 +19,7 @@ const globalText = {
 export default function Inventory() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const inventory =   SessionStorage.getItem("charInventory");
+  const inventory = SessionStorage.getItem("charInventory");
 
   const handleItemPress = (myItem) => {
     setSelectedItem(myItem);

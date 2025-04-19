@@ -11,58 +11,114 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import SessionStorage from "react-native-session-storage";
+import { Circle } from "lucide-react-native";
 
 const globalText = {
   color: "white",
   fontFamily: "Sora",
 };
-
+const items = [
+  {
+    name: "Shortsword",
+    type: "weapon",
+    properties: "Simple Melee Weapon",
+    damage_type: "1d6",
+    attributes: ["Slashing", "Finess", "Vex"],
+    description: "A simple shortsword",
+  },
+  {
+    name: "Shortbow",
+    type: "weapon",
+    properties: "Simple Ranged Weapon",
+    damage_type: "1d6",
+    attributes: ["Piercing", "Slow"],
+    description: "A simple shortbow",
+  },
+  {
+    name: "Leather Armor",
+    type: "armor",
+    damage_type: "",
+    armor_class: 11,
+    attributes: ["Light"],
+    description: "A simple set of leather armor",
+  },
+  {
+    name: "Shield",
+    type: "armor",
+    damage_type: "",
+    armor_class: 2,
+    attributes: ["Shield"],
+    description: "A simple shield",
+  },
+];
 export default function CharacterCreation() {
   const initialCharacterData = {
-    name: "",
-    species: "",
-    class: "",
-    subclass: "",
-    inventoryNotes: "",
-    str: "10",
-    dex: "10",
-    con: "10",
-    wis: "10",
-    int: "10",
-    cha: "10",
+    user_uid: "",
+    character_uid: "",
+    character: {
+      name: "",
+      class_id: "",
+      subclass_id: "",
+      species_id: "",
+      level: 1,
+      proficiency_bonus: 1,
+      hp: 0,
+      armor_class: 10,
+      features: {
+        classfeatures: [],
+        subclassfeatures: [],
+        speciesfeatures: [],
+      },
+      ability_scores: {
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 10,
+      },
+      inventory: [],
+      character_notes: "",
+    },
   };
   const [characterData, setCharacterData] = useState(initialCharacterData);
 
-  const handleChange = (key, value) => {
-    setCharacterData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChange = (key: string, value: string) => {
+    if (["str", "dex", "con", "int", "wis", "cha"].includes(key)) {
+      setCharacterData((prev) => ({
+        ...prev,
+        character: {
+          ...prev.character,
+          ability_scores: {
+            ...prev.character.ability_scores,
+            [key]: Number(value),
+          },
+        },
+      }));
+    } else {
+      setCharacterData((prev) => ({
+        ...prev,
+        character: {
+          ...prev.character,
+          [key]: value,
+        },
+      }));
+    }
   };
   const user_uid = SessionStorage.getItem("userUid");
   const session_token = SessionStorage.getItem("token");
-  const payload = {
-    user_uid: user_uid,
-    token: session_token,
-    character: {
-      name: characterData.name,
-      hp: characterData.str, // placeholder
-      ac: characterData.dex, // placeholder
-      items: {
-        shortsword: {
-          amount: 1,
-          notes: "A short sword",
-          weight: 15,
-        },
-        gold: {
-          amount: 100,
-          notes: "Gold coins",
-          weight: 0.1,
-        },
-      },
-    },
-  };
+
   const submitCharacter = async () => {
+    const filteredInventory = items.filter((item) =>
+      SelectedOptions.includes(item.name)
+    );
+    const payload = {
+      user_uid: user_uid,
+      character: {
+        ...characterData.character,
+        inventory: [filteredInventory],
+      },
+    };
     try {
       const response = await fetch(
         "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/create-character",
@@ -70,6 +126,7 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Session_Token: session_token,
           },
           body: JSON.stringify(payload),
         }
@@ -78,12 +135,22 @@ export default function CharacterCreation() {
       console.log(data);
       alert("Character created successfully!");
       setCharacterData(initialCharacterData); // Reset the form after submission
+      setSelectedOptions([]); // Reset selected options
     } catch (error) {
       console.error(error);
       console.log("Data:", payload);
     }
   };
 
+  const [SelectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const handleOptionPress = (option: string) => {
+    setSelectedOptions(
+      (prev) =>
+        prev.includes(option)
+          ? prev.filter((item) => item !== option) // remove if selected
+          : [...prev, option] // add if not selected
+    );
+  };
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#121427" }}
@@ -97,37 +164,37 @@ export default function CharacterCreation() {
             placeholder="Name"
             style={styles.formControl}
             placeholderTextColor="#ccc"
-            value={characterData.name}
+            value={characterData.character.name}
             onChangeText={(text) => handleChange("name", text)}
           />
           <TextInput
             placeholder="Species"
             style={styles.formControl}
             placeholderTextColor="#ccc"
-            value={characterData.species}
-            onChangeText={(text) => handleChange("species", text)}
+            value={characterData.character.species_id}
+            onChangeText={(text) => handleChange("species_id", text)}
           />
           <TextInput
             placeholder="Class"
             style={styles.formControl}
             placeholderTextColor="#ccc"
-            value={characterData.class}
-            onChangeText={(text) => handleChange("class", text)}
+            value={characterData.character.class_id}
+            onChangeText={(text) => handleChange("class_id", text)}
           />
           <TextInput
             placeholder="Subclass"
             style={styles.formControl}
             placeholderTextColor="#ccc"
-            value={characterData.subclass}
-            onChangeText={(text) => handleChange("subclass", text)}
+            value={characterData.character.subclass_id}
+            onChangeText={(text) => handleChange("subclass_id", text)}
           />
           <TextInput
             style={[styles.formControl, { height: 100 }]}
             placeholderTextColor="#ccc"
             multiline={true}
-            value={characterData.inventoryNotes}
-            onChangeText={(text) => handleChange("inventoryNotes", text)}
-            placeholder="Inventory"
+            value={characterData.character.character_notes}
+            onChangeText={(text) => handleChange("character_notes", text)}
+            placeholder="Notes"
           />
           <Text style={styles.AbilityScores}>Ability Scores</Text>
           <View style={styles.abilityScoreWrapper}>
@@ -138,7 +205,7 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.str}
+                  value={characterData.character.ability_scores.str.toString()}
                   onChangeText={(text) => handleChange("str", text)}
                 />
               </View>
@@ -148,7 +215,7 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.dex}
+                  value={characterData.character.ability_scores.dex.toString()}
                   onChangeText={(text) => handleChange("dex", text)}
                 />
               </View>
@@ -158,7 +225,7 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.con}
+                  value={characterData.character.ability_scores.con.toString()}
                   onChangeText={(text) => handleChange("con", text)}
                 />
               </View>
@@ -170,7 +237,7 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.wis}
+                  value={characterData.character.ability_scores.wis.toString()}
                   onChangeText={(text) => handleChange("wis", text)}
                 />
               </View>
@@ -181,7 +248,7 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.int}
+                  value={characterData.character.ability_scores.int.toString()}
                   onChangeText={(text) => handleChange("int", text)}
                 />
               </View>
@@ -191,11 +258,56 @@ export default function CharacterCreation() {
                   style={styles.abilityScoreControl}
                   placeholder="10"
                   placeholderTextColor="#ccc"
-                  value={characterData.cha}
+                  value={characterData.character.ability_scores.cha.toString()}
                   onChangeText={(text) => handleChange("cha", text)}
                 />
               </View>
             </View>
+          </View>
+          <Text style={styles.Inventory}>Inventory</Text>
+          <View style={styles.radioContainer}>
+            <TouchableOpacity onPress={() => handleOptionPress("Shortsword")}>
+              <Circle
+                size={25}
+                color={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
+                style={{ marginBottom: 5 }}
+                strokeWidth={1}
+                fill={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
+              >
+                {" "}
+              </Circle>
+            </TouchableOpacity>
+            <Text style={styles.radioText}>Shortsword</Text>
+          </View>
+          <View style={styles.radioContainer}>
+            <TouchableOpacity
+              onPress={() => handleOptionPress("Leather Armor")}
+            >
+              <Circle
+                size={25}
+                color={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+                style={{ marginBottom: 5 }}
+                strokeWidth={1}
+                fill={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+              >
+                {" "}
+              </Circle>
+            </TouchableOpacity>
+            <Text style={styles.radioText}>Leather Armor</Text>
+          </View>
+          <View style={styles.radioContainer}>
+            <TouchableOpacity onPress={() => handleOptionPress("Shield")}>
+              <Circle
+                size={25}
+                color={SelectedOptions.includes("Shield") ? "#ccc" : ""}
+                style={{ marginBottom: 5 }}
+                strokeWidth={1}
+                fill={SelectedOptions.includes("Shield") ? "#ccc" : ""}
+              >
+                {" "}
+              </Circle>
+            </TouchableOpacity>
+            <Text style={styles.radioText}>Shield</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.button} onPress={submitCharacter}>
@@ -314,5 +426,19 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "left",
     marginTop: 10,
+  },
+  radioContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginStart: 20,
+    marginBottom: 10,
+  },
+  radioText: {
+    ...globalText,
+    flex: 1,
+    textAlign: "left",
+    fontSize: 24,
+    marginStart: 20,
   },
 });
