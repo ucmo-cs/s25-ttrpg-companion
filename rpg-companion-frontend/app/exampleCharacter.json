@@ -58,6 +58,6 @@
         }
         
         ],
-    "character_notes":""
+    "character_notes":[{"title": "example note", "note_content": "somthing profound!"}]
   }
 }

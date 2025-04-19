@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} from "react-native";
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
-import {Backpack,Swords,Notebook,House,Activity,FlaskConical,} from "lucide-react-native";
+import {Backpack,Swords,Notebook,House,Activity,FlaskConical,} from "lucide-react";
+import SessionStorage from "react-native-session-storage";
 import Notes from "./components/Notes";
 import Spells from "./components/Spells";
 import Combat from "./components/Combat";
@@ -14,6 +15,10 @@ export default function HomeWeb() {
 
   const [hp,setHp] = useState(10);
   const [tab, setTab] = useState("notes");
+  const [note, setNote] = useState(null);
+  const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
+ 
+  
 
 
   const minusHP = () => {
@@ -32,20 +37,20 @@ export default function HomeWeb() {
 
 
   const renderTab = () => {
+    console.log(character);
     switch (tab) {
       case "notes":
-        return <Notes title="enterTitle of last used or first note here" note="same with the note"/>;
+        return <Notes key="notes"/>;
       case "spells":
-        return <Spells test="test" />;
+        return <Spells key="spells" />;
       case "combat":
-        return <Combat test="test" />;
+        return <Combat key="combat" />;
       case "status":
-        return <Status test="test" />;
+        return <Status key="status" />;
       case "inventory":
-        return <Inventory test="test" />;
+        return <Inventory key="inventory" />;
     }
   }
-
 
 
   return (
@@ -58,21 +63,11 @@ export default function HomeWeb() {
               style={styles.pfp}
               resizeMode="cover"
             />
-            {/* Needs to have character sheets pfp used, placeholder for now */}
           </View>
           <View style={styles.charHeader}>
-            {/* Character Name */}
-            <Text style={styles.headName}>Legolas</Text>
-            {/* Character Species */}
-            <Text style={styles.headSpecies}>Elf</Text>
-            {/* Character Class */}
-            <Text
-              style={styles.headClass}
-              numberOfLines={1}
-              adjustsFontSizeToFit={true}
-            >
-              Ranger
-            </Text>
+            <Text style={styles.headName}>{character.name}</Text>
+            <Text style={styles.headSpecies}>{character.species_id}</Text>
+            <Text style={styles.headClass} numberOfLines={1} adjustsFontSizeToFit={true}>{character.class_id}</Text>
           </View>
           <View style={styles.dropDownContainerHolder}>
             <View style={styles.dropDownContainer}></View>
@@ -89,7 +84,7 @@ export default function HomeWeb() {
                 >
                   Strength
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.str}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -99,7 +94,7 @@ export default function HomeWeb() {
                 >
                   Dexterity
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.dex}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -109,7 +104,7 @@ export default function HomeWeb() {
                 >
                   Constitution
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.con}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -119,7 +114,7 @@ export default function HomeWeb() {
                 >
                   Intelligence
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.int}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -129,7 +124,7 @@ export default function HomeWeb() {
                 >
                   Wisdom
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.wis}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -139,7 +134,7 @@ export default function HomeWeb() {
                 >
                   Charisma
                 </Text>
-                <View style={styles.abilityName}>10</View>
+                <View style={styles.abilityName}>{character.ability_scores.cha}</View>
               </View>
             </View>
             <View style={styles.skillsHolder}>
@@ -149,35 +144,17 @@ export default function HomeWeb() {
                 <Text style={styles.skill}>Bonus</Text>
               </View>
               <View style={styles.skillsBody}>
-                {/* Will call a component to populate this table with the values of the correct character 
-            for now populated with dummy values*/}
 
-                <View style={styles.skillRow}>
+
+                {/* Dynamically render skills here */}
+
+                {/* <View style={styles.skillRow}>
                   <Text style={styles.skill}>Investigation</Text>
                   <Text style={styles.skill}>Intelligence</Text>
                   <Text style={styles.skill}>+2</Text>
                 </View>
+                 */}
 
-                <View style={styles.skillRow}>
-                  <Text style={styles.skill}>Arcana</Text>
-                  <Text style={styles.skill}>Intelligence</Text>
-                  <Text style={styles.skill}>+0</Text>
-                </View>
-                <View style={styles.skillRow}>
-                  <Text style={styles.skill}>Deception</Text>
-                  <Text style={styles.skill}>Charisma</Text>
-                  <Text style={styles.skill}>+1</Text>
-                </View>
-                <View style={styles.skillRow}>
-                  <Text style={styles.skill}>Perception</Text>
-                  <Text style={styles.skill}>Wisdom</Text>
-                  <Text style={styles.skill}>+3</Text>
-                </View>
-                <View style={styles.skillRow}>
-                  <Text style={styles.skill}>Persuasion</Text>
-                  <Text style={styles.skill}>Charisma</Text>
-                  <Text style={styles.skill}>-1</Text>
-                </View>
               </View>
             </View>
           
@@ -235,19 +212,19 @@ export default function HomeWeb() {
             </View>
             <View style={styles.dynamicSelector}> 
             <View style={styles.tabOption}>
-              <Notebook size={100} strokeWidth={0.75} onPress={() => setTab("notes")}></Notebook>
+              <Notebook size={100} strokeWidth={0.75} onClick={() => setTab("notes")}></Notebook>
             </View>
             <View style={styles.tabOption}>
-              <FlaskConical size={100} strokeWidth={0.75} onPress={() => setTab("spells")}></FlaskConical>
+              <FlaskConical size={100} strokeWidth={0.75} onClick={() => setTab("spells")}></FlaskConical>
             </View>
             <View style={styles.tabOption}>
-              <Swords size={100} strokeWidth={0.75} onPress={() => setTab("combat")}></Swords>
+              <Swords size={100} strokeWidth={0.75} onClick={() => setTab("combat")}></Swords>
             </View>
             <View style={styles.tabOption}>
-              <Activity size={100} strokeWidth={0.75} onPress={() => setTab("status")}></Activity>
+              <Activity size={100} strokeWidth={0.75} onClick={() => setTab("status")}></Activity>
             </View>
             <View style={styles.tabOption}>
-              <Backpack size={100} strokeWidth={0.75} onPress={() => setTab("inventory")}></Backpack>
+              <Backpack size={100} strokeWidth={0.75} onClick={() => setTab("inventory")}></Backpack>
             </View>
             
           </View>
@@ -312,7 +289,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     margin: 10,
-    backgroundColor: "green",
+    backgroundColor: "white",
     justifyContent: "center",
     alignContent: "center",
   },
@@ -475,7 +452,6 @@ const styles = StyleSheet.create({
   dynamicSelector: {
     flex:0.15,
     flexDirection:"row",
-    // backgroundColor:"green",
     margin: "1%",
     borderRadius: 10,
     height:"15%",
@@ -492,7 +468,6 @@ const styles = StyleSheet.create({
   tabOption: {
     flex:0.15,
     marginVertical: "0.5%",
-    // backgroundColor:"red",
     justifyContent:"center",
     alignItems:"center"
   }

@@ -9,10 +9,12 @@ const GlobalStyles = StyleSheet.create({
     justifyContent: "center",
     fontFamily: "Sora-Regular",
     fontSize: 16,
+    minWidth:1200,
+    minHeight:675
   },
   dynamicHolder: {
     flex: 1,
-    flexDirection:"column",
+    flexDirection:"row",
     backgroundColor:"green",
     marginHorizontal:10,
     marginBottom:10

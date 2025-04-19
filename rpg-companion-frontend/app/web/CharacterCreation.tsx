@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, TextInput, ScrollView, Platform, KeyboardAvoidingView, TouchableOpacity,} from "react-native";
-  import { useLocalSearchParams } from "expo-router";
+  import { useLocalSearchParams, router } from "expo-router";
   import React, { useEffect, useState } from "react";
   import SessionStorage from "react-native-session-storage";
   import GlobalStyles from "../globalstyles";
@@ -47,7 +47,6 @@ import {View, Text, StyleSheet, TextInput, ScrollView, Platform, KeyboardAvoidin
   export default function CharacterCreation() {
     const initialCharacterData = {
       user_uid: "",
-      character_uid: "",
       character: {
         name: "",
         class_id: "",
@@ -124,11 +123,13 @@ import {View, Text, StyleSheet, TextInput, ScrollView, Platform, KeyboardAvoidin
             body: JSON.stringify(payload),
           }
         );
-        const data = await response.text();
+        const data = await response.json();
         console.log(data);
         alert("Character created successfully!");
+        SessionStorage.setItem("token", data.session_token)
         setCharacterData(initialCharacterData); // Reset the form after submission
         setSelectedOptions([]); // Reset selected options
+        router.navigate("../../CharacterSelection")
       } catch (error) {
         console.error(error);
         console.log("Data:", payload);

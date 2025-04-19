@@ -21,9 +21,8 @@ export default function Inventory() {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    const raw = SessionStorage.getItem("charInventory");
+    const parsed = SessionStorage.getItem("charInventory");
     try {
-      const parsed = JSON.parse(raw);
       const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
       setInventory(flat);
       console.log("Parsed inventory:", flat);

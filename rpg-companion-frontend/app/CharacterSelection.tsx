@@ -118,15 +118,9 @@ export default function CharacterSelect() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem(
-        "selectedCharacterData",
-        JSON.stringify(data.character)
-      );
+      SessionStorage.setItem("selectedCharacterData",data.character);
       SessionStorage.setItem("token", data.session_token);
-      SessionStorage.setItem(
-        "charInventory",
-        JSON.stringify(data.character.inventory)
-      );
+      SessionStorage.setItem("charInventory",data.character.inventory);
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
       nav();
