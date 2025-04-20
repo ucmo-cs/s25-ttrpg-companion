@@ -30,13 +30,14 @@ export default function Inventory() {
       console.error("Failed to parse inventory:", err);
     }
 
-    // const raw2 = SessionStorage.getItem("selectedCharacterData");
-    // try {
-    //   const parsed = JSON.parse(raw2);
-    //   console.log("Parsed selected character data:", parsed);
-    // } catch (err) {
-    //   console.error("Failed to parse selected character data:", err);
-    // }
+    const raw2 = SessionStorage.getItem("selectedCharacterData");
+    try {
+      console.log(raw2);
+      const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
+      console.log("Parsed selected character data:", parsed);
+    } catch (err) {
+      console.error("Failed to parse selected character data:", err);
+    }
   }, []);
   const [inventory, setInventory] = useState<Array<any>>([]);
   const handleItemPress = (myItem) => {
