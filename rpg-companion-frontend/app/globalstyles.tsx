@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
+
 
 const GlobalStyles = StyleSheet.create({
   page: {
@@ -9,15 +10,31 @@ const GlobalStyles = StyleSheet.create({
     justifyContent: "center",
     fontFamily: "Sora-Regular",
     fontSize: 16,
-    minWidth:1200,
-    minHeight:675
+
+    ...Platform.select({
+      web: {
+        minWidth:1200,
+        minHeight:675
+      },
+        }),
   },
   dynamicHolder: {
     flex: 1,
-    flexDirection:"row",
     backgroundColor:"green",
     marginHorizontal:10,
-    marginBottom:10
+    marginBottom:10,
+
+    ...Platform.select({
+      ios: {
+        flexDirection:"column",
+      },
+      android: {
+        flexDirection:"column",
+      },
+      web: {
+        flexDirection:"row",
+      },
+        }),
   }
 });
 

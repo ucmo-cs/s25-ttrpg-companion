@@ -78,16 +78,21 @@ export default function CharacterSelect() {
       }
       const data = await response.json();
       SessionStorage.setItem("token", data.session_token);
+      console.log("Character Deleted");
+
+      //removing the character from current object
+      setCharacters((prevCharacters) => {
+        return prevCharacters.filter(
+          (characters) => characters.character_uid != key
+        );
+      });
+
     } catch (error) {
       console.log("Could not delete character: ", error);
+      alert("Could not delete character")
     }
-    console.log("Character Deleted");
-    //removing the character from current object
-    setCharacters((prevCharacters) => {
-      return prevCharacters.filter(
-        (characters) => characters.character_uid != key
-      );
-    });
+
+    //pushing new list to session storage
     sessionStorage.setItem("characters", characters);
     console.log(characters);
   };
