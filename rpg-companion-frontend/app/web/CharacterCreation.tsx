@@ -47,6 +47,7 @@ import {View, Text, StyleSheet, TextInput, ScrollView, Platform, KeyboardAvoidin
   export default function CharacterCreation() {
     const initialCharacterData = {
       user_uid: "",
+      character_uid: "",
       character: {
         name: "",
         class_id: "",
@@ -55,6 +56,8 @@ import {View, Text, StyleSheet, TextInput, ScrollView, Platform, KeyboardAvoidin
         level: 1,
         proficiency_bonus: 1,
         hp: 0,
+        speed: 30,
+        initiative: 0,
         armor_class: 10,
         features: {
           classfeatures: [],

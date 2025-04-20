@@ -13,11 +13,11 @@ import Inventory from "./components/Inventory";
 
 export default function HomeWeb() {
 
-  const [hp,setHp] = useState(10);
+  const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
+  const [hp,setHp] = useState(character.hp);
   const [tab, setTab] = useState("notes");
   const [note, setNote] = useState(null);
-  const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
- 
+  
   
 
 
@@ -168,7 +168,7 @@ export default function HomeWeb() {
                   color="white"
                   style={styles.feather}
                 />
-                <Text style={styles.skill}>5</Text>
+                <Text style={styles.skill}>{character.proficiency_bonus}</Text>
               </View>
               <View style={styles.featherWrapper}>
                 <Feather
@@ -177,7 +177,7 @@ export default function HomeWeb() {
                   color="white"
                   style={styles.feather}
                 />
-                <Text style={styles.skill}>5</Text>
+                <Text style={styles.skill}>{character.speed}</Text>
               </View>
               <View style={styles.featherWrapper}>
                 <Feather
@@ -186,7 +186,7 @@ export default function HomeWeb() {
                   color="white"
                   style={styles.feather}
                 />
-                <Text style={styles.skill}>5</Text>
+                <Text style={styles.skill}>{character.armor_class}</Text>
               </View>
 
               <View style={styles.healthContainer}>

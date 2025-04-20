@@ -20,6 +20,7 @@ const GlobalStyles = StyleSheet.create({
   },
   dynamicHolder: {
     flex: 1,
+    display:"flex",
     backgroundColor:"green",
     marginHorizontal:10,
     marginBottom:10,
