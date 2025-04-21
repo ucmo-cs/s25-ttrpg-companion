@@ -63,6 +63,7 @@ export default function CharacterCreation() {
       level: 1,
       proficiency_bonus: 1,
       hp: 0,
+      max_hp: 0,
       speed: 30,
       initiative: 0,
       armor_class: 10,

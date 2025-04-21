@@ -23,6 +23,9 @@ import {
 } from "react-native";
 // import CheckBox from "@react-native-community/checkbox";
 import SessionStorage from "react-native-session-storage";
+import { useNavigation } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
+import { useRouter } from "expo-router";
 
 const initialSkillsData = [
   {
@@ -172,7 +175,6 @@ const globalText = {
 
 export default function HomeMobile() {
   const character = SessionStorage.getItem("selectedCharacterData");
-
   //Adjusting HP
 
   ///////////Need something that allows us to import their max hp and make that adjustable.//////////
@@ -192,7 +194,8 @@ export default function HomeMobile() {
 
   const [filter, setFilter] = useState("all");
   const [menuVisible, setMenuVisible] = useState(false);
-  const [editListVisible, setEditListVisible] = useState(false);
+  const [editSkillsListVisible, setEditSkillsListVisible] = useState(false);
+  const [editCharListVisible, setEditCharListVisible] = useState(false);
 
   const filteredSkills = skillsData.filter((skill) => {
     if (filter === "favorites") return skill.favorite;
@@ -219,11 +222,58 @@ export default function HomeMobile() {
         {/* Needs to have character sheets pfp used, placeholder for now */}
       </View>
       <View style={styles.staticContainer}>
-        <Text style={styles.header}>{character.name}</Text>
-        <Text style={styles.header}>{character.species_id}</Text>
-        <Text style={styles.header} numberOfLines={1} adjustsFontSizeToFit>
-          {character.class_id} ({character.subclass_id})
-        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            setEditCharListVisible(true);
+          }}
+        >
+          <Text style={styles.header}>{character.name}</Text>
+          <Text style={styles.header}>{character.species_id}</Text>
+          <Text style={styles.header} numberOfLines={1} adjustsFontSizeToFit>
+            {character.class_id} ({character.subclass_id})
+          </Text>
+        </TouchableOpacity>
+
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={editCharListVisible}
+          onRequestClose={() => setEditCharListVisible(false)}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Edit Character</Text>
+            <View style={styles.row}>
+              <Text style={styles.editCharSubtitle}>Character Name: </Text>
+              <TextInput
+                style={styles.editCharTextInput}
+                placeholder={character.name}
+                placeholderTextColor="#ccc"
+              ></TextInput>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.editCharSubtitle}>Level: </Text>
+              <TextInput
+                style={styles.editCharTextInput}
+                placeholder={character.level.toString()}
+                placeholderTextColor="#ccc"
+                keyboardType="numeric"
+              ></TextInput>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.editCharSubtitle}>Max Hp: </Text>
+              <TextInput
+                style={styles.editCharTextInput}
+                // placeholder={character.max_hp.toString()}
+                placeholderTextColor="#ccc"
+                keyboardType="numeric"
+              ></TextInput>
+            </View>
+
+            <TouchableOpacity onPress={() => setEditCharListVisible(false)}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
 
       <View style={styles.iconContainer}>
@@ -317,11 +367,14 @@ export default function HomeMobile() {
       </View>
 
       <View style={styles.sectionHeader}>
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => setMenuVisible(true)}
+        >
           <AlignJustify style={styles.selectionIcon} color="white" size={45} />
         </TouchableOpacity>
 
-        <Text style={styles.sectionHeaderText}></Text>
+        <Text style={styles.sectionHeaderText}>Skill</Text>
         <Text style={styles.sectionHeaderText}>Ability</Text>
         <Text style={styles.sectionHeaderText}>Bonus</Text>
       </View>
@@ -387,7 +440,7 @@ export default function HomeMobile() {
             {/*Edit Skills option*/}
             <TouchableOpacity
               onPress={() => {
-                setEditListVisible(true);
+                setEditSkillsListVisible(true);
                 setMenuVisible(false);
               }}
             >
@@ -401,8 +454,8 @@ export default function HomeMobile() {
       <Modal
         transparent={true}
         animationType="slide"
-        visible={editListVisible}
-        onRequestClose={() => setEditListVisible(false)}
+        visible={editSkillsListVisible}
+        onRequestClose={() => setEditSkillsListVisible(false)}
       >
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Edit Skills</Text>
@@ -451,7 +504,7 @@ export default function HomeMobile() {
             )}
           />
 
-          <TouchableOpacity onPress={() => setEditListVisible(false)}>
+          <TouchableOpacity onPress={() => setEditSkillsListVisible(false)}>
             <Text style={styles.closeButton}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -523,10 +576,10 @@ const styles = StyleSheet.create({
   sectionHeaderText: {
     ...globalText,
     fontSize: 25,
-    flex: 1,
-    textAlign: "center",
-    // marginRight:
-    marginLeft: -50,
+    // flex: 1,
+    textAlign: "left",
+    marginRight: 39,
+    // marginLeft: -50,
     // width: "33%",
   },
   sectionContainer: {
@@ -706,5 +759,29 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     marginBottom: 10,
+  },
+  editCharSubtitle: {
+    ...globalText,
+    fontSize: 20,
+  },
+  editCharTextInput: {
+    ...globalText,
+    // flex: 1,
+    fontSize: 20,
+    textAlign: "center",
+    borderWidth: 2,
+    borderStyle: "solid",
+    borderColor: "white",
+    borderRadius: 10,
+    padding: 3,
+    maxWidth: 200,
+    alignContent: "flex-end",
+    alignSelf: "flex-end",
+    width: "100%",
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "flex-end",
   },
 });
