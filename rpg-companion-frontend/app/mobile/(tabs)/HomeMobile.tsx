@@ -22,6 +22,7 @@ import {
   Switch,
 } from "react-native";
 // import CheckBox from "@react-native-community/checkbox";
+import SessionStorage from "react-native-session-storage";
 
 const initialSkillsData = [
   {
@@ -170,6 +171,8 @@ const globalText = {
 };
 
 export default function HomeMobile() {
+  const character = SessionStorage.getItem("selectedCharacterData");
+
   //Adjusting HP
 
   ///////////Need something that allows us to import their max hp and make that adjustable.//////////
@@ -185,14 +188,10 @@ export default function HomeMobile() {
   };
 
   //Skill preferences like proficient and favorites
-  // const [skillPref, setSkillPref] = useState(skillsData);
   const [skillsData, setSkillsData] = useState(initialSkillsData);
 
   const [filter, setFilter] = useState("all");
   const [menuVisible, setMenuVisible] = useState(false);
-  // const [modalVisible, setModalVisible] = useState(false);
-  // const [selectedSkillIndex, setSelectedSkillIndex] = useState(null);
-  // const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [editListVisible, setEditListVisible] = useState(false);
 
   const filteredSkills = skillsData.filter((skill) => {
@@ -201,20 +200,6 @@ export default function HomeMobile() {
     return true;
   });
 
-  // const openEditModal = (index) => {
-  //   setSelectedSkillIndex(index);
-  //   setModalVisible(true);
-  // };
-
-  // const updateSkill = (type, value) => {
-  //   const updatedSkills = [...skillPref];
-  //   updatedSkills[selectedSkillIndex][type] = value;
-  //   setSkillPref(updatedSkills);
-  // };
-
-  //If the plus/minus is touched it will increase/decrease 1
-  //If the Hp textArea is touched the user will enter a number then click plus/minus
-  //That will add/subtract the number entered from the current Hp
   const handleHp = (type) => {
     const amount = getCustomHp();
     setHp((prev) => (type === "add" ? prev + amount : prev - amount));
@@ -234,26 +219,28 @@ export default function HomeMobile() {
         {/* Needs to have character sheets pfp used, placeholder for now */}
       </View>
       <View style={styles.staticContainer}>
-        <Text style={styles.header}>Character Name</Text>
-        <Text style={styles.header}>Species</Text>
-        <Text style={styles.header}>Class (SubClass)</Text>
+        <Text style={styles.header}>{character.name}</Text>
+        <Text style={styles.header}>{character.species_id}</Text>
+        <Text style={styles.header} numberOfLines={1} adjustsFontSizeToFit>
+          {character.class_id} ({character.subclass_id})
+        </Text>
       </View>
 
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Circle size={70} strokeWidth={1} color={"white"} fill="#3E4A59" />
-          <Text style={styles.iconText}>10</Text>
+          <Text style={styles.iconText}>{character.proficiency_bonus}</Text>
         </View>
 
         <View style={styles.iconWrapper}>
           <Square size={70} color="white" strokeWidth={1} fill="#3E4A59" />
-          <Text style={styles.iconText}>20</Text>
+          <Text style={styles.iconText}>{character.speed}</Text>
         </View>
 
         <View style={styles.iconWrapper}>
           {/*Need to check in with inventory if equipped with a shield*/}
           <Shield size={70} color="white" strokeWidth={1} fill="#3E4A59" />
-          <Text style={styles.iconText}>30</Text>
+          <Text style={styles.iconText}>{character.armor_class}</Text>
         </View>
         <TouchableOpacity
           onPress={() => handleHp("add")}
@@ -277,7 +264,7 @@ export default function HomeMobile() {
               onBlur={() => setEditHp(false)}
             />
           ) : (
-            <Text style={styles.hp}>{hp}</Text>
+            <Text style={styles.hp}>{character.hp}</Text>
           )}
         </TouchableOpacity>
 
@@ -289,9 +276,6 @@ export default function HomeMobile() {
         </TouchableOpacity>
       </View>
 
-      {/* </View> */}
-
-      {/* </View> */}
       <View style={styles.iconContainer}>
         {abilityData.map((item, index) => (
           <View style={styles.iconWrapper}>
@@ -337,7 +321,7 @@ export default function HomeMobile() {
           <AlignJustify style={styles.selectionIcon} color="white" size={45} />
         </TouchableOpacity>
 
-        <Text style={styles.sectionHeaderText}>Skill</Text>
+        <Text style={styles.sectionHeaderText}></Text>
         <Text style={styles.sectionHeaderText}>Ability</Text>
         <Text style={styles.sectionHeaderText}>Bonus</Text>
       </View>
