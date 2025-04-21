@@ -9,8 +9,8 @@ import Spells from "./components/Spells";
 import Combat from "./components/Combat";
 import Status from "./components/Status";
 import Inventory from "./components/Inventory";
+import { router } from "expo-router";
  
-
 export default function HomeWeb() {
 
   const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
@@ -18,9 +18,6 @@ export default function HomeWeb() {
   const [tab, setTab] = useState("notes");
   const [note, setNote] = useState(null);
   
-  
-
-
   const minusHP = () => {
     if (hp <= 0) {
       setHp(0);
@@ -34,7 +31,6 @@ export default function HomeWeb() {
     setHp(hp + 1);
     console.log(hp);
   }
-
 
   const renderTab = () => {
     console.log(character);
@@ -51,7 +47,6 @@ export default function HomeWeb() {
         return <Inventory key="inventory" />;
     }
   }
-
 
   return (
     <View style={GlobalStyles.page}>
@@ -265,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     height: 100,
     width: "100%",
-    backgroundColor: "white",
+    backgroundColor: "rgb(255, 255, 255)",
     color: "black",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,

@@ -92,11 +92,12 @@ const styles = StyleSheet.create({
     },
     textArea: {
         flex:0.9,
-        backgroundColor:"#121427",
+        backgroundColor: '#1e293b',
         color:"white",
         fontSize: 18,
         margin:10,
-        padding:1
+        padding:2,
+        borderRadius:5
     },
     submit: {
         flex:0.1,

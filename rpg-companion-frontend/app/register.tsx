@@ -99,6 +99,7 @@ export default function Register() {
         ></TextInput>
         <TextInput
           value={password}
+          secureTextEntry
           onChangeText={setPassword}
           onSubmitEditing={handleRegistration}
           autoCapitalize="none"
@@ -108,6 +109,7 @@ export default function Register() {
         ></TextInput>
         <TextInput
           value={passwordTwo}
+          secureTextEntry
           onChangeText={setPasswordTwo}
           onSubmitEditing={handleRegistration}
           style={styles.login}
