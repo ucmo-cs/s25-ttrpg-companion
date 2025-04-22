@@ -40,7 +40,7 @@ export default function HomeWeb() {
       case "spells":
         return <Spells key="spells" />;
       case "combat":
-        return <Combat key="combat" />;
+        return <Combat key="combat" character={character} />;
       case "status":
         return <Status key="status" />;
       case "inventory":
