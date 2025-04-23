@@ -2,10 +2,6 @@ import { StyleSheet, Platform } from "react-native";
 import { useFonts } from "expo-font";
 
 
- const [fontsLoaded] = useFonts({
-    "Sora-Regular": require("../assets/fonts/Sora-Regular.ttf"),
-  });
-
 const GlobalStyles = StyleSheet.create({
   page: {
     backgroundColor: "#121427",
