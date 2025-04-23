@@ -5,7 +5,6 @@ import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
 import GlobalStyles from '@/app/globalstyles';
 import { FlatList } from 'react-native-gesture-handler';
 import { BowArrow } from 'lucide-react';
-import { BlurView } from "expo-blur"
 
 interface CombatProps {
   inventory: JSON
@@ -30,13 +29,13 @@ const Combat = (props: CombatProps) => {
         description: "Here is a test description for all of these things"
       },
       {
-        type: "Shortbow",
+        type: "Sword",
         hit: "+5",
         damage: "1d6",
         description: "Here is a test description for all of these things"
       },
       {
-        type: "Shortbow",
+        type: "Healing Potion",
         hit: "+5",
         damage: "1d6",
         description: "Here is a test description for all of these things"
@@ -111,11 +110,13 @@ const Combat = (props: CombatProps) => {
 
     <View style={styles.card}>
       <Text style={[styles.itemName, { textAlign: "center", backgroundColor: "rgba(0,0,0,0.2)", flex: 0.1, width: "100%", }]}>{item.type}</Text>
-      <ImageBackground resizeMode='stretch' tintColor={"rgba(255,255,255,0.3"} blurRadius={12} style={[styles.background, { flex: 0.9 }]} source={getItemType(item)}>
+      <ImageBackground tintColor={"rgba(255,255,255,0.3"} blurRadius={12} style={[styles.background, { flex: 0.9 }]} source={getItemType(item)}>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.hitOrDamage}>Hit: {item.hit}</Text>
             <Text style={styles.hitOrDamage}>Damage: {item.damage}</Text>
+            <Text style={[styles.hitOrDamage, {fontSize:12}]}>{item.description}</Text>
+
           </ScrollView>
         </View>
       </ImageBackground>
@@ -218,7 +219,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#3E4A59",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 15
+    borderRadius: 15,
+    overflow: "hidden",
   },
   itemName: {
     color: "white",
@@ -227,7 +229,6 @@ const styles = StyleSheet.create({
     margin: 5
   },
   background: {
-    resizeMode: "contain",
     height: 250,
     width: 250,
     filter: "",
@@ -244,7 +245,8 @@ const styles = StyleSheet.create({
     color: "white",
     flex: 0.5,
     backgroundColor: "rgba(0,0,0,0.3)",
-    margin: 5,
+    margin: 2,
+    padding:5,
     borderRadius: 15,
     fontSize: 30,
 

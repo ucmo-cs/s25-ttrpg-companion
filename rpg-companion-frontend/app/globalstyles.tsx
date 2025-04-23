@@ -41,7 +41,12 @@ const GlobalStyles = StyleSheet.create({
         flexDirection:"row",
       },
         }),
-  }
+  },
+  flexBox: {
+    flex: 1,
+    backgroundColor: "#121427",
+    flexDirection: "column"
+  },
 });
 
 export default GlobalStyles;
