@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Circle,
   Square,
@@ -173,8 +173,58 @@ const globalText = {
   fontFamily: "Sora",
 };
 
+const calculateBonus = (score) => {
+  const modifier = Math.floor((score-10)/2);
+  return(modifier >= 0 ? "+" : "") + modifier.toString();
+}
 export default function HomeMobile() {
   const character = SessionStorage.getItem("selectedCharacterData");
+
+  const [abilityScores,setabilityScores] = useState([
+    {title: "Str", modifier: "+0", score: 10},
+    {title: "Dex", modifier: "+0", score: 10},
+    {title: "Con", modifier: "+0", score: 10},
+    {title: "Int", modifier: "+0", score: 10},
+    {title: "Wis", modifier: "+0", score: 10},
+    {title: "Cha", modifier: "+0", score: 10},
+  ]);
+  console.log("Character ability scores", character.ability_scores.cha);
+  
+  const rawData = character.ability_scores;
+  console.log("MyData", Number(rawData.dex));
+  const updated_ability_scores = 
+  [
+    {
+      title: "Str",
+      modifier: calculateBonus(Number(rawData.str)),
+      score: rawData.str,
+    },
+    {    title: "Dex",
+      modifier: calculateBonus(Number(rawData.dex)),
+      score: rawData.dex,},
+      {
+        title: "Con",
+        modifier: calculateBonus(Number(rawData.con)),
+        score: rawData.con,
+      },
+      {
+        title: "Int",
+        modifier: calculateBonus(Number(rawData.int)),
+        score: rawData.int,
+      },
+      {
+        title: "Wis",
+        modifier: calculateBonus(Number(rawData.wis)),
+        score: rawData.wis,
+      },
+      {
+        title: "Cha",
+        modifier: calculateBonus(Number(rawData.cha)),
+        score: rawData.cha,
+      },
+  ]
+  console.log(updated_ability_scores)
+  
   //Adjusting HP
 
   ///////////Need something that allows us to import their max hp and make that adjustable.//////////
@@ -327,7 +377,7 @@ export default function HomeMobile() {
       </View>
 
       <View style={styles.iconContainer}>
-        {abilityData.map((item, index) => (
+        {updated_ability_scores.map((item, index) => (
           <View style={styles.iconWrapper}>
             <PanelTopDashed
               style={styles.abilityIcons}
