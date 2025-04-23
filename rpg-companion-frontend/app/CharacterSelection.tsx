@@ -24,11 +24,13 @@ export default function CharacterSelect() {
   const userUid = SessionStorage.getItem("userUid");
   const [trashColor, setTrashColor] = useState("#af1f31");
 
+
   const nav = Platform.select({
     android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
     ios: () => router.navigate("/mobile/HomeMobile"),
     default: () => router.navigate("/web/HomeWeb"),
   });
+
 
   const deleteCharacterMobileHandler = (key) => {
     Alert.alert(
@@ -45,6 +47,7 @@ export default function CharacterSelect() {
     );
   };
 
+
   const deleteCharacterWebHandler = (key, name) => {
     const userClick = confirm("Are you sure you want to delete " + name);
     if (userClick) {
@@ -53,6 +56,8 @@ export default function CharacterSelect() {
       console.log("Character not deleted");
     }
   };
+
+
   const deleteCharacter = async (key) => {
     try {
       console.log("user_uid: " + userUid);
@@ -78,24 +83,20 @@ export default function CharacterSelect() {
       }
       const data = await response.json();
       SessionStorage.setItem("token", data.session_token);
-      console.log("Character Deleted");
-
-      //removing the character from current object
-      setCharacters((prevCharacters) => {
-        return prevCharacters.filter(
-          (characters) => characters.character_uid != key
-        );
-      });
-
     } catch (error) {
       console.log("Could not delete character: ", error);
-      alert("Could not delete character")
     }
-
-    //pushing new list to session storage
+    console.log("Character Deleted");
+    //removing the character from current object
+    setCharacters((prevCharacters) => {
+      return prevCharacters.filter(
+        (characters) => characters.character_uid != key
+      );
+    });
     sessionStorage.setItem("characters", characters);
     console.log(characters);
   };
+
 
   const pressHandler = async (key) => {
     try {
@@ -123,9 +124,9 @@ export default function CharacterSelect() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem("selectedCharacterData",data.character);
+      SessionStorage.setItem("selectedCharacterData", data.character);
       SessionStorage.setItem("token", data.session_token);
-      SessionStorage.setItem("charInventory",data.character.inventory);
+      SessionStorage.setItem("charInventory", data.character.inventory);
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
       nav();

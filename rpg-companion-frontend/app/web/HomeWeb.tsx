@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import {Text,View,TextInput,StyleSheet,Button,Alert,Platform,Image,Pressable} from "react-native";
+import { Text, View, TextInput, StyleSheet, Button, Alert, Platform, Image, Pressable } from "react-native";
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
-import {Backpack,Swords,Notebook,House,Activity,FlaskConical,} from "lucide-react";
+import { Backpack, Swords, Notebook, House, Activity, FlaskConical, } from "lucide-react";
 import SessionStorage from "react-native-session-storage";
 import Notes from "./components/Notes";
 import Spells from "./components/Spells";
@@ -10,14 +10,49 @@ import Combat from "./components/Combat";
 import Status from "./components/Status";
 import Inventory from "./components/Inventory";
 import { router } from "expo-router";
- 
+
 export default function HomeWeb() {
 
-  const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
-  const [hp,setHp] = useState(character.hp);
+  const [character, setCharacter] = useState<CharacterData | null>(null);
+  const [hp, setHp] = useState(0);
   const [tab, setTab] = useState("notes");
   const [note, setNote] = useState(null);
-  
+
+
+  useEffect(() => {
+    const loadCharacter = async () => {
+      const data = await SessionStorage.getItem("selectedCharacterData");
+      if (!data) {
+        router.navigate("/+not-found");
+      } else {
+        setCharacter(data);
+        setHp(data.hp);
+
+
+      }
+    };
+    loadCharacter();
+  }, []);
+
+  type CharacterData = {
+    name: string;
+    species_id: string;
+    class_id: string;
+    hp: number;
+    ability_scores: {
+      str: number;
+      dex: number;
+      con: number;
+      int: number;
+      wis: number;
+      cha: number;
+    };
+    proficiency_bonus: number;
+    speed: number;
+    armor_class: number;
+    inventory: JSON; // or type this properly
+  };
+
   const minusHP = () => {
     if (hp <= 0) {
       setHp(0);
@@ -36,16 +71,21 @@ export default function HomeWeb() {
     console.log(character);
     switch (tab) {
       case "notes":
-        return <Notes key="notes"/>;
+        return <Notes key="notes" />;
       case "spells":
         return <Spells key="spells" />;
       case "combat":
-        return <Combat key="combat" character={character} />;
+        if (character != null)
+          return <Combat key="combat" inventory={character.inventory} />;
       case "status":
         return <Status key="status" />;
       case "inventory":
         return <Inventory key="inventory" />;
     }
+  }
+
+  if (character === null) {
+    return <View style={GlobalStyles.page}><Text>Loading...</Text></View>;
   }
 
   return (
@@ -60,9 +100,9 @@ export default function HomeWeb() {
             />
           </View>
           <View style={styles.charHeader}>
-            <Text style={styles.headName}>{character.name}</Text>
-            <Text style={styles.headSpecies}>{character.species_id}</Text>
-            <Text style={styles.headClass} numberOfLines={1} adjustsFontSizeToFit={true}>{character.class_id}</Text>
+            <Text style={styles.headName}>{character!.name}</Text>
+            <Text style={styles.headSpecies}>{character!.species_id}</Text>
+            <Text style={styles.headClass} numberOfLines={1} adjustsFontSizeToFit={true}>{character!.class_id}</Text>
           </View>
           <View style={styles.dropDownContainerHolder}>
             <View style={styles.dropDownContainer}></View>
@@ -79,7 +119,7 @@ export default function HomeWeb() {
                 >
                   Strength
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.str}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.str}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -89,7 +129,7 @@ export default function HomeWeb() {
                 >
                   Dexterity
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.dex}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.dex}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -99,7 +139,7 @@ export default function HomeWeb() {
                 >
                   Constitution
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.con}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.con}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -109,7 +149,7 @@ export default function HomeWeb() {
                 >
                   Intelligence
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.int}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.int}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -119,7 +159,7 @@ export default function HomeWeb() {
                 >
                   Wisdom
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.wis}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.wis}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -129,7 +169,7 @@ export default function HomeWeb() {
                 >
                   Charisma
                 </Text>
-                <View style={styles.abilityName}>{character.ability_scores.cha}</View>
+                <View style={styles.abilityName}>{character!.ability_scores.cha}</View>
               </View>
             </View>
             <View style={styles.skillsHolder}>
@@ -152,8 +192,8 @@ export default function HomeWeb() {
 
               </View>
             </View>
-          
-        </View>
+
+          </View>
           <View style={styles.split}>
             <View style={styles.iconContainer}>
               <View style={styles.featherWrapper}>
@@ -205,34 +245,35 @@ export default function HomeWeb() {
                 </View>
               </View>
             </View>
-            <View style={styles.dynamicSelector}> 
-            <View style={styles.tabOption}>
-              <Notebook size={100} strokeWidth={0.75} onClick={() => setTab("notes")}></Notebook>
+            <View style={styles.dynamicSelector}>
+              <View style={styles.tabOption}>
+                <Notebook size={100} strokeWidth={0.75} onClick={() => setTab("notes")}></Notebook>
+              </View>
+              <View style={styles.tabOption}>
+                <FlaskConical size={100} strokeWidth={0.75} onClick={() => setTab("spells")}></FlaskConical>
+              </View>
+              <View style={styles.tabOption}>
+                <Swords size={100} strokeWidth={0.75} onClick={() => setTab("combat")}></Swords>
+              </View>
+              <View style={styles.tabOption}>
+                <Activity size={100} strokeWidth={0.75} onClick={() => setTab("status")}></Activity>
+              </View>
+              <View style={styles.tabOption}>
+                <Backpack size={100} strokeWidth={0.75} onClick={() => setTab("inventory")}></Backpack>
+              </View>
+
             </View>
-            <View style={styles.tabOption}>
-              <FlaskConical size={100} strokeWidth={0.75} onClick={() => setTab("spells")}></FlaskConical>
+            <View style={styles.dynamicHolder}>
+
+
+              {renderTab()}
             </View>
-            <View style={styles.tabOption}>
-              <Swords size={100} strokeWidth={0.75} onClick={() => setTab("combat")}></Swords>
-            </View>
-            <View style={styles.tabOption}>
-              <Activity size={100} strokeWidth={0.75} onClick={() => setTab("status")}></Activity>
-            </View>
-            <View style={styles.tabOption}>
-              <Backpack size={100} strokeWidth={0.75} onClick={() => setTab("inventory")}></Backpack>
-            </View>
-            
-          </View>
-          <View style={styles.dynamicHolder}>
-            
-          
-          {renderTab()}
-          </View>
           </View>
         </View>
       </View>
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -421,8 +462,8 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     flexDirection: "row",
-    minWidth:300,
-    overflow:"hidden"
+    minWidth: 300,
+    overflow: "hidden"
   },
   healthContainer: {
     flexDirection: "row",
@@ -437,34 +478,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   healthNum: {
-    fontSize:36,
-    height:50,
-    width:75,
-    color:"white",
-    textAlign:"center",
-    justifyContent:"center"
+    fontSize: 36,
+    height: 50,
+    width: 75,
+    color: "white",
+    textAlign: "center",
+    justifyContent: "center"
   },
   dynamicSelector: {
-    flex:0.15,
-    flexDirection:"row",
+    flex: 0.15,
+    flexDirection: "row",
     margin: "1%",
     borderRadius: 10,
-    height:"15%",
+    height: "15%",
     minHeight: 100,
-    justifyContent:"space-around",
-    alignContent:"space-around",
+    justifyContent: "space-around",
+    alignContent: "space-around",
     borderColor: "white",
-    borderWidth:2
+    borderWidth: 2
   },
   dynamicHolder: {
-    flex:0.85,
-    height:"85%",
+    flex: 0.85,
+    height: "85%",
   },
   tabOption: {
-    flex:0.15,
+    flex: 0.15,
     marginVertical: "0.5%",
-    justifyContent:"center",
-    alignItems:"center"
+    justifyContent: "center",
+    alignItems: "center"
   }
 
 });
