@@ -179,8 +179,78 @@ const globalText = {
   fontFamily: "Sora",
 };
 
+const calculateBonus = (score) => {
+  const modifier = Math.floor((score - 10) / 2);
+  return (modifier >= 0 ? "+" : "") + modifier.toString();
+};
+
 export default function HomeMobile() {
   const character = SessionStorage.getItem("selectedCharacterData");
+  type AbilityScore = {
+    title: string;
+    modifier: string;
+    score: number;
+  };
+  const [abilityScores, setAbilityScores] = useState<AbilityScore[]>([]);
+  const [skillsData, setSkillsData] = useState(initialSkillsData);
+  const [calculatedSkills, setCalculatedSkills] = useState(initialSkillsData);
+  useEffect(() => {
+    const rawData = character.ability_scores;
+    const updated_ability_scores = [
+      {
+        title: "Str",
+        modifier: calculateBonus(Number(rawData.str)),
+        score: rawData.str,
+      },
+      {
+        title: "Dex",
+        modifier: calculateBonus(Number(rawData.dex)),
+        score: rawData.dex,
+      },
+      {
+        title: "Con",
+        modifier: calculateBonus(Number(rawData.con)),
+        score: rawData.con,
+      },
+      {
+        title: "Int",
+        modifier: calculateBonus(Number(rawData.int)),
+        score: rawData.int,
+      },
+      {
+        title: "Wis",
+        modifier: calculateBonus(Number(rawData.wis)),
+        score: rawData.wis,
+      },
+      {
+        title: "Cha",
+        modifier: calculateBonus(Number(rawData.cha)),
+        score: rawData.cha,
+      },
+    ];
+    setAbilityScores(updated_ability_scores);
+  }, []);
+  useEffect(() => {
+    if (!abilityScores.length) return;
+    const abilityModMap = {};
+    abilityScores.forEach((ability) => {
+      abilityModMap[ability.title] = parseInt(
+        ability.modifier.replace("+", ""),
+        10
+      );
+    });
+
+    const updatedSkills = skillsData.map((skill) => {
+      const baseMod = abilityModMap[skill.ability] || 0;
+      const profBonus = skill.proficient ? character.proficiency_bonus : 0;
+      const total = baseMod + profBonus;
+      return {
+        ...skill,
+        bonus: (total >= 0 ? "+" : "") + total,
+      };
+    });
+    setCalculatedSkills(updatedSkills);
+  }, [skillsData, abilityScores, character.proficiency_bonus]);
   //Adjusting HP
 
   ///////////Need something that allows us to import their max hp and make that adjustable.//////////
@@ -188,6 +258,7 @@ export default function HomeMobile() {
   const [hp, setHp] = useState(0);
   const [customHp, setCustomHp] = useState("");
   const [editHp, setEditHp] = useState(false);
+  const [charPfp, setCharPfp] = useState(SessionStorage.getItem("passImage"));
 
   const getCustomHp = () => {
     const num = parseInt(customHp);
@@ -196,14 +267,13 @@ export default function HomeMobile() {
   };
 
   //Skill preferences like proficient and favorites
-  const [skillsData, setSkillsData] = useState(initialSkillsData);
 
   const [filter, setFilter] = useState("all");
   const [menuVisible, setMenuVisible] = useState(false);
   const [editSkillsListVisible, setEditSkillsListVisible] = useState(false);
   const [editCharListVisible, setEditCharListVisible] = useState(false);
 
-  const filteredSkills = skillsData.filter((skill) => {
+  const filteredSkills = calculatedSkills.filter((skill) => {
     if (filter === "favorites") return skill.favorite;
     if (filter === "proficient") return skill.proficient;
     return true;
@@ -215,13 +285,14 @@ export default function HomeMobile() {
     setCustomHp("");
     setEditHp(false);
     Keyboard.dismiss(); // Hide the keyboard after clicking plus/minus
+    setCharPfp(SessionStorage.getItem("passImage"));
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.pfpHolder}>
         <Image
-          source={require("../../../assets/images/placeholderDND.png")}
+          source={{ uri: charPfp }}
           style={styles.pfp}
           resizeMode="cover"
         />
@@ -334,7 +405,7 @@ export default function HomeMobile() {
       </View>
 
       <View style={styles.iconContainer}>
-        {abilityData.map((item, index) => (
+        {abilityScores.map((item, index) => (
           <View style={styles.iconWrapper}>
             <PanelTopDashed
               style={styles.abilityIcons}

@@ -90,7 +90,6 @@ export default function SpellCarousel() {
         renderItem={renderItem}
         scrollEnabled={true}
         keyExtractor={(item, index) => `${item.title}-${index}`}
-
         contentContainerStyle={styles.listContainer}
       />
     </View>
