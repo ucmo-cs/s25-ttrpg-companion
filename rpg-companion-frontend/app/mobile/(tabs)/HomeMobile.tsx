@@ -177,21 +177,20 @@ const calculateBonus = (score) => {
   const modifier = Math.floor((score-10)/2);
   return(modifier >= 0 ? "+" : "") + modifier.toString();
 }
+
+
 export default function HomeMobile() {
   const character = SessionStorage.getItem("selectedCharacterData");
-
-  const [abilityScores,setabilityScores] = useState([
-    {title: "Str", modifier: "+0", score: 10},
-    {title: "Dex", modifier: "+0", score: 10},
-    {title: "Con", modifier: "+0", score: 10},
-    {title: "Int", modifier: "+0", score: 10},
-    {title: "Wis", modifier: "+0", score: 10},
-    {title: "Cha", modifier: "+0", score: 10},
-  ]);
-  console.log("Character ability scores", character.ability_scores.cha);
-  
+  type AbilityScore = {
+    title: string;
+    modifier: string;
+    score: number;
+  }
+  const [abilityScores,setAbilityScores] = useState<AbilityScore[]>([])
+  const [skillsData, setSkillsData] = useState(initialSkillsData);
+  const [calculatedSkills, setCalculatedSkills] = useState(initialSkillsData);
+useEffect(() => {
   const rawData = character.ability_scores;
-  console.log("MyData", Number(rawData.dex));
   const updated_ability_scores = 
   [
     {
@@ -222,9 +221,28 @@ export default function HomeMobile() {
         modifier: calculateBonus(Number(rawData.cha)),
         score: rawData.cha,
       },
-  ]
-  console.log(updated_ability_scores)
-  
+  ]; 
+  setAbilityScores(updated_ability_scores)
+},[])
+  useEffect(() => {
+    if(!abilityScores.length) return;
+    const abilityModMap = {};
+    abilityScores.forEach((ability) => {
+      abilityModMap[ability.title] = parseInt(ability.modifier.replace("+",""),10);
+    })
+
+
+  const updatedSkills = skillsData.map((skill) => {
+    const baseMod = abilityModMap[skill.ability] || 0;
+    const profBonus = skill.proficient ? character.proficiency_bonus : 0;
+    const total = baseMod + profBonus;
+    return {
+      ...skill,
+      bonus: (total >= 0 ? "+" : "") + total,
+    };
+  })
+  setCalculatedSkills(updatedSkills);
+},[skillsData,abilityScores,character.proficiency_bonus])
   //Adjusting HP
 
   ///////////Need something that allows us to import their max hp and make that adjustable.//////////
@@ -241,14 +259,13 @@ export default function HomeMobile() {
   };
 
   //Skill preferences like proficient and favorites
-  const [skillsData, setSkillsData] = useState(initialSkillsData);
 
   const [filter, setFilter] = useState("all");
   const [menuVisible, setMenuVisible] = useState(false);
   const [editSkillsListVisible, setEditSkillsListVisible] = useState(false);
   const [editCharListVisible, setEditCharListVisible] = useState(false);
 
-  const filteredSkills = skillsData.filter((skill) => {
+  const filteredSkills = calculatedSkills.filter((skill) => {
     if (filter === "favorites") return skill.favorite;
     if (filter === "proficient") return skill.proficient;
     return true;
@@ -379,7 +396,7 @@ export default function HomeMobile() {
       </View>
 
       <View style={styles.iconContainer}>
-        {updated_ability_scores.map((item, index) => (
+        {abilityScores.map((item, index) => (
           <View style={styles.iconWrapper}>
             <PanelTopDashed
               style={styles.abilityIcons}
