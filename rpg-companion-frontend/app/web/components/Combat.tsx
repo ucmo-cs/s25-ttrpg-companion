@@ -2,13 +2,16 @@ import React, { useState, } from 'react';
 import { Text, View, TextInput, StyleSheet, Button, Alert, Platform, Image, Pressable, Dimensions, ImageBackground, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
-import GlobalStyles from '@/app/globalstyles';
+import { useFonts } from 'expo-font';
 import { FlatList } from 'react-native-gesture-handler';
-import { BowArrow } from 'lucide-react';
 
 interface CombatProps {
   inventory: JSON
 }
+// const [fontsLoaded] = useFonts({
+//     "Sora-Regular": require("../../../assets/fonts/Sora-Regular.ttf"),
+//   });
+
 
 const Combat = (props: CombatProps) => {
   const [deathSave, setDeathSave] = useState([0, 0, 0, 0, 0]);
@@ -110,7 +113,7 @@ const Combat = (props: CombatProps) => {
 
     <View style={styles.card}>
       <Text style={[styles.itemName, { textAlign: "center", backgroundColor: "rgba(0,0,0,0.2)", flex: 0.1, width: "100%", }]}>{item.type}</Text>
-      <ImageBackground tintColor={"rgba(255,255,255,0.3"} blurRadius={12} style={[styles.background, { flex: 0.9 }]} source={getItemType(item)}>
+      <ImageBackground resizeMode="stretch" tintColor={"rgba(255,255,255,0.3"} blurRadius={8} style={[styles.background, { flex: 0.9 ,}]} source={getItemType(item)}>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.hitOrDamage}>Hit: {item.hit}</Text>
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
   headText: {
     fontSize: 20,
     textAlign: "center",
-    fontFamily: "sora-regular",
+    fontFamily: "Sora-Regular",
     color: "white"
   },
   actionScroll: {
@@ -225,7 +228,7 @@ const styles = StyleSheet.create({
   itemName: {
     color: "white",
     fontSize: 20,
-    fontFamily: "sora-regular",
+    fontFamily: "Robotco",
     margin: 5
   },
   background: {

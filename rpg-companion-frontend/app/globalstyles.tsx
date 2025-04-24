@@ -1,4 +1,7 @@
 import { StyleSheet, Platform } from "react-native";
+import { useFonts } from "expo-font";
+
+
 
 const GlobalStyles = StyleSheet.create({
   page: {
