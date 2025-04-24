@@ -1,3 +1,9 @@
+{
+  /*They are adjust to adjust their ability score every 4 levels (4,8,12,16,20) where they can allocated 2 points to their ability scores*/
+}
+{
+  /*They can allocate the 2 points to the same abiity score up to 20*/
+}
 import { useState } from "react";
 import {
   Circle,
@@ -251,6 +257,7 @@ export default function HomeMobile() {
               ></TextInput>
             </View>
             <View style={styles.row}>
+              {/*at level 3 they get their subclass */}
               <Text style={styles.editCharSubtitle}>Level: </Text>
               <TextInput
                 style={styles.editCharTextInput}
