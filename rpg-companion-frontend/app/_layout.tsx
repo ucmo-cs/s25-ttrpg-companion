@@ -1,8 +1,9 @@
 import { Stack } from "expo-router";
 import { hide } from "expo-splash-screen";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import EditCharacterButton from "../app/mobile/editCharacterButton"; // adjust the path as needed
 
 export default function RootLayout() {
   return (
@@ -28,13 +29,14 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="mobile/HomeMobile" //Despite it being name it needs the relative path
+        name="/mobile/HomeMobile" //Despite it being name it needs the relative path
         options={{
           headerShown: false,
           title: "Home",
           gestureEnabled: false,
           headerStyle: { backgroundColor: "black" },
           headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -57,6 +59,5 @@ export default function RootLayout() {
         }}
       />
     </Stack>
-    
   );
 }
