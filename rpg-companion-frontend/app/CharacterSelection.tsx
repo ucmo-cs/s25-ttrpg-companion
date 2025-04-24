@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
 import SessionStorage from "react-native-session-storage";
@@ -6,6 +6,7 @@ import SessionStorage from "react-native-session-storage";
 import { Trash2 } from "lucide-react-native";
 
 import {
+  Image,
   FlatList,
   Text,
   View,
@@ -23,8 +24,6 @@ export default function CharacterSelect() {
   );
   const userUid = SessionStorage.getItem("userUid");
   const [trashColor, setTrashColor] = useState("#af1f31");
-
-
   const nav = Platform.select({
     android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
     ios: () => router.navigate("/mobile/HomeMobile"),
@@ -98,7 +97,42 @@ export default function CharacterSelect() {
   };
 
 
-  const pressHandler = async (key) => {
+  const selectCharacterHandler = (key) => {
+    storeImage(key)
+  }
+
+  const storeImage  = (key) => {
+    fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-image", {
+      method: "POST",
+      headers: {
+          user_uid : "24b7875d-7719-47bd-9ce7-66be8088dff4",
+          character_uid : "6f6fdbec-1a7b-4fb0-bc9a-e4f97dae1935",
+          session_token : "cooper_is_slow"
+      },
+      body : JSON.stringify({
+          "extension" : ".webp"
+      })
+    })
+    .then((response) => {
+        console.log("Response: " + JSON.stringify(response))
+        console.log("Status: " + response.status)
+        console.log("Headers: " + response.headers)
+        return response.blob()  
+    })
+    .then(async (blob) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);  // Convert Blob to Base64
+      reader.onloadend = () => {
+          // @ts-ignore
+          SessionStorage.setItem('passImage', reader.result); // Store Base64 Data URL in state
+      };
+    })
+    selectCharacter(key)
+    console.log('Image set')
+    
+  }
+
+  const selectCharacter = async (key) => {
     try {
       console.log("start of storeCharacterFromUID");
       console.log("user_uid: " + userUid);
@@ -141,7 +175,7 @@ export default function CharacterSelect() {
       <FlatList
         data={characters}
         renderItem={({ item }) => (
-          <TouchableHighlight onPress={() => pressHandler(item.character_uid)}>
+          <TouchableHighlight onPress={() => selectCharacterHandler(item.character_uid)}>
             <View style={styles.item}>
               <Text style={styles.buttonText}>{item.character_name}</Text>
               <Pressable
@@ -250,6 +284,10 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     padding: 10,
+  },
+  pic: {
+    height: 200,
+    width: 200,
   },
   buttonContainer: {
     height: "20%",

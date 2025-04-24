@@ -182,6 +182,7 @@ export default function HomeMobile() {
   const [hp, setHp] = useState(0);
   const [customHp, setCustomHp] = useState("");
   const [editHp, setEditHp] = useState(false);
+  const [charPfp, setCharPfp] = useState(SessionStorage.getItem('passImage'))
 
   const getCustomHp = () => {
     const num = parseInt(customHp);
@@ -209,13 +210,14 @@ export default function HomeMobile() {
     setCustomHp("");
     setEditHp(false);
     Keyboard.dismiss(); // Hide the keyboard after clicking plus/minus
+    setCharPfp(SessionStorage.getItem('passImage'))
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.pfpHolder}>
         <Image
-          source={require("../../../assets/images/placeholderDND.png")}
+          source={{uri: charPfp}}
           style={styles.pfp}
           resizeMode="cover"
         />
