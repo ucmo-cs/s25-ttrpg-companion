@@ -1,13 +1,9 @@
 import { Stack } from "expo-router";
 import { hide } from "expo-splash-screen";
-<<<<<<< HEAD
-import { View, Text, TouchableOpacity } from "react-native";
-=======
-import { View, Text, } from "react-native";
->>>>>>> 0d336a1610e7b6680f9a1e13a1ab40953a384b3c
+// import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditCharacterButton from "../app/mobile/editCharacterButton"; // adjust the path as needed
 
 export default function RootLayout() {
   return (
@@ -21,7 +17,6 @@ export default function RootLayout() {
         headerShadowVisible: false,
         headerTintColor: "#fff",
       }}
-      
     >
       <Stack.Screen
         name="index"
@@ -34,11 +29,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-<<<<<<< HEAD
         name="/mobile/HomeMobile" //Despite it being name it needs the relative path
-=======
-        name="mobile/(tabs)" //Despite it being name it needs the relative path
->>>>>>> 0d336a1610e7b6680f9a1e13a1ab40953a384b3c
         options={{
           headerShown: false,
           title: "Home",

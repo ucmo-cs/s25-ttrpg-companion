@@ -4,7 +4,7 @@
 {
   /*They can allocate the 2 points to the same abiity score up to 20*/
 }
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Circle,
   Square,
