@@ -26,6 +26,7 @@ import {
   Keyboard,
   Modal,
   Switch,
+  ScrollView,
 } from "react-native";
 // import CheckBox from "@react-native-community/checkbox";
 import SessionStorage from "react-native-session-storage";
@@ -288,6 +289,84 @@ export default function HomeMobile() {
     setCharPfp(SessionStorage.getItem("passImage"));
   };
 
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [level, setLevel] = useState(character.level);
+  const [subclass, setSubclass] = useState("");
+  const [tempScores, setTempScores] = useState<{ [key: string]: number }>({});
+  const [abilityPointsUsed, setAbilityPointsUsed] = useState(0);
+  const maxPoints = 2;
+  const isAbilityScoreLevel = level % 4 === 0;
+
+  const handleLevelUp = () => {
+    const leveledUp = level + 1;
+    setLevel(leveledUp);
+    setShowLevelUp(true);
+  };
+
+  //This is so they get 2 new ability increases every 4 levels
+  const getMaxAbilityPoints = (level: number) => {
+    return [4, 8, 12, 16, 20].filter((lvl) => lvl <= level).length * 2;
+  };
+
+  const handleIncreaseScore = (title: string) => {
+    // Get the current score of the ability
+    const originalScore =
+      abilityScores.find((a) => a.title === title)?.score ?? 0;
+
+    // Get the current temp score for the ability
+    const currentTempScore = tempScores[title] ?? originalScore;
+
+    // Check if the ability score can be increased (it can only increase by 1 or 2 total)
+    if (currentTempScore >= originalScore + 2) return; // Already at max increase of +2
+
+    // Calculate the proposed new score by increasing by 1
+    const proposedNewScore = currentTempScore + 1;
+
+    // Create a copy of the temp scores to modify
+    const newTempScores = { ...tempScores, [title]: proposedNewScore };
+
+    // Track the total points used for ability score increases
+    const totalIncrease = Object.keys(newTempScores).reduce((total, key) => {
+      const change =
+        newTempScores[key] -
+        (abilityScores.find((a) => a.title === key)?.score ?? 0);
+      return change > 0 ? total + change : total;
+    }, 0);
+
+    // Don't allow more than 2 points total increase across all abilities
+    if (totalIncrease > 2) return;
+
+    setAbilityPointsUsed(totalIncrease);
+    setTempScores(newTempScores); // Update the temp scores
+  };
+
+  const handleResetScores = () => {
+    // Reset the temp scores to the original scores from the backend
+    const initialScores = abilityScores.reduce((acc, ability) => {
+      acc[ability.title] = ability.score;
+      return acc;
+    }, {});
+
+    setTempScores(initialScores);
+    setAbilityPointsUsed(0); // Reset ability points used to 0
+  };
+  useEffect(() => {
+    if (isAbilityScoreLevel) {
+      // Pull updated ability scores from backend, or passed-in props
+      const freshScores = abilityScores.reduce((acc, ability) => {
+        acc[ability.title] = ability.score;
+        return acc;
+      }, {} as { [key: string]: number });
+
+      setTempScores(freshScores);
+      setAbilityPointsUsed(0); // Reset limit for this level
+    }
+  }, [level, abilityScores]);
+
+  const handleClose = () => {
+    setEditCharListVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.pfpHolder}>
@@ -318,7 +397,88 @@ export default function HomeMobile() {
           onRequestClose={() => setEditCharListVisible(false)}
         >
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Edit Character</Text>
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+              <View style={styles.container}>
+                <Text style={styles.pageHeader}>Edit Character</Text>
+                <TextInput
+                  placeholder={`Name: ${character.name}`}
+                  style={styles.formControl}
+                  placeholderTextColor="#ccc"
+                  // value={character.name}
+                  //  onChangeText={(text) => handleChange("name", text)}
+                />
+                <TextInput
+                  value={`Level: ${level}`}
+                  style={styles.formControl}
+                  placeholderTextColor="#ccc"
+                  // editable={false}
+                  // value={character.name}
+                  //  onChangeText={(text) => handleChange("name", text)}
+                />
+
+                <TouchableOpacity style={styles.button} onPress={handleLevelUp}>
+                  <Text style={styles.buttonText}>Level Up!</Text>
+                </TouchableOpacity>
+
+                {showLevelUp && (
+                  <View style={styles.modalView}>
+                    {/* <View style={styles.container}> */}
+                    {level >= 3 && (
+                      <TextInput
+                        style={styles.formControl}
+                        placeholder="Enter Subclass"
+                        value={subclass}
+                        onChangeText={setSubclass}
+                      ></TextInput>
+                    )}
+                  </View>
+                  // </View>
+                )}
+
+                {/* <Text style={styles.AbilityScores}>Ability Scores</Text> */}
+                {isAbilityScoreLevel && (
+                  <View style={styles.abilityScoreWrapper}>
+                    <Text style={styles.header}>Ability Score Improvement</Text>
+                    <View style={styles.abilityRow}>
+                      {abilityScores.map((ability) => (
+                        <View key={ability.title} style={styles.abilityBox}>
+                          <Text style={styles.abilityLabel}>
+                            {ability.title}
+                          </Text>
+                          <TouchableOpacity
+                            style={styles.abilityLabel}
+                            onPress={() => handleIncreaseScore(ability.title)}
+                          >
+                            <View>
+                              <Text style={styles.abilityScoreControl}>
+                                {tempScores[ability.title] ?? ability.score}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                      {/* <View style={styles.}> */}
+
+                      {/* </View> */}
+                    </View>
+                    {abilityPointsUsed >= maxPoints && (
+                      <Text style={styles.warningText}>
+                        You've used all 2 ability score increases.
+                      </Text>
+                    )}
+                    <TouchableOpacity onPress={handleResetScores}>
+                      <Text style={styles.resetButton}>Reset Scores</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </ScrollView>
+            <TouchableOpacity onPress={handleClose}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
+          {/* </View> */}
+          {/* <Text style={styles.modalText}>Edit Character</Text>
             <View style={styles.row}>
               <Text style={styles.editCharSubtitle}>Character Name: </Text>
               <TextInput
@@ -327,8 +487,8 @@ export default function HomeMobile() {
                 placeholderTextColor="#ccc"
               ></TextInput>
             </View>
-            <View style={styles.row}>
-              {/*at level 3 they get their subclass */}
+            <View style={styles.row}> 
+              {/*at level 3 they get their subclass *
               <Text style={styles.editCharSubtitle}>Level: </Text>
               <TextInput
                 style={styles.editCharTextInput}
@@ -345,14 +505,11 @@ export default function HomeMobile() {
                 placeholderTextColor="#ccc"
                 keyboardType="numeric"
               ></TextInput>
-            </View>
-
-            <TouchableOpacity onPress={() => setEditCharListVisible(false)}>
-              <Text style={styles.closeButton}>Close</Text>
-            </TouchableOpacity>
-          </View>
+            </View> */}
+          {/* </View> */}
         </Modal>
       </View>
+      {/* </View> */}
 
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
@@ -838,6 +995,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+  resetButton: {
+    ...globalText,
+    color: "red",
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 10,
+  },
   editCharSubtitle: {
     ...globalText,
     fontSize: 20,
@@ -861,5 +1026,164 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
+  },
+  hoverStyle: {
+    backgroundColor: "#4B5563",
+    borderColor: "#4B5563",
+  },
+
+  buttonText: {
+    color: "white",
+    alignSelf: "center",
+    fontSize: 22,
+  },
+
+  // warning: {
+  //   color: "#A8FFFC",
+  //   textAlign: "center",
+  //   padding: 10,
+  // },
+
+  globalContainer: {
+    ...globalText,
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "#121427",
+  },
+  // container: {
+  //   flex: 1,
+  //   flexDirection: "column",
+  //   backgroundColor: "#121427",
+  // },
+  // staticContainer: {
+  //   alignSelf: "flex-end",
+  //   width: "70%",
+  //   height: "15%",
+  // },
+  pageHeader: {
+    ...globalText,
+    fontSize: 30,
+    padding: 5,
+    textAlign: "center",
+    marginTop: 7,
+  },
+  formControl: {
+    ...globalText,
+    padding: 10,
+    margin: 10,
+    fontSize: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: "#fff",
+    width: "95%",
+    marginBottom: 24,
+    textAlign: "left",
+    marginTop: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#fff",
+  },
+  AbilityScores: {
+    ...globalText,
+    padding: 10,
+    margin: 10,
+    fontSize: 24,
+    color: "#ccc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#fff",
+    width: "100%",
+    marginBottom: 24,
+    textAlign: "left",
+    marginTop: 10,
+  },
+  abilityScoreWrapper: {
+    marginBottom: 5,
+  },
+  abilityRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    flexWrap: "wrap",
+  },
+  abilityScoreControl: {
+    ...globalText,
+    fontSize: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fff",
+    backgroundColor: "#121427",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    width: 100,
+    textAlign: "center",
+  },
+  abilityLabel: {
+    ...globalText,
+    fontSize: 24,
+    marginBottom: 4,
+    marginTop: 4,
+  },
+  abilityBox: {
+    alignItems: "center",
+    marginHorizontal: 8,
+  },
+  button: {
+    backgroundColor: "#6B728C",
+    borderColor: "#6B728C",
+    alignSelf: "center",
+    borderWidth: 2,
+    borderRadius: 25,
+    marginTop: 40,
+    width: "75%",
+  },
+  // buttonText: {
+  //   ...globalText,
+  //   alignSelf: "center",
+  //   fontSize: 22,
+  // },
+  Inventory: {
+    ...globalText,
+    padding: 10,
+    margin: 10,
+    fontSize: 24,
+    color: "#ccc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#fff",
+    width: "100%",
+    marginBottom: 24,
+    textAlign: "left",
+    marginTop: 10,
+  },
+  radioContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginStart: 20,
+    marginBottom: 10,
+  },
+  radioText: {
+    ...globalText,
+    flex: 1,
+    textAlign: "left",
+    fontSize: 24,
+    marginStart: 20,
+  },
+  warningText: {
+    color: "#A8FFFC",
+    fontWeight: "bold",
+    marginTop: 10,
+    alignSelf: "center",
+  },
+
+  scoreBox: {
+    backgroundColor: "#ddd",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 5,
+  },
+  abilityScoreText: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
