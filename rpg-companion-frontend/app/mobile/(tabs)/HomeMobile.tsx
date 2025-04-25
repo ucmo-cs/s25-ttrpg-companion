@@ -186,6 +186,66 @@ const calculateBonus = (score) => {
 };
 
 export default function HomeMobile() {
+  const [armor, setArmor] = useState<Array<any>>([]);
+  useEffect(() => {
+    if (armor.length == null) return;
+
+    const interval = setInterval(() => {
+      const parsed = SessionStorage.getItem("armorEquipped");
+      if (!parsed) {
+        console.log("No equipped item found in session storage.");
+        return;
+      }
+      try {
+        const armorData = JSON.parse(parsed);
+        if (!Array.isArray(armorData)) {
+          return;
+        }
+        setArmor(armorData);
+      } catch (err) {
+        console.error("Failed to parse equipped item armordata:", err);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const calculateArmorClass = () => {
+    if (!armor || armor.length === 0) return character.armor_class;
+    let baseAC = 10; // Base AC
+    let armorAC = null;
+    let hasShield = false;
+    let dexMod = 0;
+
+    if (abilityScores.length > 0) {
+      const dexAbility = abilityScores.find((a) => a.title === "Dex");
+      if (dexAbility) {
+        dexMod = parseInt(dexAbility.modifier.replace("+", ""), 10);
+      }
+    }
+
+    armor.forEach((item) => {
+      if (item.type === "armor") {
+        if (item.name.toLowerCase().includes("shield")) {
+          hasShield = true; //Shield found
+        } else {
+          armorAC = item.armor_class; //Armor found
+        }
+      }
+    });
+
+    let finalAC = armorAC ?? baseAC;
+
+    if (dexMod > 2) {
+      finalAC += 2; // Max dex bonus is +2 for armor
+    } else if (dexMod > 0) {
+      finalAC += dexMod; // Add dex modifier to AC
+    }
+
+    if (hasShield) {
+      finalAC += 2; // Add shield AC if equipped
+    }
+    return finalAC;
+  };
   const character = SessionStorage.getItem("selectedCharacterData");
   type AbilityScore = {
     title: string;
@@ -230,6 +290,10 @@ export default function HomeMobile() {
       },
     ];
     setAbilityScores(updated_ability_scores);
+    SessionStorage.setItem(
+      "abilityScores",
+      JSON.stringify(updated_ability_scores)
+    );
   }, []);
   useEffect(() => {
     if (!abilityScores.length) return;
@@ -525,7 +589,7 @@ export default function HomeMobile() {
         <View style={styles.iconWrapper}>
           {/*Need to check in with inventory if equipped with a shield*/}
           <Shield size={70} color="white" strokeWidth={1} fill="#3E4A59" />
-          <Text style={styles.iconText}>{character.armor_class}</Text>
+          <Text style={styles.iconText}>{calculateArmorClass()}</Text>
         </View>
         <TouchableOpacity
           onPress={() => handleHp("add")}
