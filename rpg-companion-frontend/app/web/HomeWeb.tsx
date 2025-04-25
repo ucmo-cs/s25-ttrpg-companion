@@ -27,8 +27,6 @@ export default function HomeWeb() {
       } else {
         setCharacter(data);
         setHp(data.hp);
-
-
       }
     };
     loadCharacter();
@@ -323,9 +321,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     flexDirection: "row-reverse",
     width: 80,
-    height: 80,
+    height: "50%",
     margin: 10,
-    backgroundColor: "white",
+    backgroundColor: "green",
     justifyContent: "center",
     alignContent: "center",
   },

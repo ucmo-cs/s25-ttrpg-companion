@@ -1,63 +1,78 @@
 {
   "user_uid": "f82e1d22-3a58-4846-86bd-96a132b4ea46",
-  "character_uid":"f5774f3e-ee6e-43b4-ac9e-d44f6863a196",
+  "character_uid": "f5774f3e-ee6e-43b4-ac9e-d44f6863a196",
   "character": {
     "name": "Gale",
     "class_id": "fighter",
     "subclass_id": "eldritch_knight",
     "species_id": "elf",
     "level": 1,
-    "proficiency_bonus":1,
-    "hp":0,
-    "armor_class":10,
+    "proficiency_bonus": 1,
+    "hp": 0,
+    "armor_class": 10,
     "features": {
       "classfeatures": [],
       "subclassfeatures": [],
       "speciesfeatures": []
     },
-    "ability_scores":{
-        "str":10,
-        "dex":10,
-        "con":10,
-        "int":10,
-        "wis":10,
-        "cha":10
+    "ability_scores": {
+      "str": 10,
+      "dex": 10,
+      "con": 10,
+      "int": 10,
+      "wis": 10,
+      "cha": 10
     },
     "inventory": [
-        {
-            "name":"Shortsword",
-            "type":"weapon",
-            "properties":"Simple Melee Weapon",
-            "damage_type": "1d6",
-            "attributes":["Slashing","Finess","Vex"],
-            "description":"A simple shortsword"
-        },
-        {
-            "name":"Shortbow",
-            "type":"weapon",
-            "properties":"Simple Ranged Weapon",
-            "damage_type": "1d6",
-            "attributes":["Piercing","Slow"],
-            "description":"A simple shortbow"
-        },
-        {
-            "name":"Leather Armor",
-            "type":"armor",
-            "damage_type": "",
-            "armor_class":11,
-            "attributes":["Light"],
-            "description":"A simple set of leather armor"
-        },
-                {
-            "name":"Shield",
-            "type":"armor",
-            "damage_type": "",
-            "armor_class":2,
-            "attributes":["Shield"],
-            "description":"A simple shield"
-        }
-        
+      {
+        "name": "Shortsword",
+        "type": "weapon",
+        "properties": "Simple Melee Weapon",
+        "damage_type": "1d6",
+        "attributes": [
+          "Slashing",
+          "Finess",
+          "Vex"
         ],
-    "character_notes":[{"title": "example note", "note_content": "somthing profound!"}]
+        "description": "A simple shortsword"
+      },
+      {
+        "name": "Shortbow",
+        "type": "weapon",
+        "properties": "Simple Ranged Weapon",
+        "damage_type": "1d6",
+        "attributes": [
+          "Piercing",
+          "Slow"
+        ],
+        "description": "A simple shortbow"
+      },
+      {
+        "name": "Leather Armor",
+        "type": "armor",
+        "damage_type": "",
+        "armor_class": 11,
+        "attributes": [
+          "Light"
+        ],
+        "description": "A simple set of leather armor"
+      },
+      {
+        "name": "Shield",
+        "type": "armor",
+        "damage_type": "",
+        "armor_class": 2,
+        "attributes": [
+          "Shield"
+        ],
+        "description": "A simple shield"
+      }
+    ],
+    "character_notes": [
+      {
+        "title": "example note",
+        "note_content": "somthing profound!"
+      }
+    ]
   }
 }
