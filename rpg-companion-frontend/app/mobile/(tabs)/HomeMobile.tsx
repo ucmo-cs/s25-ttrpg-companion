@@ -1,9 +1,3 @@
-{
-  /*They are adjust to adjust their ability score every 4 levels (4,8,12,16,20) where they can allocated 2 points to their ability scores*/
-}
-{
-  /*They can allocate the 2 points to the same abiity score up to 20*/
-}
 import { useState, useEffect } from "react";
 import {
   Circle,
@@ -187,6 +181,7 @@ const calculateBonus = (score) => {
 
 export default function HomeMobile() {
   const character = SessionStorage.getItem("selectedCharacterData");
+
   type AbilityScore = {
     title: string;
     modifier: string;
@@ -289,13 +284,33 @@ export default function HomeMobile() {
     setCharPfp(SessionStorage.getItem("passImage"));
   };
 
+  /////////Level Up
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [level, setLevel] = useState(character.level);
+  const [editedName, setEditedName] = useState(character.name);
   const [subclass, setSubclass] = useState("");
   const [tempScores, setTempScores] = useState<{ [key: string]: number }>({});
   const [abilityPointsUsed, setAbilityPointsUsed] = useState(0);
-  const maxPoints = 2;
+  // const [maxPoints, setMaxPoints] = useState(0);
+  const [points, setPoints] = useState(0);
   const isAbilityScoreLevel = level % 4 === 0;
+  const [ability_score, set_ability_score] = useState(character.ability_score);
+  const maxPoints = 2;
+
+  // const getTotalPoints = () => {
+  //   if (isAbilityScoreLevel) {
+  //     let points =
+  //       character.abilityScores.str +
+  //       character.abilityScores.dex +
+  //       character.abilityScores.con +
+  //       character.abilityScores.int +
+  //       character.abilityScores.wis +
+  //       character.abilityScores.cha;
+  //     setPoints(points);
+  //     setMaxPoints(points + 2);
+  //     console.log(maxPoints);
+  //   }
+  // };
 
   const handleLevelUp = () => {
     const leveledUp = level + 1;
@@ -303,10 +318,11 @@ export default function HomeMobile() {
     setShowLevelUp(true);
   };
 
-  //This is so they get 2 new ability increases every 4 levels
-  const getMaxAbilityPoints = (level: number) => {
-    return [4, 8, 12, 16, 20].filter((lvl) => lvl <= level).length * 2;
-  };
+  // const handleIncreaseScore = (title: number) => {
+  //   if (points > maxPoints) {
+  //     character.ability_scores.title += 1;
+  //   }
+  // };
 
   const handleIncreaseScore = (title: string) => {
     // Get the current score of the ability
@@ -350,6 +366,7 @@ export default function HomeMobile() {
     setTempScores(initialScores);
     setAbilityPointsUsed(0); // Reset ability points used to 0
   };
+
   useEffect(() => {
     if (isAbilityScoreLevel) {
       // Pull updated ability scores from backend, or passed-in props
@@ -363,7 +380,122 @@ export default function HomeMobile() {
     }
   }, [level, abilityScores]);
 
-  const handleClose = () => {
+  // const handleLevelUpChange = (key: string, value: string) => {
+  //   if (["str", "dex", "con", "int", "wis", "cha"].includes(key)) {
+  //     setTempScores((prev) => ({
+  //       ...prev,
+  //       [key]: Number(value),
+  //     }));
+  //   }
+  // };
+
+  const user_uid = SessionStorage.getItem("userUid");
+  const character_uid = SessionStorage.getItem("characterUid");
+  const session_token = SessionStorage.getItem("token");
+
+  const submitLevelUp = async () => {
+    const payload: any = {
+      user_uid,
+      character_uid,
+      character: {
+        hp: character.hp,
+        max_hp: character.max_hp,
+        armor_class: character.armor_class,
+        speed: character.speed,
+        initiative: character.initiative,
+        inventory: [
+          {
+            name: "Shortsword",
+            type: "weapon",
+            properties: "Simple Melee Weapon",
+            damage_type: "1d6",
+            attributes: ["Slashing", "Finess", "Vex"],
+            description: "A simple shortsword",
+          },
+          {
+            name: "Leather Armor",
+            type: "armor",
+            damage_type: "",
+            armor_class: 11,
+            attributes: ["Light"],
+            description: "A simple set of leather armor",
+          },
+          {
+            name: "Shield",
+            type: "armor",
+            damage_type: "",
+            armor_class: 2,
+            attributes: ["Shield"],
+            description: "A simple shield",
+          },
+        ],
+        proficiency_bonus: character.proficiency_bonus,
+        class_id: character.class_id,
+        species_id: character.species_id,
+      },
+    };
+
+    //Send the name if it was edited
+    if (editedName && editedName !== character.name) {
+      character.name = editedName;
+    }
+
+    //Send the subclass if above level 3 (and they selected one)
+    if (level >= 3 && subclass) {
+      character.subclass = subclass;
+    }
+
+    //Send the updated ability scores if changed
+    if (isAbilityScoreLevel) {
+      // character.ability_scores = {
+      //   str: tempScores["str"],
+      //   dex: tempScores["dex"],
+      //   con: tempScores["con"],
+      //   int: tempScores["int"],
+      //   wis: tempScores["wis"],
+      //   cha: tempScores["cha"],
+      // };
+      payload.character.ability_scores = { ...tempScores };
+    }
+
+    //Always send the level up
+    character.level = level;
+
+    try {
+      const response = await fetch(
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/edit-character",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Session_Token: session_token,
+            session_token: "cooper_is_slow",
+          },
+          body: JSON.stringify(character),
+        }
+      );
+
+      console.log("Character:", character);
+      console.log("Status:", response.status);
+      // console.log("inventory", character.inventory);
+      const responseText = await response.text(); // read as text first
+      console.log("Raw Response:", responseText);
+
+      if (!response.ok) throw new Error("Failed to submit level-up changes");
+
+      const data = await response.json();
+      console.log("Level up submitted", data);
+      alert("Level up submitted successfully!");
+      setShowLevelUp(false);
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Error submitting level-up changes.");
+    }
+  };
+  // }
+
+  const handleClose = async () => {
+    await submitLevelUp();
     setEditCharListVisible(false);
   };
 
@@ -399,13 +531,13 @@ export default function HomeMobile() {
           <View style={styles.modalView}>
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
               <View style={styles.container}>
-                <Text style={styles.pageHeader}>Edit Character</Text>
+                <Text style={styles.modalText}>Edit Character</Text>
                 <TextInput
                   placeholder={`Name: ${character.name}`}
                   style={styles.formControl}
                   placeholderTextColor="#ccc"
-                  // value={character.name}
-                  //  onChangeText={(text) => handleChange("name", text)}
+                  // value={editedName}
+                  onChangeText={setEditedName}
                 />
                 <TextInput
                   value={`Level: ${level}`}
@@ -416,12 +548,15 @@ export default function HomeMobile() {
                   //  onChangeText={(text) => handleChange("name", text)}
                 />
 
-                <TouchableOpacity style={styles.button} onPress={handleLevelUp}>
-                  <Text style={styles.buttonText}>Level Up!</Text>
+                <TouchableOpacity
+                  style={styles.levelUpButton}
+                  onPress={handleLevelUp}
+                >
+                  <Text style={styles.levelUpButtonText}>Level Up!</Text>
                 </TouchableOpacity>
 
                 {showLevelUp && (
-                  <View style={styles.modalView}>
+                  <View>
                     {/* <View style={styles.container}> */}
                     {level >= 3 && (
                       <TextInput
@@ -435,10 +570,11 @@ export default function HomeMobile() {
                   // </View>
                 )}
 
-                {/* <Text style={styles.AbilityScores}>Ability Scores</Text> */}
                 {isAbilityScoreLevel && (
-                  <View style={styles.abilityScoreWrapper}>
-                    <Text style={styles.header}>Ability Score Improvement</Text>
+                  <View>
+                    <Text style={styles.abilityHeader}>
+                      Ability Score Improvement
+                    </Text>
                     <View style={styles.abilityRow}>
                       {abilityScores.map((ability) => (
                         <View key={ability.title} style={styles.abilityBox}>
@@ -457,9 +593,6 @@ export default function HomeMobile() {
                           </TouchableOpacity>
                         </View>
                       ))}
-                      {/* <View style={styles.}> */}
-
-                      {/* </View> */}
                     </View>
                     {abilityPointsUsed >= maxPoints && (
                       <Text style={styles.warningText}>
@@ -477,39 +610,8 @@ export default function HomeMobile() {
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
           </View>
-          {/* </View> */}
-          {/* <Text style={styles.modalText}>Edit Character</Text>
-            <View style={styles.row}>
-              <Text style={styles.editCharSubtitle}>Character Name: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                placeholder={character.name}
-                placeholderTextColor="#ccc"
-              ></TextInput>
-            </View>
-            <View style={styles.row}> 
-              {/*at level 3 they get their subclass *
-              <Text style={styles.editCharSubtitle}>Level: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                placeholder={character.level.toString()}
-                placeholderTextColor="#ccc"
-                keyboardType="numeric"
-              ></TextInput>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.editCharSubtitle}>Max Hp: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                // placeholder={character.max_hp.toString()}
-                placeholderTextColor="#ccc"
-                keyboardType="numeric"
-              ></TextInput>
-            </View> */}
-          {/* </View> */}
         </Modal>
       </View>
-      {/* </View> */}
 
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
@@ -798,30 +900,20 @@ const styles = StyleSheet.create({
 
   //Section styles
   sectionHeader: {
-    // flexDirection: "row",
-    // justifyContent: "center",
-
     flexDirection: "row",
     width: "100%",
-    // paddingHorizontal: -50,
-    // paddingVertical: 5,
     alignItems: "center",
     overflow: "hidden",
   },
   sectionHeaderText: {
     ...globalText,
     fontSize: 25,
-    // flex: 1,
     textAlign: "left",
     marginRight: 39,
-    // marginLeft: -50,
-    // width: "33%",
   },
   sectionContainer: {
-    // alignItems: "",
     width: "33.33%",
     justifyContent: "space-evenly",
-    // flex: 1,
   },
 
   //Ability section styles
@@ -907,7 +999,6 @@ const styles = StyleSheet.create({
   pfp: {
     height: 92,
     width: 110,
-    // alignSelf: "center",
     borderRadius: 10,
     borderColor: "black",
     borderStyle: "solid",
@@ -946,7 +1037,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     ...globalText,
-    fontSize: 20,
+    fontSize: 25,
     marginBottom: 10,
     textAlign: "center",
   },
@@ -995,33 +1086,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-  resetButton: {
-    ...globalText,
-    color: "red",
-    marginTop: 10,
-    fontSize: 20,
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  editCharSubtitle: {
-    ...globalText,
-    fontSize: 20,
-  },
-  editCharTextInput: {
-    ...globalText,
-    // flex: 1,
-    fontSize: 20,
-    textAlign: "center",
-    borderWidth: 2,
-    borderStyle: "solid",
-    borderColor: "white",
-    borderRadius: 10,
-    padding: 3,
-    maxWidth: 200,
-    alignContent: "flex-end",
-    alignSelf: "flex-end",
-    width: "100%",
-  },
 
   row: {
     flexDirection: "row",
@@ -1038,35 +1102,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
 
-  // warning: {
-  //   color: "#A8FFFC",
-  //   textAlign: "center",
-  //   padding: 10,
-  // },
-
-  globalContainer: {
-    ...globalText,
-    flex: 1,
-    flexDirection: "column",
-    backgroundColor: "#121427",
-  },
-  // container: {
-  //   flex: 1,
-  //   flexDirection: "column",
-  //   backgroundColor: "#121427",
-  // },
-  // staticContainer: {
-  //   alignSelf: "flex-end",
-  //   width: "70%",
-  //   height: "15%",
-  // },
-  pageHeader: {
-    ...globalText,
-    fontSize: 30,
-    padding: 5,
-    textAlign: "center",
-    marginTop: 7,
-  },
+  //Edit Character/Level up styles
   formControl: {
     ...globalText,
     padding: 10,
@@ -1082,26 +1118,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#fff",
   },
-  AbilityScores: {
-    ...globalText,
-    padding: 10,
-    margin: 10,
-    fontSize: 24,
-    color: "#ccc",
-    borderBottomWidth: 1,
-    borderBottomColor: "#fff",
-    width: "100%",
-    marginBottom: 24,
-    textAlign: "left",
-    marginTop: 10,
-  },
-  abilityScoreWrapper: {
-    marginBottom: 5,
-  },
   abilityRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 12,
     flexWrap: "wrap",
   },
   abilityScoreControl: {
@@ -1126,46 +1145,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 8,
   },
-  button: {
+  levelUpButton: {
     backgroundColor: "#6B728C",
     borderColor: "#6B728C",
     alignSelf: "center",
     borderWidth: 2,
     borderRadius: 25,
-    marginTop: 40,
-    width: "75%",
-  },
-  // buttonText: {
-  //   ...globalText,
-  //   alignSelf: "center",
-  //   fontSize: 22,
-  // },
-  Inventory: {
-    ...globalText,
-    padding: 10,
-    margin: 10,
-    fontSize: 24,
-    color: "#ccc",
-    borderBottomWidth: 1,
-    borderBottomColor: "#fff",
-    width: "100%",
-    marginBottom: 24,
-    textAlign: "left",
     marginTop: 10,
+    marginBottom: 15,
+    width: "80%",
+    padding: 5,
   },
-  radioContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginStart: 20,
-    marginBottom: 10,
-  },
-  radioText: {
+  levelUpButtonText: {
     ...globalText,
-    flex: 1,
-    textAlign: "left",
-    fontSize: 24,
-    marginStart: 20,
+    color: "#A8FFFC",
+    alignSelf: "center",
+    fontSize: 27,
   },
   warningText: {
     color: "#A8FFFC",
@@ -1173,17 +1168,37 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignSelf: "center",
   },
-
-  scoreBox: {
-    backgroundColor: "#ddd",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 5,
+  resetButton: {
+    ...globalText,
+    color: "red",
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 10,
   },
-  abilityScoreText: {
-    fontSize: 18,
-    fontWeight: "bold",
+  editCharSubtitle: {
+    ...globalText,
+    fontSize: 20,
+  },
+  editCharTextInput: {
+    ...globalText,
+    fontSize: 20,
+    textAlign: "center",
+    borderWidth: 2,
+    borderStyle: "solid",
+    borderColor: "white",
+    borderRadius: 10,
+    padding: 3,
+    maxWidth: 200,
+    alignContent: "flex-end",
+    alignSelf: "flex-end",
+    width: "100%",
+  },
+  abilityHeader: {
+    ...globalText,
+    color: "#A8FFFC",
+    alignSelf: "center",
+    fontSize: 20,
+    marginBottom: 5,
   },
 });

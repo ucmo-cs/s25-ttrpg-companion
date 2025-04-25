@@ -30,7 +30,6 @@ export default function CharacterSelect() {
     default: () => router.navigate("/web/HomeWeb"),
   });
 
-
   const deleteCharacterMobileHandler = (key) => {
     Alert.alert(
       "Delete Character",
@@ -46,7 +45,6 @@ export default function CharacterSelect() {
     );
   };
 
-
   const deleteCharacterWebHandler = (key, name) => {
     const userClick = confirm("Are you sure you want to delete " + name);
     if (userClick) {
@@ -55,7 +53,6 @@ export default function CharacterSelect() {
       console.log("Character not deleted");
     }
   };
-
 
   const deleteCharacter = async (key) => {
     try {
@@ -96,41 +93,39 @@ export default function CharacterSelect() {
     console.log(characters);
   };
 
-
   const selectCharacterHandler = (key) => {
-    storeImage(key)
-  }
+    storeImage(key);
+  };
 
-  const storeImage  = (key) => {
+  const storeImage = (key) => {
     fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-image", {
       method: "POST",
       headers: {
-          user_uid : "24b7875d-7719-47bd-9ce7-66be8088dff4",
-          character_uid : "6f6fdbec-1a7b-4fb0-bc9a-e4f97dae1935",
-          session_token : "cooper_is_slow"
+        user_uid: "24b7875d-7719-47bd-9ce7-66be8088dff4",
+        character_uid: "6f6fdbec-1a7b-4fb0-bc9a-e4f97dae1935",
+        session_token: "cooper_is_slow",
       },
-      body : JSON.stringify({
-          "extension" : ".webp"
+      body: JSON.stringify({
+        extension: ".webp",
+      }),
+    })
+      .then((response) => {
+        console.log("Response: " + JSON.stringify(response));
+        console.log("Status: " + response.status);
+        console.log("Headers: " + response.headers);
+        return response.blob();
       })
-    })
-    .then((response) => {
-        console.log("Response: " + JSON.stringify(response))
-        console.log("Status: " + response.status)
-        console.log("Headers: " + response.headers)
-        return response.blob()  
-    })
-    .then(async (blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);  // Convert Blob to Base64
-      reader.onloadend = () => {
+      .then(async (blob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob); // Convert Blob to Base64
+        reader.onloadend = () => {
           // @ts-ignore
-          SessionStorage.setItem('passImage', reader.result); // Store Base64 Data URL in state
-      };
-    })
-    selectCharacter(key)
-    console.log('Image set')
-    
-  }
+          SessionStorage.setItem("passImage", reader.result); // Store Base64 Data URL in state
+        };
+      });
+    selectCharacter(key);
+    console.log("Image set");
+  };
 
   const selectCharacter = async (key) => {
     try {
@@ -159,10 +154,12 @@ export default function CharacterSelect() {
 
       const data = await response.json();
       SessionStorage.setItem("selectedCharacterData", data.character);
+      SessionStorage.setItem("characterUid", key);
       SessionStorage.setItem("token", data.session_token);
       SessionStorage.setItem("charInventory", data.character.inventory);
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
+      console.log("Character Inventory:", data.character.inventory);
       nav();
     } catch (error) {
       console.log("Could not recieve character: ", error);
@@ -175,7 +172,9 @@ export default function CharacterSelect() {
       <FlatList
         data={characters}
         renderItem={({ item }) => (
-          <TouchableHighlight onPress={() => selectCharacterHandler(item.character_uid)}>
+          <TouchableHighlight
+            onPress={() => selectCharacterHandler(item.character_uid)}
+          >
             <View style={styles.item}>
               <Text style={styles.buttonText}>{item.character_name}</Text>
               <Pressable
