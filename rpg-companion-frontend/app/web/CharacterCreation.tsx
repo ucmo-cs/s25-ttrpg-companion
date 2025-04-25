@@ -105,6 +105,7 @@ export default function CharacterCreation() {
     }
   };
 
+
   function changeClass(Class) {
     setClass(Class)
     getClassData(Class);
@@ -112,7 +113,8 @@ export default function CharacterCreation() {
 
   function getClassData(Class) {
     // IMPLEMENT LOGIC TO REQUEST CLASS DATA FROM BACKEND HERE
-  }
+  };
+
 
   function validClass() {
     if (Class != null && Class != undefined) {
@@ -126,7 +128,8 @@ export default function CharacterCreation() {
         </Picker>
       )
     }
-  }
+  };
+
 
   function getSubclasses() {
     if (Class == null) {
@@ -142,10 +145,52 @@ export default function CharacterCreation() {
     else {
       return (<Picker.Item label="somthing selected" value="na" />)
     }
+  };
+
+
+  const getSpecies = async () => {
+    try {
+      console.log(SessionStorage.getItem("userUid"));
+      console.log(SessionStorage.getItem("token"));
+      const response = await fetch(
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-species",
+        {
+          method: "POST",
+          headers: {
+            session_token: SessionStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            user_uid: SessionStorage.getItem("userUid"),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+
+      const data = await response.json();
+      SessionStorage.setItem("speciesList", data);
+      SessionStorage.setItem("token", data.session_token);
+      console.log(SessionStorage.getItem("speciesList"));
+      return (<Picker.Item label="Error occurred" value="error" />);
+    }
+    catch (error) {
+      console.log("Couldnt retreive subClasses: " + error);
+      return (<Picker.Item label="Error occurred" value="error" />);
+    }
   }
 
-  const user_uid = SessionStorage.getItem("userUid");
-  const session_token = SessionStorage.getItem("token");
+  function inputSpecies() {
+    getSpecies();
+    console.log(SessionStorage.getItem("speciesList"));
+    return (<Picker.Item label="Testing" value={"test"} />)
+  }
+
+
+  const user_uid = SessionStorage.getItem("userUid"); //Store UserUID
+  const session_token = SessionStorage.getItem("token"); //Store Session_Token
+
 
   const submitCharacter = async () => {
     const filteredInventory = items.filter((item) =>
@@ -183,6 +228,7 @@ export default function CharacterCreation() {
     }
   };
 
+
   const [SelectedOptions, setSelectedOptions] = useState<string[]>([]);
   const handleOptionPress = (option: string) => {
     setSelectedOptions(
@@ -205,15 +251,14 @@ export default function CharacterCreation() {
             onChangeText={(text) => handleChange("name", text)}
           />
 
-          <Picker
+          <Picker //Species Selection
             selectedValue={Species}
             mode="dropdown"
             style={styles.formControl}
             onValueChange={(itemValue) => changeClass(itemValue)}>
-            <Picker.Item label="Human" value="human" />
           </Picker>
 
-          <Picker
+          <Picker //Class selection
             selectedValue={Class}
             mode="dropdown"
             style={styles.formControl}
@@ -364,7 +409,7 @@ export default function CharacterCreation() {
             <Text style={styles.radioText}>Shield</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.button} onPress={submitCharacter}>
+        <TouchableOpacity style={styles.button} onPress={inputSpecies}>
           <Text style={styles.buttonText}>Create Character</Text>
         </TouchableOpacity>
       </ScrollView>
