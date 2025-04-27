@@ -23,7 +23,7 @@ export default function Inventory() {
   useEffect(() => {
     const parsed = SessionStorage.getItem("charInventory");
     try {
-      const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
+      const flat = JSON.parse(parsed);
       setInventory(flat);
       console.log("Parsed inventory:", flat);
     } catch (err) {
@@ -67,6 +67,50 @@ export default function Inventory() {
 
     return "help-circle"; // fallback
   };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const addToCombat = (item) => {
+    console.log("Adding item to combat:", item);
+    const stored = SessionStorage.getItem("equippedItem");
+    let equipped: Array<any> = [];
+    if (stored) {
+      try {
+        equipped = JSON.parse(stored) || [];
+      } catch (err) {
+        console.error("Failed to parse equipped item add to combat:", err);
+      }
+    }
+    const alreadyEquipped = equipped.some(
+      (equippedItem) => equippedItem.name === item.name
+    );
+    if (alreadyEquipped) {
+      equipped = equipped.filter(
+        (equippedItem) => equippedItem.name !== item.name
+      );
+      console.log("Item already equipped:", item.name);
+    } else {
+      equipped.push(item);
+    }
+    SessionStorage.setItem(`equippedItem`, JSON.stringify(equipped));
+    console.log("Equipped items:", equipped);
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  const isEquipped = (item) => {
+    const equipped = SessionStorage.getItem("equippedItem");
+    if (!equipped) return false;
+    try {
+      const parsedEquipped = JSON.parse(equipped) || [];
+      return parsedEquipped.some(
+        (equippedItem) => equippedItem.name === item.name
+      );
+    } catch (err) {
+      console.error(
+        "Failed to parse equipped item inventory is equipped:",
+        err
+      );
+      return false;
+    }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Inventory Screen</Text>
@@ -107,8 +151,13 @@ export default function Inventory() {
                 ))}
               </View>
             </View>
-            <TouchableOpacity style={styles.equipContainer}>
-              <Text style={styles.equipButton}>Equip</Text>
+            <TouchableOpacity
+              style={styles.equipContainer}
+              onPress={() => addToCombat(item)}
+            >
+              <Text style={styles.equipButton}>
+                {isEquipped(item) ? "Unequip" : "Equip"}
+              </Text>
             </TouchableOpacity>
           </View>
         ))}

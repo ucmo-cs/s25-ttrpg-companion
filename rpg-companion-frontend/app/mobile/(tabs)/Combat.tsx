@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SessionStorage from "react-native-session-storage";
 
 const globalText = {
   color: "white",
@@ -20,7 +21,24 @@ const colorOptions = [
   { color: "green", fill: "green" },
   { color: "red", fill: "red" },
 ];
+const getIconForItem = (item) => {
+  if (item.type === "weapon") {
+    if (item.name.toLowerCase().includes("bow")) return "bow-arrow";
+    if (item.name.toLowerCase().includes("sword")) return "sword";
+    if (item.name.toLowerCase().includes("axe")) return "axe";
+    if (item.name.toLowerCase().includes("wand")) return "wand";
+    return "sword-cross";
+  }
 
+  if (item.type === "armor") {
+    if (item.name.toLowerCase().includes("shield")) return "shield-half-full";
+    if (item.name.toLowerCase().includes("helmet")) return "helmet";
+    if (item.name.toLowerCase().includes("leather")) return "tshirt-v";
+    return "shield";
+  }
+
+  return "help-circle"; // fallback
+};
 const actions = [
   {
     title: "Shortbow",
@@ -62,6 +80,50 @@ const bonusActions = [
   },
 ];
 export default function Combat() {
+  const [equippedItem, setEquippedItem] = useState<Array<any>>([]);
+  const [abilities, setAbilities] = useState<Array<any>>([]);
+  const [armor, setArmor] = useState<Array<any>>([]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const parsed = SessionStorage.getItem("equippedItem");
+      try {
+        const parsedItems = JSON.parse(parsed) || [];
+
+        const weapons = parsedItems.filter((item) => item.type === "weapon");
+        const armor = parsedItems.filter((item) => item.type === "armor");
+        SessionStorage.setItem("armorEquipped", JSON.stringify(armor));
+        setEquippedItem(weapons);
+      } catch (err) {
+        console.error("Failed to parse equipped item combat equip:", err);
+      }
+    }, 1000);
+
+    const characterAbilities = SessionStorage.getItem("abilityScores");
+    try {
+      const parsedAbilities = JSON.parse(characterAbilities);
+      console.log("Parsed character abilities:", parsedAbilities);
+      setAbilities(parsedAbilities);
+    } catch (err) {
+      console.error("Failed to parse character abilities:", err);
+    }
+  }, []);
+
+  const getHitModifier = (item) => {
+    if (!abilities || abilities.length === 0) return "";
+
+    const strMod =
+      abilities.find((ability) => ability.title === "Str")?.modifier || "+0";
+    const dexMod =
+      abilities.find((ability) => ability.title === "Dex")?.modifier || "+0";
+
+    // Check if item.attributes includes "Finesse"
+    if (item.attributes && item.attributes.includes("Finess")) {
+      return dexMod;
+    }
+
+    // Otherwise default to Strength
+    return strMod;
+  };
   //The array allows us to invidualize the circles
   const [deathSave, setDeathSave] = useState([0, 0, 0, 0, 0]);
 
@@ -83,18 +145,22 @@ export default function Combat() {
       <View style={styles.scrollSection}>
         <ScrollView style={styles.scrollArea}>
           <View style={styles.gridContainer}>
-            {actions.map((item, index) => (
+            {equippedItem.map((item, index) => (
               <View key={index} style={styles.infoBox}>
-                {item.icon}
+                <MaterialCommunityIcons
+                  name={getIconForItem(item)}
+                  size={50}
+                  color="white"
+                />
                 <View>
-                  <Text style={styles.boxTitle}>{item.title}</Text>
+                  <Text style={styles.boxTitle}>{item.name}</Text>
                   <View style={styles.statRow}>
                     <Text style={styles.boxSubtitle}>Hit</Text>
-                    <Text style={styles.boxValue}>{item.hit}</Text>
+                    <Text style={styles.boxValue}>{getHitModifier(item)}</Text>
                   </View>
                   <View style={styles.statRow}>
                     <Text style={styles.boxSubtitle}>Damage</Text>
-                    <Text style={styles.boxValue}>{item.damage}</Text>
+                    <Text style={styles.boxValue}>{item.damage_type}</Text>
                   </View>
                 </View>
               </View>
