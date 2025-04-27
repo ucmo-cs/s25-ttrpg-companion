@@ -12,6 +12,7 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import SessionStorage from "react-native-session-storage";
 import { Circle } from "lucide-react-native";
+import { Picker } from "@react-native-picker/picker";
 
 const globalText = {
   color: "white",
@@ -110,7 +111,7 @@ export default function CharacterCreation() {
   };
   const user_uid = SessionStorage.getItem("userUid");
   const session_token = SessionStorage.getItem("token");
-
+  console.log("Session token:", session_token);
   const submitCharacter = async () => {
     const filteredInventory = items.filter((item) =>
       SelectedOptions.includes(item.name)
@@ -154,6 +155,48 @@ export default function CharacterCreation() {
           : [...prev, option] // add if not selected
     );
   };
+  const [species, setSpecies] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-species",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Session_Token: session_token,
+            },
+            body: JSON.stringify({ user_uid: user_uid }),
+          }
+        );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error fetching species:", errorText);
+          return;
+        }
+        const data = await response.json();
+        const speciesData = data.species;
+        console.log("Species data:", speciesData);
+        const newSessionToken = data.session_token;
+        console.log("New session token:", newSessionToken);
+        if (newSessionToken) {
+          SessionStorage.setItem("token", newSessionToken);
+        }
+        const speciesArray = Object.keys(speciesData).map((key) => ({
+          id: key,
+          name: key,
+          ...speciesData[key],
+        }));
+        console.log("species Array:", speciesArray);
+        setSpecies(speciesArray);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#121427" }}
@@ -177,6 +220,25 @@ export default function CharacterCreation() {
             value={characterData.character.species_id}
             onChangeText={(text) => handleChange("species_id", text)}
           />
+          <Picker
+            selectedValue={characterData.character.species_id}
+            onValueChange={(itemValue, itemIndex) =>
+              handleChange("species_id", itemValue)
+            }
+            itemStyle={{
+              color: "#fff",
+              fontSize: 24,
+              fontFamily: "Sora",
+            }}
+          >
+            {species.map((species) => (
+              <Picker.Item
+                label={species.name}
+                value={species.id}
+                key={species.id}
+              />
+            ))}
+          </Picker>
           <TextInput
             placeholder="Class"
             style={styles.formControl}
@@ -184,13 +246,13 @@ export default function CharacterCreation() {
             value={characterData.character.class_id}
             onChangeText={(text) => handleChange("class_id", text)}
           />
-          <TextInput
+          {/* <TextInput
             placeholder="Subclass"
             style={styles.formControl}
             placeholderTextColor="#ccc"
             value={characterData.character.subclass_id}
             onChangeText={(text) => handleChange("subclass_id", text)}
-          />
+          /> */}
           <TextInput
             style={[styles.formControl, { height: 100 }]}
             placeholderTextColor="#ccc"
