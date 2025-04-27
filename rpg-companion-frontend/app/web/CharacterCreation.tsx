@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import SessionStorage from "react-native-session-storage";
 import GlobalStyles from "../globalstyles";
-import { Circle } from "lucide-react-native";
+import { Circle, Key } from "lucide-react-native";
+import { jsx } from "react/jsx-runtime";
 
 const globalText = {
   color: "white",
@@ -80,7 +81,13 @@ export default function CharacterCreation() {
   };
   const [characterData, setCharacterData] = useState(initialCharacterData);
   const [Class, setClass] = useState();
-  const [Species, setSpecies] = useState();
+  const [Species, setSpecies] = useState("barbarian");
+  const [speciesList, setSpeciesList] = useState(<><Picker.Item label="loading" value="na"/></>);
+  const [speciesInfo, setSpeciesInfo] = useState(<Text style={styles.loadingText}>Loading...</Text>) 
+
+  useEffect(() => {
+    getSpecies();
+  }, []);
 
   const handleChange = (key: string, value: string) => {
     if (["str", "dex", "con", "int", "wis", "cha"].includes(key)) {
@@ -115,6 +122,13 @@ export default function CharacterCreation() {
     // IMPLEMENT LOGIC TO REQUEST CLASS DATA FROM BACKEND HERE
   };
 
+  function changeSpecies(species){
+    setSpecies(species);
+    setSpeciesInfo(<>
+    <Text>Test</Text>
+    </>)
+  }
+
 
   function validClass() {
     if (Class != null && Class != undefined) {
@@ -148,6 +162,11 @@ export default function CharacterCreation() {
   };
 
 
+  function generateSpeciesInfo(){
+    
+  }
+
+
   const getSpecies = async () => {
     try {
       console.log(SessionStorage.getItem("userUid"));
@@ -172,19 +191,30 @@ export default function CharacterCreation() {
       const data = await response.json();
       SessionStorage.setItem("speciesList", data);
       SessionStorage.setItem("token", data.session_token);
-      console.log(SessionStorage.getItem("speciesList"));
-      return (<Picker.Item label="Error occurred" value="error" />);
+      inputSpecies();
+      generateSpeciesInfo();
     }
     catch (error) {
       console.log("Couldnt retreive subClasses: " + error);
-      return (<Picker.Item label="Error occurred" value="error" />);
     }
   }
 
   function inputSpecies() {
-    getSpecies();
+
+    if(SessionStorage.getItem("speciesList") != null || undefined){
     console.log(SessionStorage.getItem("speciesList"));
-    return (<Picker.Item label="Testing" value={"test"} />)
+
+    const speciesList = Object.keys(SessionStorage.getItem("speciesList"));
+    console.log(speciesList);
+
+    var final = speciesList.map((item) => (
+      <Picker.Item label={item} value={item.toLocaleLowerCase()} />
+    ));
+    setSpeciesList(<>{final}</>);
+  }else{
+    return(<Picker.Item label="loading" value="loading" />
+      )
+    }
   }
 
 
@@ -238,6 +268,11 @@ export default function CharacterCreation() {
           : [...prev, option] // add if not selected
     );
   };
+
+
+
+
+
   return (
     <View style={GlobalStyles.page}>
       <ScrollView>
@@ -255,8 +290,12 @@ export default function CharacterCreation() {
             selectedValue={Species}
             mode="dropdown"
             style={styles.formControl}
-            onValueChange={(itemValue) => changeClass(itemValue)}>
+            onValueChange={(itemValue) => changeSpecies(itemValue)}>
+            {speciesList};
           </Picker>
+
+          {/* {speciesInfo} */}
+          <View style={styles.speciesView}><Text>Where am I</Text></View>
 
           <Picker //Class selection
             selectedValue={Class}
@@ -409,13 +448,17 @@ export default function CharacterCreation() {
             <Text style={styles.radioText}>Shield</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.button} onPress={inputSpecies}>
+        <TouchableOpacity style={styles.button} onPress={submitCharacter}>
           <Text style={styles.buttonText}>Create Character</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -539,4 +582,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginStart: 20,
   },
+  loadingText: {
+    color:"white",
+    fontSize:32
+  },
+  speciesView: {
+    flex:1,
+    height: 100
+  }
 });
