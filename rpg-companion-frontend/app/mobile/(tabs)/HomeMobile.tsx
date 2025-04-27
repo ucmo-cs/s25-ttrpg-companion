@@ -186,6 +186,10 @@ const calculateBonus = (score) => {
 };
 
 export default function HomeMobile() {
+  //Session token and user uid
+  const session_token = SessionStorage.getItem("token");
+  const user_uid = SessionStorage.getItem("userUid");
+  //Calculating the equipped items and armor class
   const [armor, setArmor] = useState<Array<any>>([]);
   useEffect(() => {
     if (armor.length == null) return;
@@ -193,7 +197,6 @@ export default function HomeMobile() {
     const interval = setInterval(() => {
       const parsed = SessionStorage.getItem("armorEquipped");
       if (!parsed) {
-        console.log("No equipped item found in session storage.");
         return;
       }
       try {
@@ -246,12 +249,69 @@ export default function HomeMobile() {
     }
     return finalAC;
   };
+
+  //Character traits from session storage i.e. species features/class features
   const character = SessionStorage.getItem("selectedCharacterData");
+  const speciesFeatures = character.features.speciesfeatures;
+  console.log("Species Features", speciesFeatures);
+  const traitsKey = Object.keys(speciesFeatures).find((key) =>
+    key.includes("_traits")
+  );
+  const traits = traitsKey ? speciesFeatures[traitsKey] : speciesFeatures;
+  console.log("Traits", traits);
+  useEffect(() => {
+    SessionStorage.setItem("speciesData", JSON.stringify(traits));
+  });
+
+  //Class Features set up
+  const [classFeatures, setClassFeatures] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/level-up",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Session_Token: session_token,
+            },
+            body: JSON.stringify({
+              user_uid: user_uid,
+              class: character.class_id,
+              level: character.level,
+              subspecies: "",
+            }),
+          }
+        );
+        console.log(user_uid, character.level, character.class_id);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error fetching classData:", errorText);
+          return;
+        }
+        //setting data and resetting session token
+        const data = await response.json();
+        console.log("Class Features Data", data);
+        const newSessionToken = data.session_token;
+        console.log("New session token:", newSessionToken);
+        if (newSessionToken) {
+          SessionStorage.setItem("token", newSessionToken);
+        }
+      } catch (error) {
+        console.error("Error fetching class features:", error);
+      }
+    };
+    fetchData();
+  });
+
+  //Ability scores and caluclated skills
   type AbilityScore = {
     title: string;
     modifier: string;
     score: number;
   };
+
   const [abilityScores, setAbilityScores] = useState<AbilityScore[]>([]);
   const [skillsData, setSkillsData] = useState(initialSkillsData);
   const [calculatedSkills, setCalculatedSkills] = useState(initialSkillsData);

@@ -7,7 +7,8 @@ import {
 } from "react-native";
 import { Star, Skull } from "lucide-react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import SessionStorage from "react-native-session-storage";
 
 const globalText = {
   color: "white",
@@ -45,6 +46,44 @@ const features = [
 ];
 
 export default function Status() {
+  const [speciesData, setSpeciesData] = useState<any[]>([]);
+  const [characterData, setCharacterData] = useState<any[]>([]);
+  const [featuresData, setFeaturesData] = useState<any>([]);
+  //UseEffect to load feature data from session storage
+  useEffect(() => {
+    //Species Data loaded from session storage
+    const raw = SessionStorage.getItem("speciesData");
+    try {
+      const parsed = JSON.parse(raw);
+      console.log("Parsed selected species data:", parsed);
+      setSpeciesData(parsed);
+    } catch (err) {
+      console.error("Failed to parse selected character data:", err);
+    }
+
+    //Character Data loaded from session storage, specifically for features
+    const raw2 = SessionStorage.getItem("selectedCharacterData");
+    try {
+      setCharacterData(raw2);
+      console.log("Parsed selected character data:", raw2);
+    } catch (err) {
+      console.error("Failed to parse selected character data:", err);
+    }
+  }, []);
+
+  //Features Data set up
+  useEffect(() => {
+    if (!speciesData) return;
+    const updatedFeatures = Object.entries(speciesData).map(([key, value]) => ({
+      title: "Species Feature",
+      subtitle: key,
+      icon: <Star color="white" size={50} />,
+      description: value,
+    }));
+    setFeaturesData(updatedFeatures);
+    console.log("Updated features data:", updatedFeatures);
+  }, [speciesData]);
+
   const [statuses, setStatuses] = useState([0, 0, 0]);
 
   const toggleStatus = (index: number) => {
@@ -85,19 +124,36 @@ export default function Status() {
       </View>
       <ScrollView style={styles.scrollArea}>
         <View style={styles.row}>
-          {features.map((item, index) => (
-            <View style={styles.featureBox}>
-              <View style={styles.featureContent}>
-                {item.icon}
-                <Text style={styles.featureTitle}>{item.title}</Text>
-                <View style={styles.line}></View>
-                <Text style={styles.featureSubtitle}>{item.subtitle}</Text>
-                <ScrollView style={styles.descriptionContainer}>
-                  <Text style={styles.description}>{item.description}</Text>
-                </ScrollView>
+          <View style={styles.row}>
+            {featuresData.map((item, index) => (
+              <View key={index} style={styles.featureBox}>
+                <View style={styles.featureContent}>
+                  {item.icon}
+                  <Text style={styles.featureTitle}>{item.title}</Text>
+                  <View style={styles.line}></View>
+                  <Text style={styles.featureSubtitle}>{item.subtitle}</Text>
+
+                  {/* 🛠️ New: Handle if description is an object */}
+                  <ScrollView style={styles.descriptionContainer}>
+                    {typeof item.description === "string" ? (
+                      // If it's a regular string, just show it normally
+                      <Text style={styles.description}>{item.description}</Text>
+                    ) : (
+                      // If it's an object, map each sub-trait!
+                      Object.entries(item.description).map(
+                        ([subTrait, detail], i) => (
+                          <View key={i} style={{ marginBottom: 10 }}>
+                            <Text style={styles.subTraitTitle}>{subTrait}</Text>
+                            <Text style={styles.subTraitDescription}></Text>
+                          </View>
+                        )
+                      )
+                    )}
+                  </ScrollView>
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -186,6 +242,21 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: "#3E4A59",
     borderRadius: 10,
+    textAlign: "center",
+  },
+
+  subTraitTitle: {
+    ...globalText,
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 2,
+    textAlign: "center",
+  },
+
+  subTraitDescription: {
+    ...globalText,
+    fontSize: 14,
+    marginBottom: 5,
     textAlign: "center",
   },
 });

@@ -116,11 +116,31 @@ export default function CharacterCreation() {
     const filteredInventory = items.filter((item) =>
       SelectedOptions.includes(item.name)
     );
+    const selectedSpecies = species.find(
+      (species) => species.id === characterData.character.species_id
+    );
+    if (!selectedSpecies) {
+      alert("Please select a valid species.");
+      return;
+    }
+    const traitsKey = Object.keys(selectedSpecies.features).find((key) =>
+      key.includes("_traits")
+    );
+
     const payload = {
       user_uid: user_uid,
       character: {
         ...characterData.character,
+        speed: selectedSpecies.Speed,
+        creature_type: selectedSpecies.creature_type,
+        size: selectedSpecies.size,
+        level: 1,
         inventory: [filteredInventory],
+        features: {
+          classfeatures: [],
+          subclassfeatures: [],
+          speciesfeatures: traitsKey ? selectedSpecies.features[traitsKey] : [],
+        },
       },
     };
     try {
@@ -191,6 +211,7 @@ export default function CharacterCreation() {
         }));
         console.log("species Array:", speciesArray);
         setSpecies(speciesArray);
+        SessionStorage.setItem("species", JSON.stringify(speciesArray));
       } catch (error) {
         console.error(error);
       }
@@ -246,13 +267,20 @@ export default function CharacterCreation() {
             value={characterData.character.class_id}
             onChangeText={(text) => handleChange("class_id", text)}
           />
-          {/* <TextInput
-            placeholder="Subclass"
-            style={styles.formControl}
-            placeholderTextColor="#ccc"
-            value={characterData.character.subclass_id}
-            onChangeText={(text) => handleChange("subclass_id", text)}
-          /> */}
+          <Picker
+            selectedValue={characterData.character.class_id}
+            onValueChange={(itemValue, itemIndex) =>
+              handleChange("class_id", itemValue)
+            }
+            itemStyle={{
+              color: "#fff",
+              fontSize: 24,
+              fontFamily: "Sora",
+            }}
+          >
+            <Picker.Item label="Wizard" value="Wizard" key="Wizard" />
+            <Picker.Item label="Fighter" value="Fighter" key="Fighter" />
+          </Picker>
           <TextInput
             style={[styles.formControl, { height: 100 }]}
             placeholderTextColor="#ccc"

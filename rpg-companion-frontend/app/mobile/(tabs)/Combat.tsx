@@ -84,19 +84,24 @@ export default function Combat() {
   const [abilities, setAbilities] = useState<Array<any>>([]);
   const [armor, setArmor] = useState<Array<any>>([]);
   useEffect(() => {
-    const interval = setInterval(() => {
-      const parsed = SessionStorage.getItem("equippedItem");
-      try {
-        const parsedItems = JSON.parse(parsed) || [];
+    if (SessionStorage.getItem("equippedItem") != null) {
+      const interval = setInterval(() => {
+        const parsed = SessionStorage.getItem("equippedItem");
+        try {
+          const parsedItems = JSON.parse(parsed) || [];
 
-        const weapons = parsedItems.filter((item) => item.type === "weapon");
-        const armor = parsedItems.filter((item) => item.type === "armor");
-        SessionStorage.setItem("armorEquipped", JSON.stringify(armor));
-        setEquippedItem(weapons);
-      } catch (err) {
-        console.error("Failed to parse equipped item combat equip:", err);
-      }
-    }, 1000);
+          const weapons = parsedItems.filter((item) => item.type === "weapon");
+          const armor = parsedItems.filter((item) => item.type === "armor");
+          SessionStorage.setItem("armorEquipped", JSON.stringify(armor));
+          setEquippedItem(weapons);
+        } catch (err) {
+          console.error("Failed to parse equipped item combat equip:", err);
+        }
+      }, 1000);
+    } else if (SessionStorage.getItem("equippedItem") === null) {
+      console.log("No equipped item found in session storage.");
+      setEquippedItem([]);
+    }
 
     const characterAbilities = SessionStorage.getItem("abilityScores");
     try {

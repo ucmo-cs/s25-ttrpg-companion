@@ -21,13 +21,21 @@ export default function Inventory() {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+    SessionStorage.removeItem("equippedItem");
     const parsed = SessionStorage.getItem("charInventory");
-    try {
-      const flat = JSON.parse(parsed);
-      setInventory(flat);
-      console.log("Parsed inventory:", flat);
-    } catch (err) {
-      console.error("Failed to parse inventory:", err);
+    if (parsed) {
+      try {
+        const flat = JSON.parse(parsed);
+        const safeInventory = Array.isArray(flat) ? flat : [flat];
+        setInventory(safeInventory);
+        console.log("Parsed inventory:", safeInventory);
+      } catch (err) {
+        console.error("Failed to parse inventory:", err);
+        setInventory([]);
+      }
+    } else if (parsed === null) {
+      console.log("No inventory found in session storage.");
+      setInventory([]);
     }
 
     const raw2 = SessionStorage.getItem("selectedCharacterData");
@@ -116,51 +124,55 @@ export default function Inventory() {
       <Text style={styles.pageHeader}>Inventory Screen</Text>
 
       <ScrollView style={styles.staticContainer}>
-        {inventory.map((item, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <TouchableOpacity
-              onPress={() =>
-                handleItemPress({
-                  ...item,
-                  icon: getIconForItem(item),
-                  description: item.description || "No description available",
-                })
-              }
-            >
-              <MaterialCommunityIcons
-                name={getIconForItem(item)}
-                size={50}
-                color="white"
-              />
-            </TouchableOpacity>
-            {selectedItem && (
-              <ItemModal
-                item={selectedItem}
-                visible={modalVisible}
-                onClose={handleCloseModal}
-              />
-            )}
-            <View style={styles.itemContent}>
-              <Text style={styles.itemText}>{item.name}</Text>
-              <Text style={styles.itemText}>{item.properties}</Text>
-              <View style={styles.attributesContainer}>
-                {item.attributes?.map((attr, i) => (
-                  <View style={styles.attributesTextContainer}>
-                    <Text style={styles.attributeText}>{attr || ""}</Text>
-                  </View>
-                ))}
+        {inventory.length > 0 ? (
+          inventory.map((item, index) => (
+            <View key={index} style={styles.itemContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  handleItemPress({
+                    ...item,
+                    icon: getIconForItem(item),
+                    description: item.description || "No description available",
+                  })
+                }
+              >
+                <MaterialCommunityIcons
+                  name={getIconForItem(item)}
+                  size={50}
+                  color="white"
+                />
+              </TouchableOpacity>
+              {selectedItem && (
+                <ItemModal
+                  item={selectedItem}
+                  visible={modalVisible}
+                  onClose={handleCloseModal}
+                />
+              )}
+              <View style={styles.itemContent}>
+                <Text style={styles.itemText}>{item.name}</Text>
+                <Text style={styles.itemText}>{item.properties}</Text>
+                <View style={styles.attributesContainer}>
+                  {item.attributes?.map((attr, i) => (
+                    <View style={styles.attributesTextContainer}>
+                      <Text style={styles.attributeText}>{attr || ""}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
+              <TouchableOpacity
+                style={styles.equipContainer}
+                onPress={() => addToCombat(item)}
+              >
+                <Text style={styles.equipButton}>
+                  {isEquipped(item) ? "Unequip" : "Equip"}
+                </Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.equipContainer}
-              onPress={() => addToCombat(item)}
-            >
-              <Text style={styles.equipButton}>
-                {isEquipped(item) ? "Unequip" : "Equip"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+          ))
+        ) : (
+          <Text style={styles.itemText}>No items in inventory</Text>
+        )}
       </ScrollView>
     </View>
   );
