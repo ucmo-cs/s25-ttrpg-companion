@@ -259,50 +259,9 @@ export default function HomeMobile() {
   );
   const traits = traitsKey ? speciesFeatures[traitsKey] : speciesFeatures;
   console.log("Traits", traits);
+  console.log("Spell Data", character.features.classfeatures);
   useEffect(() => {
     SessionStorage.setItem("speciesData", JSON.stringify(traits));
-  });
-
-  //Class Features set up
-  const [classFeatures, setClassFeatures] = useState<any[]>([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/level-up",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Session_Token: session_token,
-            },
-            body: JSON.stringify({
-              user_uid: user_uid,
-              class: character.class_id,
-              level: character.level,
-              subspecies: "",
-            }),
-          }
-        );
-        console.log(user_uid, character.level, character.class_id);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error fetching classData:", errorText);
-          return;
-        }
-        //setting data and resetting session token
-        const data = await response.json();
-        console.log("Class Features Data", data);
-        const newSessionToken = data.session_token;
-        console.log("New session token:", newSessionToken);
-        if (newSessionToken) {
-          SessionStorage.setItem("token", newSessionToken);
-        }
-      } catch (error) {
-        console.error("Error fetching class features:", error);
-      }
-    };
-    fetchData();
   });
 
   //Ability scores and caluclated skills

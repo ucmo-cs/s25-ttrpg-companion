@@ -165,9 +165,9 @@ export default function CharacterSelect() {
         "charInventory",
         JSON.stringify(data.character.inventory[0])
       );
-      console.log(
-        "Character Inventory",
-        JSON.stringify(data.character.inventory[0])
+      SessionStorage.setItem(
+        "classFeatures",
+        JSON.stringify(data.character.features.classfeatures)
       );
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);

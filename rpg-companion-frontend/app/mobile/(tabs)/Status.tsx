@@ -47,7 +47,7 @@ const features = [
 
 export default function Status() {
   const [speciesData, setSpeciesData] = useState<any[]>([]);
-  const [characterData, setCharacterData] = useState<any[]>([]);
+  const [classFeatures, setClassFeatures] = useState<any>([]);
   const [featuresData, setFeaturesData] = useState<any>([]);
   //UseEffect to load feature data from session storage
   useEffect(() => {
@@ -62,27 +62,39 @@ export default function Status() {
     }
 
     //Character Data loaded from session storage, specifically for features
-    const raw2 = SessionStorage.getItem("selectedCharacterData");
+    const raw2 = SessionStorage.getItem("classFeatures");
     try {
-      setCharacterData(raw2);
-      console.log("Parsed selected character data:", raw2);
+      const parsed = JSON.parse(raw2);
+      console.log("Parsed selected classFeatures:", parsed);
+      setClassFeatures(parsed);
     } catch (err) {
-      console.error("Failed to parse selected character data:", err);
+      console.error("Failed to parse selected classFeatures:", err);
     }
   }, []);
 
   //Features Data set up
   useEffect(() => {
-    if (!speciesData) return;
-    const updatedFeatures = Object.entries(speciesData).map(([key, value]) => ({
+    if (!speciesData || !classFeatures) return;
+    const speciesFeatures = Object.entries(speciesData).map(([key, value]) => ({
       title: "Species Feature",
       subtitle: key,
       icon: <Star color="white" size={50} />,
       description: value,
     }));
-    setFeaturesData(updatedFeatures);
-    console.log("Updated features data:", updatedFeatures);
-  }, [speciesData]);
+
+    const parsedclassFeatures =
+      classFeatures.flatMap((featureGroup: any) =>
+        Object.entries(featureGroup || {}).map(([key, value]) => ({
+          title: "Class Feature",
+          subtitle: key,
+          icon: <Skull color="white" size={50} />,
+          description: value,
+        }))
+      ) || [];
+    const allFeatures = [...speciesFeatures, ...parsedclassFeatures];
+    setFeaturesData(allFeatures);
+    console.log("Updated features data:", allFeatures);
+  }, [speciesData, classFeatures]);
 
   const [statuses, setStatuses] = useState([0, 0, 0]);
 
@@ -133,7 +145,6 @@ export default function Status() {
                   <View style={styles.line}></View>
                   <Text style={styles.featureSubtitle}>{item.subtitle}</Text>
 
-                  {/* 🛠️ New: Handle if description is an object */}
                   <ScrollView style={styles.descriptionContainer}>
                     {typeof item.description === "string" ? (
                       // If it's a regular string, just show it normally
