@@ -10,6 +10,7 @@ const GlobalStyles = StyleSheet.create({
     height: "100%",
     color: "white",
     justifyContent: "center",
+    alignContent:"center",
     fontFamily: "Sora-Regular",
     fontSize: 16,
 

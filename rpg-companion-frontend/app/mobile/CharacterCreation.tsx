@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import SessionStorage from "react-native-session-storage";
 import { Circle } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
+import GlobalStyles from "../globalstyles";
 
 const globalText = {
   color: "white",
@@ -191,8 +192,8 @@ export default function CharacterCreation() {
         }
       );
       const data = await response.text();
-      console.log(data);
-      console.log("Character data:", payload);
+      // console.log(data);
+      // console.log("Character data:", payload);
       alert("Character created successfully!");
       setCharacterData(initialCharacterData); // Reset the form after submission
       setSelectedOptions([]); // Reset selected options
@@ -201,7 +202,7 @@ export default function CharacterCreation() {
       setSpellData({}); // Reset spell data
     } catch (error) {
       console.error(error);
-      console.log("Data:", payload);
+      // console.log("Data:", payload);
     }
   };
 
@@ -323,234 +324,250 @@ export default function CharacterCreation() {
   }, [characterData.character.class_id, characterData.character.level]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#121427" }}
-      behavior="padding"
-      keyboardVerticalOffset={80}
-    >
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        <View style={styles.container}>
-          <Text style={styles.pageHeader}>Create Character</Text>
-          <TextInput
-            placeholder="Name"
-            style={styles.formControl}
-            placeholderTextColor="#ccc"
-            value={characterData.character.name}
-            onChangeText={(text) => handleChange("name", text)}
-          />
-          <TextInput
-            placeholder="Species"
-            style={styles.formControl}
-            placeholderTextColor="#ccc"
-            value={characterData.character.species_id}
-            onChangeText={(text) => handleChange("species_id", text)}
-          />
-          <Picker
-            selectedValue={characterData.character.species_id}
-            onValueChange={(itemValue) => {
-              handleChange("species_id", itemValue);
-
-              const selected = species.find((s) => s.id === itemValue);
-              if (selected) {
-                const baseTraitsKey = Object.keys(selected.features).find(
-                  (key) => key.toLowerCase().includes(selected.id.toLowerCase())
-                );
-
-                if (baseTraitsKey) {
-                  setTraitsKey(baseTraitsKey); // <--- SAVE it here
-
-                  const subspeciesList =
-                    selected.features[baseTraitsKey]?.subspecies || [];
-                  setAvailableSubspecies(subspeciesList);
-                } else {
-                  setTraitsKey(null);
-                  setAvailableSubspecies([]);
-                }
-              }
-            }}
-            itemStyle={{
-              color: "#fff",
-              fontSize: 24,
-              fontFamily: "Sora",
-            }}
-          >
-            {species.map((species) => (
-              <Picker.Item
-                label={species.name}
-                value={species.id}
-                key={species.id}
+    <View style={GlobalStyles.page}>
+      <ScrollView style={styles.webWrapper}>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: "#121427" }}
+          behavior="padding"
+          keyboardVerticalOffset={80}
+        >
+          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <View style={styles.container}>
+              <Text style={styles.pageHeader}>Create Character</Text>
+              <TextInput
+                placeholder="Name"
+                style={styles.formControl}
+                placeholderTextColor="#ccc"
+                value={characterData.character.name}
+                onChangeText={(text) => handleChange("name", text)}
               />
-            ))}
-          </Picker>
-          {availableSubspecies.length > 0 && (
-            <Picker
-              selectedValue={characterData.character.subspecies_id}
-              onValueChange={(itemValue) =>
-                handleChange("subspecies_id", itemValue)
-              }
-              itemStyle={{
-                color: "#fff",
-                fontSize: 24,
-                fontFamily: "Sora",
-              }}
-            >
-              {availableSubspecies.map((sub) => (
-                <Picker.Item label={sub} value={sub} key={sub} />
-              ))}
-            </Picker>
-          )}
-          <TextInput
-            placeholder="Class"
-            style={styles.formControl}
-            placeholderTextColor="#ccc"
-            value={characterData.character.class_id}
-            onChangeText={(text) => handleChange("class_id", text)}
-          />
-          <Picker
-            selectedValue={characterData.character.class_id}
-            onValueChange={(itemValue, itemIndex) =>
-              handleChange("class_id", itemValue)
-            }
-            itemStyle={{
-              color: "#fff",
-              fontSize: 24,
-              fontFamily: "Sora",
-            }}
-          >
-            <Picker.Item label="Fighter" value="Fighter" key="Fighter" />
-            <Picker.Item label="Wizard" value="Wizard" key="Wizard" />
-          </Picker>
-          <TextInput
-            style={[styles.formControl, { height: 100 }]}
-            placeholderTextColor="#ccc"
-            multiline={true}
-            value={characterData.character.character_notes}
-            onChangeText={(text) => handleChange("character_notes", text)}
-            placeholder="Notes"
-          />
-          <Text style={styles.AbilityScores}>Ability Scores</Text>
-          <View style={styles.abilityScoreWrapper}>
-            <View style={styles.abilityRow}>
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Str</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.str.toString()}
-                  onChangeText={(text) => handleChange("str", text)}
-                />
-              </View>
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Dex</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.dex.toString()}
-                  onChangeText={(text) => handleChange("dex", text)}
-                />
-              </View>
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Con</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.con.toString()}
-                  onChangeText={(text) => handleChange("con", text)}
-                />
-              </View>
-            </View>
-            <View style={styles.abilityRow}>
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Wis</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.wis.toString()}
-                  onChangeText={(text) => handleChange("wis", text)}
-                />
-              </View>
+              <TextInput
+                placeholder="Species"
+                style={styles.formControl}
+                placeholderTextColor="#ccc"
+                value={characterData.character.species_id}
+                onChangeText={(text) => handleChange("species_id", text)}
+              />
+              <Picker
+                selectedValue={characterData.character.species_id}
+                onValueChange={(itemValue) => {
+                  handleChange("species_id", itemValue);
 
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Int</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.int.toString()}
-                  onChangeText={(text) => handleChange("int", text)}
-                />
+                  const selected = species.find((s) => s.id === itemValue);
+                  if (selected) {
+                    const baseTraitsKey = Object.keys(selected.features).find(
+                      (key) => key.toLowerCase().includes(selected.id.toLowerCase())
+                    );
+
+                    if (baseTraitsKey) {
+                      setTraitsKey(baseTraitsKey); // <--- SAVE it here
+
+                      const subspeciesList =
+                        selected.features[baseTraitsKey]?.subspecies || [];
+                      setAvailableSubspecies(subspeciesList);
+                    } else {
+                      setTraitsKey(null);
+                      setAvailableSubspecies([]);
+                    }
+                  }
+                }}
+                itemStyle={{
+                  color: "#fff",
+                  fontSize: 24,
+                  fontFamily: "Sora",
+                }}
+              >
+                {species.map((species) => (
+                  <Picker.Item
+                    label={species.name}
+                    value={species.id}
+                    key={species.id}
+                  />
+                ))}
+              </Picker>
+              {availableSubspecies.length > 0 && (
+                <Picker
+                  selectedValue={characterData.character.subspecies_id}
+                  onValueChange={(itemValue) =>
+                    handleChange("subspecies_id", itemValue)
+                  }
+                  itemStyle={{
+                    color: "#fff",
+                    fontSize: 24,
+                    fontFamily: "Sora",
+                  }}
+                >
+                  {availableSubspecies.map((sub) => (
+                    <Picker.Item label={sub} value={sub} key={sub} />
+                  ))}
+                </Picker>
+              )}
+              <TextInput
+                placeholder="Class"
+                style={styles.formControl}
+                placeholderTextColor="#ccc"
+                value={characterData.character.class_id}
+                onChangeText={(text) => handleChange("class_id", text)}
+              />
+              <Picker
+                selectedValue={characterData.character.class_id}
+                onValueChange={(itemValue, itemIndex) =>
+                  handleChange("class_id", itemValue)
+                }
+                itemStyle={{
+                  color: "#fff",
+                  fontSize: 24,
+                  fontFamily: "Sora",
+                }}
+              >
+                <Picker.Item label="Fighter" value="Fighter" key="Fighter" />
+                <Picker.Item label="Wizard" value="Wizard" key="Wizard" />
+              </Picker>
+              <TextInput
+                style={[styles.formControl, { height: 100 }]}
+                placeholderTextColor="#ccc"
+                multiline={true}
+                value={characterData.character.character_notes}
+                onChangeText={(text) => handleChange("character_notes", text)}
+                placeholder="Notes"
+              />
+              <Text style={styles.AbilityScores}>Ability Scores</Text>
+              <View style={styles.abilityScoreWrapper}>
+                <View style={styles.abilityRow}>
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Str</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.str.toString()}
+                      onChangeText={(text) => handleChange("str", text)}
+                    />
+                  </View>
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Dex</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.dex.toString()}
+                      onChangeText={(text) => handleChange("dex", text)}
+                    />
+                  </View>
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Con</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.con.toString()}
+                      onChangeText={(text) => handleChange("con", text)}
+                    />
+                  </View>
+                </View>
+                <View style={styles.abilityRow}>
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Wis</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.wis.toString()}
+                      onChangeText={(text) => handleChange("wis", text)}
+                    />
+                  </View>
+
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Int</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.int.toString()}
+                      onChangeText={(text) => handleChange("int", text)}
+                    />
+                  </View>
+                  <View style={styles.abilityBox}>
+                    <Text style={styles.abilityLabel}>Cha</Text>
+                    <TextInput
+                      style={styles.abilityScoreControl}
+                      placeholder="10"
+                      placeholderTextColor="#ccc"
+                      value={characterData.character.ability_scores.cha.toString()}
+                      onChangeText={(text) => handleChange("cha", text)}
+                    />
+                  </View>
+                </View>
               </View>
-              <View style={styles.abilityBox}>
-                <Text style={styles.abilityLabel}>Cha</Text>
-                <TextInput
-                  style={styles.abilityScoreControl}
-                  placeholder="10"
-                  placeholderTextColor="#ccc"
-                  value={characterData.character.ability_scores.cha.toString()}
-                  onChangeText={(text) => handleChange("cha", text)}
-                />
+              <Text style={styles.Inventory}>Inventory</Text>
+              <View style={styles.radioContainer}>
+                <TouchableOpacity onPress={() => handleOptionPress("Shortsword")}>
+                  <Circle
+                    size={25}
+                    color={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
+                    style={{ marginBottom: 5 }}
+                    strokeWidth={1}
+                    fill={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
+                  >
+                    {" "}
+                  </Circle>
+                </TouchableOpacity>
+                <Text style={styles.radioText}>Shortsword</Text>
+              </View>
+              <View style={styles.radioContainer}>
+                <TouchableOpacity
+                  onPress={() => handleOptionPress("Leather Armor")}
+                >
+                  <Circle
+                    size={25}
+                    color={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+                    style={{ marginBottom: 5 }}
+                    strokeWidth={1}
+                    fill={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+                  >
+                    {" "}
+                  </Circle>
+                </TouchableOpacity>
+                <Text style={styles.radioText}>Leather Armor</Text>
+              </View>
+              <View style={styles.radioContainer}>
+                <TouchableOpacity onPress={() => handleOptionPress("Shield")}>
+                  <Circle
+                    size={25}
+                    color={SelectedOptions.includes("Shield") ? "#ccc" : ""}
+                    style={{ marginBottom: 5 }}
+                    strokeWidth={1}
+                    fill={SelectedOptions.includes("Shield") ? "#ccc" : ""}
+                  >
+                    {" "}
+                  </Circle>
+                </TouchableOpacity>
+                <Text style={styles.radioText}>Shield</Text>
               </View>
             </View>
-          </View>
-          <Text style={styles.Inventory}>Inventory</Text>
-          <View style={styles.radioContainer}>
-            <TouchableOpacity onPress={() => handleOptionPress("Shortsword")}>
-              <Circle
-                size={25}
-                color={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
-                style={{ marginBottom: 5 }}
-                strokeWidth={1}
-                fill={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
-              >
-                {" "}
-              </Circle>
+            <TouchableOpacity style={styles.button} onPress={submitCharacter}>
+              <Text style={styles.buttonText}>Create Character</Text>
             </TouchableOpacity>
-            <Text style={styles.radioText}>Shortsword</Text>
-          </View>
-          <View style={styles.radioContainer}>
-            <TouchableOpacity
-              onPress={() => handleOptionPress("Leather Armor")}
-            >
-              <Circle
-                size={25}
-                color={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
-                style={{ marginBottom: 5 }}
-                strokeWidth={1}
-                fill={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
-              >
-                {" "}
-              </Circle>
-            </TouchableOpacity>
-            <Text style={styles.radioText}>Leather Armor</Text>
-          </View>
-          <View style={styles.radioContainer}>
-            <TouchableOpacity onPress={() => handleOptionPress("Shield")}>
-              <Circle
-                size={25}
-                color={SelectedOptions.includes("Shield") ? "#ccc" : ""}
-                style={{ marginBottom: 5 }}
-                strokeWidth={1}
-                fill={SelectedOptions.includes("Shield") ? "#ccc" : ""}
-              >
-                {" "}
-              </Circle>
-            </TouchableOpacity>
-            <Text style={styles.radioText}>Shield</Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={submitCharacter}>
-          <Text style={styles.buttonText}>Create Character</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  webWrapper: {
+      ...Platform.select({
+        ios: {
+        },
+        android: {
+        },
+        default: {
+          width: "60%",
+          alignSelf:"center"
+        },
+      }),
+  },
   globalContainer: {
     ...globalText,
     flex: 1,

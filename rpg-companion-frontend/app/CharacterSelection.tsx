@@ -214,7 +214,7 @@ export default function CharacterSelect() {
           onPress={Platform.select({
             android: () => router.navigate("/mobile/CharacterCreation"),
             ios: () => router.navigate("/mobile/CharacterCreation"),
-            default: () => router.navigate("/web/CharacterCreation"), //This will be up to nick how we do this
+            default: () => router.navigate("/mobile/CharacterCreation"), //This will be up to nick how we do this
           })}
         >
           <Text style={styles.buttonText}>Create Character</Text>
