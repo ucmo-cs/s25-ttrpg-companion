@@ -107,12 +107,12 @@ export default function CharacterSelect() {
     fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-image", {
       method: "POST",
       headers: {
-        user_uid: "24b7875d-7719-47bd-9ce7-66be8088dff4",
-        character_uid: "6f6fdbec-1a7b-4fb0-bc9a-e4f97dae1935",
+        user_uid: userUid,
+        character_uid: key,
         session_token: "cooper_is_slow",
       },
       body: JSON.stringify({
-        extension: ".webp",
+        extension: "jpeg",
       }),
     })
       .then((response) => {
@@ -169,6 +169,7 @@ export default function CharacterSelect() {
         "classFeatures",
         JSON.stringify(data.character.features.classfeatures)
       );
+      SessionStorage.setItem("characterUid", key)
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
       nav();
