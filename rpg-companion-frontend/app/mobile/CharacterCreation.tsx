@@ -115,7 +115,7 @@ export default function CharacterCreation() {
   //Set session token and user uid from session storage
   const user_uid = SessionStorage.getItem("userUid");
   let session_token = SessionStorage.getItem("token");
-  console.log("Session token:", session_token);
+  // console.log("Session token:", session_token);
   const [traitsKey, setTraitsKey] = useState<string | null>(null);
   //Character submission function
   //This function is called when the user presses the "Create Character" button
