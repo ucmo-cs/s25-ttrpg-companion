@@ -62,6 +62,7 @@ export default function CharacterCreation() {
       class_id: "",
       subclass_id: "",
       species_id: "",
+      subspecies_id: "",
       level: 1,
       proficiency_bonus: 1,
       hp: 0,
@@ -115,7 +116,7 @@ export default function CharacterCreation() {
   const user_uid = SessionStorage.getItem("userUid");
   let session_token = SessionStorage.getItem("token");
   console.log("Session token:", session_token);
-
+  const [traitsKey, setTraitsKey] = useState<string | null>(null);
   //Character submission function
   //This function is called when the user presses the "Create Character" button
   const submitCharacter = async () => {
@@ -132,9 +133,6 @@ export default function CharacterCreation() {
       alert("Please select a valid species.");
       return;
     }
-    const traitsKey = Object.keys(selectedSpecies.features).find((key) =>
-      key.includes("_traits")
-    );
     if (loadingSpells) {
       alert("Loading spells, please wait...");
       return;
@@ -145,6 +143,14 @@ export default function CharacterCreation() {
         return;
       }
     }
+
+    const selectedSubspecies =
+      selectedSpecies.features?.[
+        characterData.character.subspecies_id
+          ?.toLowerCase()
+          .replace(/\s/g, "_") + "_traits"
+      ];
+
     const payload = {
       user_uid: user_uid,
       character: {
@@ -154,11 +160,15 @@ export default function CharacterCreation() {
         size: selectedSpecies.features.Size,
         level: characterData.character.level,
         proficiency_bonus: classData.info.proficiency,
+
         inventory: [filteredInventory],
         features: {
           classfeatures: [classFeatures],
           subclassfeatures: [],
           speciesfeatures: traitsKey ? selectedSpecies.features[traitsKey] : [],
+          ...(selectedSubspecies
+            ? { subspeciesfeatures: selectedSubspecies }
+            : {}),
         },
         ...(classFeatures.Spellcasting && classData?.info
           ? {
@@ -205,7 +215,7 @@ export default function CharacterCreation() {
     );
   };
   const [species, setSpecies] = useState<any[]>([]);
-
+  const [availableSubspecies, setAvailableSubspecies] = useState<any[]>([]);
   //Get species data from the API
   useEffect(() => {
     const fetchData = async () => {
@@ -337,9 +347,27 @@ export default function CharacterCreation() {
           />
           <Picker
             selectedValue={characterData.character.species_id}
-            onValueChange={(itemValue, itemIndex) =>
-              handleChange("species_id", itemValue)
-            }
+            onValueChange={(itemValue) => {
+              handleChange("species_id", itemValue);
+
+              const selected = species.find((s) => s.id === itemValue);
+              if (selected) {
+                const baseTraitsKey = Object.keys(selected.features).find(
+                  (key) => key.toLowerCase().includes(selected.id.toLowerCase())
+                );
+
+                if (baseTraitsKey) {
+                  setTraitsKey(baseTraitsKey); // <--- SAVE it here
+
+                  const subspeciesList =
+                    selected.features[baseTraitsKey]?.subspecies || [];
+                  setAvailableSubspecies(subspeciesList);
+                } else {
+                  setTraitsKey(null);
+                  setAvailableSubspecies([]);
+                }
+              }
+            }}
             itemStyle={{
               color: "#fff",
               fontSize: 24,
@@ -354,6 +382,23 @@ export default function CharacterCreation() {
               />
             ))}
           </Picker>
+          {availableSubspecies.length > 0 && (
+            <Picker
+              selectedValue={characterData.character.subspecies_id}
+              onValueChange={(itemValue) =>
+                handleChange("subspecies_id", itemValue)
+              }
+              itemStyle={{
+                color: "#fff",
+                fontSize: 24,
+                fontFamily: "Sora",
+              }}
+            >
+              {availableSubspecies.map((sub) => (
+                <Picker.Item label={sub} value={sub} key={sub} />
+              ))}
+            </Picker>
+          )}
           <TextInput
             placeholder="Class"
             style={styles.formControl}
