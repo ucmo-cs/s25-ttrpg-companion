@@ -53,7 +53,10 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 200,
-            'body': json.dumps(species_json)
+            'body': json.dumps({
+                'species' : species_json,
+                'session_token' : new_session_token
+            })
         }
 
     except Exception as e:

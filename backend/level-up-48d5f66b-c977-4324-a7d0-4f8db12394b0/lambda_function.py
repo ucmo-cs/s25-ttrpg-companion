@@ -13,6 +13,11 @@ def lambda_handler(event, context):
     body["class"] = body["class"].lower()
     body["level"] = int(body["level"])
 
+    if body["level"] < 2 or body["level"] > 20:
+        return {
+            'statusCode': 405,
+            'body': json.dumps('Level must be between 2 and 20')
+        }
 
     session_token = event["headers"]["session_token"]
     print("Session Token:", session_token)
@@ -37,44 +42,41 @@ def lambda_handler(event, context):
             }
 
         #Get the spell level from response
-        info = response["Item"]
-        info["level"] = body["level"]
-        print("Info:", info)
+        features = response["Item"]
+        print("Info:", features)
 
         # Get spell descriptions
-        spells = getSpells(info.pop("spell_names"), body["class"], body["level"])
+        spells = {}
+        if "spell_names" in features:
+            spells = getSpells(features.pop("spell_names"), body["class"], body["level"])
 
         #Get spell for specific subspecies at level 3 and 5
+        subspecies_spell = {}
         if (body["level"] == 3 or body["level"] == 5) and "subspecies" in body:
             print("Checking for subspecies Spell")
             spell = getSubspeciesSpell(body["subspecies"].lower().replace(" ", "_"), body["level"])
             if spell != None:
                 print("Subspecies Spell Found:", spell)
-                info["subspecies_spell"] = {}
-                info["subspecies_spell"][spell.pop("spell_name")] = spell
+                subspecies_spell[spell.pop("spell_name")] = spell
 
-        #Get feature Descriptions
-        features = getFeatures(info.pop("features"), body["class"])
 
-        creation_features = {}
-        #Get character creation options
-        if info["level"] == 1:
-            creation_features = getCreationFeatures(body["class"])
 
         #Parse strings into ints
-        info["cantrips _known"] = int(info["cantrips_known"])
-        info["proficiency_bonus"] = int(info["proficiency_bonus"])
-        info["spell_slots"] = [int(x) for x in info["spell_slots"]]
+        if "Cantrips Known" in features["level_features"]:
+            features["level_features"]["Cantrips Known"] = int(features["level_features"]["Cantrips Known"])
+        if "spell_slots" in features:
+            features["spell_slots"] = [int(x) for x in features["spell_slots"]]
 
-        #print("Spells:", spells)
+        #Remove unnecessary info
+        features.pop("level")
+        features.pop("class")
 
         return {
             'statusCode': 200,
             'body': json.dumps({
-                "info" : info,
-                "spells" : spells,
                 "features" : features,
-                "creation_features" : creation_features,
+                "spells" : spells,
+                "subspecies_spell" : subspecies_spell,
                 "session_token" : new_session_token
             })
         }
@@ -136,9 +138,12 @@ def getSpells(spell_list, class_name, level):
         )
     print("Response:", response)
     for item in response["Items"]:
-        spell_name = item.pop("spell_name")
         item["level"] = str(item["level"])
-        spells_json[spell_name] = item
+        level_string = "Level " + item["level"]
+        if not level_string in spells_json:
+            spells_json[level_string] = {}
+        spell_name = item.pop("spell_name")
+        spells_json[level_string][spell_name] = item
 
     return spells_json
 
@@ -164,18 +169,6 @@ def getSubspeciesSpell(subspecies, level):
             spell["level"] = int(spell["level"])
             return spell
     return None
-
-def getFeatures(feature_list, class_name):
-    features_json = {}
-    for feature in feature_list:
-        if(feature == "Arcane Tradition Feature"):
-            features_json[feature] = "Feature from Subclass"
-            continue
-        features_json[feature] = feature_table.get_item(Key = {
-            "class" : class_name,
-            "feature_name" : feature
-        })["Item"]["description"]
-    return features_json
 
 def getCreationFeatures(class_name):
     creation_features = feature_table.get_item(Key = {
