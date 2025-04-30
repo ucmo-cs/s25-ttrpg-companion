@@ -187,13 +187,22 @@ export default function CharacterCreation() {
   const [spellData, setSpellData] = useState<any>({});
   const [loadingSpells, setLoadingSpells] = useState(false);
   const fetchClassData = async () => {
+    let ctype;
+    if (Platform.OS === "ios" || Platform.OS === "android"){
+      ctype = {"Content-Type" : "application/json"};
+      console.log("Ctype: ", ctype);
+    }
+    else{
+      ctype = null;
+      console.log("Ctype: ",  ctype);
+    }
     try {
       const response = await fetch(
         "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-classes",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            ...(ctype || {}),
             Session_Token: SessionStorage.getItem('token'),
           },
           body: JSON.stringify({
@@ -417,7 +426,7 @@ export default function CharacterCreation() {
           const response = await fetch(uri); // Fetch the file data
           const imageBlob = await response.blob(); // Convert the file to a binary blob
           console.log(imageType);
-          setImage(imageBlob)
+          setImage(imageBlob);
         }
       };
     
@@ -432,6 +441,7 @@ export default function CharacterCreation() {
     
           fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/save-image", {
               method: "POST",
+              // mode: "no-cors",
               headers: {
                   "user_uid" : user_uid,
                   "character_uid" : character_uid,

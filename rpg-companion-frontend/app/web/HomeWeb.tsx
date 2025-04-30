@@ -13,7 +13,7 @@ import { router } from "expo-router";
 
 export default function HomeWeb() {
 
-  const [character, setCharacter] = useState<CharacterData | null>(null);
+  const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
   const [hp, setHp] = useState(0);
   const [tab, setTab] = useState("notes");
   const [note, setNote] = useState(null);
@@ -117,7 +117,7 @@ export default function HomeWeb() {
                 >
                   Strength
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.str}</View>
+                <View style={styles.abilityName}>{character.ability_scores.str}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -127,7 +127,7 @@ export default function HomeWeb() {
                 >
                   Dexterity
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.dex}</View>
+                <View style={styles.abilityName}>{character.ability_scores.dex}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -137,7 +137,7 @@ export default function HomeWeb() {
                 >
                   Constitution
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.con}</View>
+                <View style={styles.abilityName}>{character.ability_scores.con}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -147,7 +147,7 @@ export default function HomeWeb() {
                 >
                   Intelligence
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.int}</View>
+                <View style={styles.abilityName}>{character.ability_scores.int}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -157,7 +157,7 @@ export default function HomeWeb() {
                 >
                   Wisdom
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.wis}</View>
+                <View style={styles.abilityName}>{character.ability_scores.wis}</View>
               </View>
               <View style={styles.ability}>
                 <Text
@@ -167,7 +167,7 @@ export default function HomeWeb() {
                 >
                   Charisma
                 </Text>
-                <View style={styles.abilityName}>{character!.ability_scores.cha}</View>
+                <View style={styles.abilityName}>{character.ability_scores.cha}</View>
               </View>
             </View>
             <View style={styles.skillsHolder}>

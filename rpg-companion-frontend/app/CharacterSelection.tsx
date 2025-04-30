@@ -160,10 +160,12 @@ export default function CharacterSelect() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem(
-        "selectedCharacterData",
-        JSON.stringify(data.character)
-      );
+      if (Platform.OS === "ios" || Platform.OS === "android"){
+        SessionStorage.setItem("selectedCharacterData",JSON.stringify(data.character));
+      }
+      else{
+        SessionStorage.setItem("selectedCharacterData" ,data.character);
+      }
       console.log("Selected Character Data: ", data.character);
       SessionStorage.setItem("token", data.session_token);
       SessionStorage.setItem(
