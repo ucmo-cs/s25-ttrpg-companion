@@ -10,7 +10,9 @@ import {
   Activity,
   FlaskConical,
 } from "lucide-react-native";
-import { Platform,  View, Text, TouchableWithoutFeedback} from "react-native";
+import { Platform,  View, Text, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
+import SessionStorage from "react-native-session-storage";
+
 
 export default function TabLayout() {
 
@@ -38,9 +40,9 @@ export default function TabLayout() {
           </TouchableWithoutFeedback>
         ),
         headerRight: () => (
-            <View>
+          <TouchableOpacity onPress={() => SessionStorage.setItem('editBool', 'start')}>
               <Text style={{ color: "#fff", fontSize: 20, marginRight: 10 }}>Edit</Text>
-            </View>
+          </TouchableOpacity>
         ),
 
         tabBarStyle: {
