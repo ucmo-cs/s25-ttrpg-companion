@@ -456,6 +456,8 @@ export default function HomeMobile() {
       user_uid: user_uid,
       character_uid: character_uid,
       character: {
+        level: level,
+        name:character.name,
         hp: character.hp,
         max_hp: character.max_hp,
         armor_class: character.armor_class,
@@ -505,15 +507,14 @@ export default function HomeMobile() {
 
     //Send the updated ability scores if changed
     if (isAbilityScoreLevel) {
-      // character.ability_scores = {
-      //   str: tempScores["str"],
-      //   dex: tempScores["dex"],
-      //   con: tempScores["con"],
-      //   int: tempScores["int"],
-      //   wis: tempScores["wis"],
-      //   cha: tempScores["cha"],
-      // };
-      payload.character.ability_scores = { ...tempScores };
+      payload.character.ability_scores = {
+        str: tempScores["Str"],
+        dex: tempScores["Dex"],
+        con: tempScores["Con"],
+        int: tempScores["Int"],
+        wis: tempScores["Wis"],
+        cha: tempScores["Cha"],
+      };    
     }
 
     //Always send the level up
@@ -527,17 +528,15 @@ export default function HomeMobile() {
           headers: {
             "Content-Type": "application/json",
             // Session_Token: session_token,
-            session_token: "cooper_is_slow",
+            session_token: session_token,
           },
-          body: JSON.stringify(character),
+          body: JSON.stringify(payload),
         }
       );
 
-      console.log("Character:", character);
+      console.log("Character LevelUp:", payload);
       console.log("Status:", response.status);
       // console.log("inventory", character.inventory);
-      const responseText = await response.text(); // read as text first
-      console.log("Raw Response:", responseText);
 
       if (!response.ok) throw new Error("Failed to submit level-up changes");
 
@@ -552,6 +551,7 @@ export default function HomeMobile() {
   };
   const handleClose = () => {
     setEditCharListVisible(false);
+    submitLevelUp();
   };
 
 
