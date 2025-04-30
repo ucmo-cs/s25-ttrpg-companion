@@ -448,9 +448,112 @@ export default function HomeMobile() {
     }
   }, [level, abilityScores]);
 
+  const character_uid = SessionStorage.getItem("characterUid");
+  const [editedName, setEditedName] = character.name;
+
+  const submitLevelUp = async () => {
+    const payload: any = {
+      user_uid: user_uid,
+      character_uid: character_uid,
+      character: {
+        hp: character.hp,
+        max_hp: character.max_hp,
+        armor_class: character.armor_class,
+        speed: character.speed,
+        initiative: character.initiative,
+        inventory: [
+          {
+            name: "Shortsword",
+            type: "weapon",
+            properties: "Simple Melee Weapon",
+            damage_type: "1d6",
+            attributes: ["Slashing", "Finess", "Vex"],
+            description: "A simple shortsword",
+          },
+          {
+            name: "Leather Armor",
+            type: "armor",
+            damage_type: "",
+            armor_class: 11,
+            attributes: ["Light"],
+            description: "A simple set of leather armor",
+          },
+          {
+            name: "Shield",
+            type: "armor",
+            damage_type: "",
+            armor_class: 2,
+            attributes: ["Shield"],
+            description: "A simple shield",
+          },
+        ],
+        proficiency_bonus: character.proficiency_bonus,
+        class_id: character.class_id,
+        species_id: character.species_id,
+      },
+    };
+
+    //Send the name if it was edited
+    if (editedName && editedName !== character.name) {
+      character.name = editedName;
+    }
+
+    //Send the subclass if above level 3 (and they selected one)
+    if (level >= 3 && subclass) {
+      character.subclass = subclass;
+    }
+
+    //Send the updated ability scores if changed
+    if (isAbilityScoreLevel) {
+      // character.ability_scores = {
+      //   str: tempScores["str"],
+      //   dex: tempScores["dex"],
+      //   con: tempScores["con"],
+      //   int: tempScores["int"],
+      //   wis: tempScores["wis"],
+      //   cha: tempScores["cha"],
+      // };
+      payload.character.ability_scores = { ...tempScores };
+    }
+
+    //Always send the level up
+    character.level = level;
+
+    try {
+      const response = await fetch(
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/edit-character",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Session_Token: session_token,
+            session_token: "cooper_is_slow",
+          },
+          body: JSON.stringify(character),
+        }
+      );
+
+      console.log("Character:", character);
+      console.log("Status:", response.status);
+      // console.log("inventory", character.inventory);
+      const responseText = await response.text(); // read as text first
+      console.log("Raw Response:", responseText);
+
+      if (!response.ok) throw new Error("Failed to submit level-up changes");
+
+      const data = await response.json();
+      console.log("Level up submitted", data);
+      alert("Level up submitted successfully!");
+      setShowLevelUp(false);
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Error submitting level-up changes.");
+    }
+  };
   const handleClose = () => {
     setEditCharListVisible(false);
   };
+
 
   return (
     <View style={styles.container}>
