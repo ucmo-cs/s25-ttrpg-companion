@@ -212,6 +212,19 @@ export default function HomeMobile() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      try{
+        if (SessionStorage.getItem('editBool') == 'start'){
+          setEditCharListVisible(true);
+        }
+      } catch (err) {
+        console.log("OOPSIE");
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const calculateArmorClass = () => {
     if (!armor || armor.length === 0) return character.armor_class;
     let baseAC = 10; // Base AC
@@ -550,6 +563,7 @@ export default function HomeMobile() {
     }
   };
   const handleClose = () => {
+    SessionStorage.setItem('editBool', 'end')
     setEditCharListVisible(false);
     submitLevelUp();
   };
