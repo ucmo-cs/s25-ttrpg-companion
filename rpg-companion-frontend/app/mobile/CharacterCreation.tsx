@@ -15,6 +15,7 @@ import SessionStorage from "react-native-session-storage";
 import { Circle } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../globalstyles";
+import * as ImagePicker from 'expo-image-picker';
 
 const globalText = {
   color: "white",
@@ -90,6 +91,8 @@ export default function CharacterCreation() {
     },
   };
   const [characterData, setCharacterData] = useState<any>(initialCharacterData);
+  const [image, setImage] = useState(new Blob([""], { type: "application/octet-stream" }));
+  const [imageType, setImageType] = useState(''); 
 
   const handleChange = (key: string, value: string) => {
     if (["str", "dex", "con", "int", "wis", "cha"].includes(key)) {
@@ -116,7 +119,6 @@ export default function CharacterCreation() {
 
   //Set session token and user uid from session storage
   const user_uid = SessionStorage.getItem("userUid");
-  const session_token = SessionStorage.getItem("token");
   // console.log("Session token:", session_token);
   const [traitsKey, setTraitsKey] = useState<string | null>(null);
   //Character submission function
@@ -148,13 +150,15 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Session_Token: session_token,
+            Session_Token: SessionStorage.getItem('token'),
           },
           body: JSON.stringify(payload),
         }
       );
       const data = await response.json();
       console.log("📬 Server Response:", data);
+      uploadImage(data.character_uid)
+      SessionStorage.setItem("token", data.session_token);
       alert("Character created successfully!");
       setCharacterData(initialCharacterData); // Reset the form after submission
     } catch (error) {
@@ -176,47 +180,6 @@ export default function CharacterCreation() {
   const [species, setSpecies] = useState<any[]>([]);
   const [availableSubspecies, setAvailableSubspecies] = useState<any[]>([]);
   //Get species data from the API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-species",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Session_Token: session_token,
-            },
-            body: JSON.stringify({ user_uid: user_uid }),
-          }
-        );
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error fetching species:", errorText);
-          return;
-        }
-        const data = await response.json();
-        const speciesData = data.species;
-        console.log("Species data:", speciesData);
-        const newSessionToken = data.session_token;
-        console.log("New session token:", newSessionToken);
-        if (newSessionToken) {
-          SessionStorage.setItem("token", newSessionToken);
-        }
-        const speciesArray = Object.keys(speciesData).map((key) => ({
-          id: key,
-          name: key,
-          ...speciesData[key],
-        }));
-        console.log("species Array:", speciesArray);
-        setSpecies(speciesArray);
-        SessionStorage.setItem("species", JSON.stringify(speciesArray));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    // fetchData();
-  }, []);
 
   //Set up for class features
   const [classFeatures, setClassFeatures] = useState<any>({});
@@ -231,7 +194,7 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Session_Token: session_token,
+            Session_Token: SessionStorage.getItem('token'),
           },
           body: JSON.stringify({
             user_uid: user_uid,
@@ -261,6 +224,48 @@ export default function CharacterCreation() {
       console.log("Class Data", classData);
     } catch (error) {
       console.error("Error fetching class features:", error);
+    }
+    fetchSpeciesData();
+  };
+
+  const fetchSpeciesData = async () => {
+    try {
+      const response = await fetch(
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-species",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Session_Token: SessionStorage.getItem('token'),
+          },
+          body: JSON.stringify({ 
+            user_uid: user_uid 
+          }),
+        }
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error fetching species:", errorText);
+        return;
+      }
+      const data = await response.json();
+      const speciesData = data.species;
+      console.log("Species data:", speciesData);
+      const newSessionToken = data.session_token;
+      console.log("New session token:", newSessionToken);
+      if (newSessionToken) {
+        SessionStorage.setItem("token", newSessionToken);
+      }
+      const speciesArray = Object.keys(speciesData).map((key) => ({
+        id: key,
+        name: key,
+        ...speciesData[key],
+      }));
+      console.log("species Array:", speciesArray);
+      setSpecies(speciesArray);
+      SessionStorage.setItem("species", JSON.stringify(speciesArray));
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -394,6 +399,51 @@ export default function CharacterCreation() {
     setSelectedClassFeatures(classFeatures);
     setModalVisible(true);
   };
+
+      const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          allowsEditing: true,
+          aspect: [3, 3],
+          quality: 1,
+          base64: true,
+        });
+    
+        // console.log(result);
+        if (!result.canceled) {
+          const uri = result.assets[0].uri
+          setImageType(result.assets[0].type + "/" + uri.split('.').pop());
+          const response = await fetch(uri); // Fetch the file data
+          const imageBlob = await response.blob(); // Convert the file to a binary blob
+          console.log(imageType);
+          setImage(imageBlob)
+        }
+      };
+    
+    
+      const uploadImage = async (character_uid) => {
+        //   file = await compressImage(file, 100)
+    
+          if(!image){
+              console.log("No File Selected")
+              return
+          }
+    
+          fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/save-image", {
+              method: "POST",
+              headers: {
+                  "user_uid" : user_uid,
+                  "character_uid" : character_uid,
+                  "session_token" : "cooper_is_slow",
+                  "content-type" : imageType
+              },
+              body: image
+          })
+          .then(response => response.json())
+          .then(data => console.log(data))
+      }
+
   return (
     <View style={GlobalStyles.page}>
       <ScrollView style={styles.webWrapper}>
@@ -811,6 +861,12 @@ export default function CharacterCreation() {
               onPress={() => submitCharacter()}
             >
               <Text style={styles.buttonText}>Create Character</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => pickImage()}
+            >
+              <Text style={styles.buttonText}>Upload Profile Picture</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[

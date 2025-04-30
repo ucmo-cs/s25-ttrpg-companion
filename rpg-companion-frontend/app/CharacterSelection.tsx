@@ -23,6 +23,7 @@ export default function CharacterSelect() {
     if (SessionStorage.getItem("equippedItem") != null) {
       SessionStorage.removeItem("equippedItem");
     }
+    SessionStorage.removeItem("passImage");
   }, []);
   //Uncomment next line once response messages are fixed and it should all work
   const [characters, setCharacters] = useState(
