@@ -159,17 +159,21 @@ export default function CharacterSelect() {
       }
 
       const data = await response.json();
-      SessionStorage.setItem("selectedCharacterData", data.character);
+      SessionStorage.setItem(
+        "selectedCharacterData",
+        JSON.stringify(data.character)
+      );
+      console.log("Selected Character Data: ", data.character);
       SessionStorage.setItem("token", data.session_token);
       SessionStorage.setItem(
         "charInventory",
-        JSON.stringify(data.character.inventory[0])
+        JSON.stringify(data.character.starting_equipment?.[0] || [])
       );
       SessionStorage.setItem(
         "classFeatures",
-        JSON.stringify(data.character.features.classfeatures)
+        JSON.stringify(data.character.features?.classfeatures || [])
       );
-      SessionStorage.setItem("characterUid", key)
+      SessionStorage.setItem("characterUid", key);
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
       nav();

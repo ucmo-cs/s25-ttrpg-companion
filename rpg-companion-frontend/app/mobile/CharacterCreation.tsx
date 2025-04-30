@@ -7,6 +7,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -65,7 +66,7 @@ export default function CharacterCreation() {
       species_id: "",
       subspecies_id: "",
       level: 1,
-      proficiency_bonus: 1,
+      proficiency_bonus: 2,
       hp: 0,
       max_hp: 0,
       speed: 30,
@@ -115,71 +116,32 @@ export default function CharacterCreation() {
 
   //Set session token and user uid from session storage
   const user_uid = SessionStorage.getItem("userUid");
-  let session_token = SessionStorage.getItem("token");
+  const session_token = SessionStorage.getItem("token");
   // console.log("Session token:", session_token);
   const [traitsKey, setTraitsKey] = useState<string | null>(null);
   //Character submission function
   //This function is called when the user presses the "Create Character" button
   const submitCharacter = async () => {
-    //Filter inventory based on selected options
-    const filteredInventory = items.filter((item) =>
-      SelectedOptions.includes(item.name)
-    );
-
-    //Check selected species and set speed, creature type, size, and features
-    const selectedSpecies = species.find(
-      (species) => species.id === characterData.character.species_id
-    );
-    if (!selectedSpecies) {
-      alert("Please select a valid species.");
-      return;
-    }
-    if (loadingSpells) {
-      alert("Loading spells, please wait...");
-      return;
-    }
-    if (classFeatures.Spellcasting) {
-      if (!spellData || Object.keys(spellData).length === 0) {
-        alert("Please select a valid spellcasting class.");
-        return;
-      }
-    }
-
-    const selectedSubspecies =
-      selectedSpecies.features?.[
-        characterData.character.subspecies_id
-          ?.toLowerCase()
-          .replace(/\s/g, "_") + "_traits"
-      ];
-
-    const payload = {
-      user_uid: user_uid,
-      character: {
-        ...characterData.character,
-        speed: selectedSpecies.features.Speed,
-        creature_type: selectedSpecies.features.Creature_Type,
-        size: selectedSpecies.features.Size,
-        level: characterData.character.level,
-        proficiency_bonus: classData.info.proficiency,
-
-        inventory: [filteredInventory],
-        features: {
-          classfeatures: [classFeatures],
-          subclassfeatures: [],
-          speciesfeatures: traitsKey ? selectedSpecies.features[traitsKey] : [],
-          ...(selectedSubspecies
-            ? { subspeciesfeatures: selectedSubspecies }
-            : {}),
-        },
-        ...(classFeatures.Spellcasting && classData?.info
-          ? {
-              cantrips_known: classData.info.cantrips_known,
-              spell_slots: classData.info.spell_slots?.[0] || 0,
-            }
-          : {}),
-      },
-    };
     try {
+      const payload = buildPayload();
+      console.log("🧾 PAYLOAD", JSON.stringify(payload, null, 2));
+      //Filter inventory based on selected options
+      const filteredInventory = items.filter((item) =>
+        SelectedOptions.includes(item.name)
+      );
+
+      //Check selected species and set speed, creature type, size, and features
+      const selectedSpecies = species.find(
+        (species) => species.id === characterData.character.species_id
+      );
+
+      // const selectedSubspecies =
+      //   selectedSpecies.features?.[
+      //     characterData.character.subspecies_id
+      //       ?.toLowerCase()
+      //       .replace(/\s/g, "_") + "_traits"
+      //   ];
+
       const response = await fetch(
         "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/create-character",
         {
@@ -191,15 +153,10 @@ export default function CharacterCreation() {
           body: JSON.stringify(payload),
         }
       );
-      const data = await response.text();
-      // console.log(data);
-      // console.log("Character data:", payload);
+      const data = await response.json();
+      console.log("📬 Server Response:", data);
       alert("Character created successfully!");
       setCharacterData(initialCharacterData); // Reset the form after submission
-      setSelectedOptions([]); // Reset selected options
-      setClassFeatures({}); // Reset class features
-      setClassData({}); // Reset class data
-      setSpellData({}); // Reset spell data
     } catch (error) {
       console.error(error);
       // console.log("Data:", payload);
@@ -215,6 +172,7 @@ export default function CharacterCreation() {
           : [...prev, option] // add if not selected
     );
   };
+
   const [species, setSpecies] = useState<any[]>([]);
   const [availableSubspecies, setAvailableSubspecies] = useState<any[]>([]);
   //Get species data from the API
@@ -257,7 +215,7 @@ export default function CharacterCreation() {
         console.error(error);
       }
     };
-    fetchData();
+    // fetchData();
   }, []);
 
   //Set up for class features
@@ -266,11 +224,9 @@ export default function CharacterCreation() {
   const [spellData, setSpellData] = useState<any>({});
   const [loadingSpells, setLoadingSpells] = useState(false);
   const fetchClassData = async () => {
-    setLoadingSpells(true);
-    if (!characterData.character.class_id) return;
     try {
       const response = await fetch(
-        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/level-up",
+        "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/get-classes",
         {
           method: "POST",
           headers: {
@@ -279,16 +235,8 @@ export default function CharacterCreation() {
           },
           body: JSON.stringify({
             user_uid: user_uid,
-            class: characterData.character.class_id,
-            level: characterData.character.level,
-            subspecies: "",
           }),
         }
-      );
-      console.log(
-        user_uid,
-        characterData.character.level,
-        characterData.character.class_id
       );
       if (!response.ok) {
         const errorText = await response.text();
@@ -302,27 +250,150 @@ export default function CharacterCreation() {
       console.log("New session token:", newSessionToken);
       if (newSessionToken) {
         SessionStorage.setItem("token", newSessionToken);
-        session_token = newSessionToken;
       }
-      setClassFeatures(data.features || {});
-      setClassData(data.info || {});
+      setClassData(data.classes || {});
       if (data.spells) {
         setSpellData(data.spells || {});
       }
-      console.log("My Spell Data", spellData);
+      console.log("My Spell Data 1", spellData);
+      console.log("Fighter Class Data", data.classes.fighter);
+      console.log("Wizard Class Data", data.classes.wizard);
+      console.log("Class Data", classData);
     } catch (error) {
       console.error("Error fetching class features:", error);
-    } finally {
-      setLoadingSpells(false);
     }
   };
 
   useEffect(() => {
-    if (characterData.character.class_id) {
-      fetchClassData();
-    }
-  }, [characterData.character.class_id, characterData.character.level]);
+    fetchClassData();
+  }, []);
 
+  //Handle class selection and set class features
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedClassFeatures, setSelectedClassFeatures] = useState<any[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(
+    null
+  );
+
+  const handleCloseModal = () => {
+    const selectedEquipmentItems = extractEquipmentOptions(
+      selectedClassFeatures["Starting Equipment"] || ""
+    )?.find((opt) => opt.label === selectedEquipment)?.items;
+
+    setCharacterData((prev) => {
+      const updatedCharacter = {
+        ...prev,
+        character: {
+          ...prev.character,
+          starting_equipment: {
+            option: selectedEquipment,
+            items: selectedEquipmentItems,
+          },
+          skill_proficiencies: selectedSkills,
+        },
+      };
+
+      console.log("Updated Character Data:", updatedCharacter);
+      return updatedCharacter;
+    });
+
+    setModalVisible(false);
+  };
+
+  const extractEquipmentOptions = (
+    text: string
+  ): { label: string; items: string }[] => {
+    const options: { label: string; items: string }[] = [];
+    const regex = /\(([A-Z])\)\s*(.*?)(?=\s*(?:or\s*)?\([A-Z]\)|$)/g;
+
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      options.push({
+        label: match[1],
+        items: match[2].replace(/^[:;]?\s*/, "").trim(), // trim leading colon or semicolon
+      });
+    }
+
+    return options;
+  };
+
+  const selectedEquipmentItems = extractEquipmentOptions(
+    selectedClassFeatures["Starting Equipment"]
+  )?.find((opt) => opt.label === selectedEquipment)?.items;
+
+  const extractSkills = (text) => {
+    const match = text.match(/Choose \d+: (.*)/);
+    return match ? match[1].split(",").map((s) => s.trim()) : [];
+  };
+  const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
+  const buildPayload = () => {
+    const filteredInventory = items.filter((item) =>
+      SelectedOptions.includes(item.name)
+    );
+
+    const currentClassId = characterData.character.class_id?.toLowerCase();
+    const currentClassFeatures = classData?.[currentClassId]?.features || {};
+    const isSpellcaster = currentClassFeatures.hasOwnProperty("Spellcasting");
+
+    const selectedEquipmentItems = extractEquipmentOptions(
+      currentClassFeatures["Starting Equipment"] || ""
+    )?.find((opt) => opt.label === selectedEquipment)?.items;
+
+    const selectedSpecies = species.find(
+      (s) => s.id === characterData.character.species_id
+    );
+
+    const selectedSubspecies =
+      selectedSpecies?.features?.[
+        characterData.character.subspecies_id
+          ?.toLowerCase()
+          .replace(/\s/g, "_") + "_traits"
+      ];
+
+    return {
+      user_uid: user_uid,
+      character: {
+        ...characterData.character,
+        level: characterData.character.level,
+        proficiency_bonus: parseInt(
+          classData?.[currentClassId]?.features?.["Proficiency Bonus"]?.replace(
+            /\D/g,
+            ""
+          ) || "2"
+        ),
+
+        skill_proficiencies: selectedSkills,
+        inventory: [filteredInventory],
+        starting_equipment: {
+          option: selectedEquipment,
+          items: selectedEquipmentItems,
+        },
+        features: {
+          classfeatures: [currentClassFeatures],
+          subclassfeatures: [],
+          speciesfeatures: [],
+          // speciesfeatures: traitsKey ? selectedSpecies?.features[traitsKey] : [],
+          // ...(selectedSubspecies ? { subspeciesfeatures: selectedSubspecies } : {}),
+        },
+        ...(isSpellcaster && {
+          cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
+          spell_names: classData?.[currentClassId]?.spell_names || [],
+          spell_slots: classData?.[currentClassId]?.spell_slots || [],
+        }),
+      },
+    };
+  };
+
+  const handleClassSelection = (className) => {
+    handleChange("class_id", className);
+
+    const classFeatures = classData[className.toLowerCase()]?.features || {};
+    console.log("Class Features", classFeatures);
+    setSelectedClassFeatures(classFeatures);
+    setModalVisible(true);
+  };
   return (
     <View style={GlobalStyles.page}>
       <ScrollView style={styles.webWrapper}>
@@ -356,7 +427,8 @@ export default function CharacterCreation() {
                   const selected = species.find((s) => s.id === itemValue);
                   if (selected) {
                     const baseTraitsKey = Object.keys(selected.features).find(
-                      (key) => key.toLowerCase().includes(selected.id.toLowerCase())
+                      (key) =>
+                        key.toLowerCase().includes(selected.id.toLowerCase())
                     );
 
                     if (baseTraitsKey) {
@@ -402,17 +474,17 @@ export default function CharacterCreation() {
                   ))}
                 </Picker>
               )}
-              <TextInput
+              {/* <TextInput
                 placeholder="Class"
                 style={styles.formControl}
                 placeholderTextColor="#ccc"
                 value={characterData.character.class_id}
                 onChangeText={(text) => handleChange("class_id", text)}
-              />
+              /> */}
               <Picker
                 selectedValue={characterData.character.class_id}
                 onValueChange={(itemValue, itemIndex) =>
-                  handleChange("class_id", itemValue)
+                  handleClassSelection(itemValue)
                 }
                 itemStyle={{
                   color: "#fff",
@@ -423,6 +495,189 @@ export default function CharacterCreation() {
                 <Picker.Item label="Fighter" value="Fighter" key="Fighter" />
                 <Picker.Item label="Wizard" value="Wizard" key="Wizard" />
               </Picker>
+
+              {/* Modal for class features */}
+
+              <Modal
+                visible={modalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={handleCloseModal}
+              >
+                <ScrollView>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "rgba(0,0,0,0.6)",
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: "#3E4A59",
+                        padding: 20,
+                        marginTop: 50,
+                        borderRadius: 10,
+                        width: "90%",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "sora",
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          color: "#FFFFFF",
+                          marginBottom: 20,
+                        }}
+                      >
+                        Class Features-{characterData.character.class_id}
+                      </Text>
+
+                      {Object.entries(selectedClassFeatures).map(
+                        ([featureName, description], idx) => (
+                          <View key={idx} style={{ marginBottom: 20 }}>
+                            <Text style={styles.featureTitle}>
+                              {featureName}
+                            </Text>
+                            {featureName === "Starting Equipment" ? (
+                              // STARTING EQUIPMENT custom block
+                              <>
+                                <Text style={styles.featureDescription}>
+                                  {description}
+                                </Text>
+                                {extractEquipmentOptions(description).map(
+                                  (option) => (
+                                    <TouchableOpacity
+                                      key={option.label}
+                                      onPress={() =>
+                                        setSelectedEquipment(option.label)
+                                      }
+                                      style={{
+                                        backgroundColor:
+                                          selectedEquipment === option.label
+                                            ? "#6B728C"
+                                            : "#3E4A59",
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginVertical: 5,
+                                      }}
+                                    >
+                                      <Text style={styles.featureDescription}>
+                                        Option {option.label}: {option.items}
+                                      </Text>
+                                    </TouchableOpacity>
+                                  )
+                                )}
+                                <Text
+                                  style={{
+                                    marginTop: 10,
+                                    fontFamily: "Sora",
+                                    color: "#FFFFFF",
+                                  }}
+                                >
+                                  Selected:{" "}
+                                  {selectedEquipment
+                                    ? extractEquipmentOptions(description).find(
+                                        (opt) => opt.label === selectedEquipment
+                                      )?.items
+                                    : "None"}
+                                </Text>
+                              </>
+                            ) : featureName === "Skill Proficiencies" ? (
+                              // SKILL PROFICIENCIES custom block
+                              <>
+                                <Text style={styles.featureDescription}>
+                                  {description}
+                                </Text>
+                                {extractSkills(description).map((skill) => (
+                                  <TouchableOpacity
+                                    key={skill}
+                                    onPress={() => {
+                                      setSelectedSkills((prev) => {
+                                        if (prev.includes(skill)) {
+                                          return prev.filter(
+                                            (s) => s !== skill
+                                          );
+                                        } else if (prev.length < 2) {
+                                          return [...prev, skill];
+                                        }
+                                        return prev;
+                                      });
+                                    }}
+                                    style={{
+                                      backgroundColor: selectedSkills.includes(
+                                        skill
+                                      )
+                                        ? "#6B728C"
+                                        : "#3E4A59",
+                                      padding: 10,
+                                      borderRadius: 5,
+                                      marginVertical: 5,
+                                    }}
+                                  >
+                                    <Text style={styles.featureDescription}>
+                                      {skill}
+                                    </Text>
+                                  </TouchableOpacity>
+                                ))}
+                                <Text
+                                  style={{
+                                    marginTop: 10,
+                                    fontFamily: "sora",
+                                    color: "#FFFFFF",
+                                  }}
+                                >
+                                  Selected:{" "}
+                                  {selectedSkills.length > 0
+                                    ? selectedSkills.join(", ")
+                                    : "None"}
+                                </Text>
+                              </>
+                            ) : (
+                              // DEFAULT fallback for all other featureNames
+                              <Text style={styles.featureDescription}>
+                                {description}
+                              </Text>
+                            )}
+                          </View>
+                        )
+                      )}
+
+                      <TouchableOpacity
+                        onPress={handleCloseModal}
+                        style={{ marginTop: 20 }}
+                      >
+                        <Text
+                          style={{
+                            color: "#FFFFFF",
+
+                            borderWidth: 1,
+                            borderRadius: 10,
+                            fontFamily: "sora",
+                            fontSize: 20,
+                            backgroundColor: "#6B728C",
+
+                            borderColor: "#fff",
+                            textAlign: "center",
+                          }}
+                        >
+                          Close
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </ScrollView>
+              </Modal>
+
+              {/* <TouchableOpacity
+                onPress={() => {
+                  console.log("Button Press");
+                }}
+              >
+                <Text style={styles.formControl}>Wizard</Text>
+                <Text style={styles.formControl}>Fighter</Text>
+              </TouchableOpacity> */}
               <TextInput
                 style={[styles.formControl, { height: 100 }]}
                 placeholderTextColor="#ccc"
@@ -501,7 +756,9 @@ export default function CharacterCreation() {
               </View>
               <Text style={styles.Inventory}>Inventory</Text>
               <View style={styles.radioContainer}>
-                <TouchableOpacity onPress={() => handleOptionPress("Shortsword")}>
+                <TouchableOpacity
+                  onPress={() => handleOptionPress("Shortsword")}
+                >
                   <Circle
                     size={25}
                     color={SelectedOptions.includes("Shortsword") ? "#ccc" : ""}
@@ -520,10 +777,14 @@ export default function CharacterCreation() {
                 >
                   <Circle
                     size={25}
-                    color={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+                    color={
+                      SelectedOptions.includes("Leather Armor") ? "#ccc" : ""
+                    }
                     style={{ marginBottom: 5 }}
                     strokeWidth={1}
-                    fill={SelectedOptions.includes("Leather Armor") ? "#ccc" : ""}
+                    fill={
+                      SelectedOptions.includes("Leather Armor") ? "#ccc" : ""
+                    }
                   >
                     {" "}
                   </Circle>
@@ -545,28 +806,45 @@ export default function CharacterCreation() {
                 <Text style={styles.radioText}>Shield</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.button} onPress={submitCharacter}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => submitCharacter()}
+            >
               <Text style={styles.buttonText}>Create Character</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                { backgroundColor: "#4A5568", marginTop: 10 },
+              ]}
+              onPress={() => {
+                console.log("Character Data:", characterData);
+                console.log("Selected Options:", SelectedOptions);
+                console.log("Class Features:", classFeatures);
+                console.log("Class Data:", classData);
+                console.log("Spell Data:", spellData);
+                alert("Check console for payload data.");
+              }}
+            >
+              <Text style={styles.buttonText}>Log Payload (Debug)</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
-        </ScrollView>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   webWrapper: {
-      ...Platform.select({
-        ios: {
-        },
-        android: {
-        },
-        default: {
-          width: "60%",
-          alignSelf:"center"
-        },
-      }),
+    ...Platform.select({
+      ios: {},
+      android: {},
+      default: {
+        width: "60%",
+        alignSelf: "center",
+      },
+    }),
   },
   globalContainer: {
     ...globalText,
@@ -689,5 +967,24 @@ const styles = StyleSheet.create({
     textAlign: "left",
     fontSize: 24,
     marginStart: 20,
+  },
+  // featureWrapper: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   marginBottom: 10,
+  // },
+  featureTitle: {
+    ...globalText,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#FFFFFF",
+  },
+  featureDescription: {
+    ...globalText,
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#A8FFFC",
   },
 });

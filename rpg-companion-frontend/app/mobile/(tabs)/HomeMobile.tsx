@@ -251,18 +251,20 @@ export default function HomeMobile() {
   };
 
   //Character traits from session storage i.e. species features/class features
-  const character = SessionStorage.getItem("selectedCharacterData");
-  const speciesFeatures = character.features.speciesfeatures;
+  const characterRaw = SessionStorage.getItem("selectedCharacterData");
+  const character = characterRaw ? JSON.parse(characterRaw) : {};
+  const speciesFeatures = character.features || [];
   console.log("Species Features", speciesFeatures);
   const traitsKey = Object.keys(speciesFeatures).find((key) =>
     key.includes("_traits")
   );
   const traits = traitsKey ? speciesFeatures[traitsKey] : speciesFeatures;
   console.log("Traits", traits);
-  console.log("Spell Data", character.features.classfeatures);
+  console.log("Spell Data", character.features || []);
   useEffect(() => {
-    SessionStorage.setItem("speciesData", JSON.stringify(traits));
-  });
+    const safeTraits = traits || {};
+    SessionStorage.setItem("speciesData", JSON.stringify(safeTraits));
+  }, [traits]);
 
   //Ability scores and caluclated skills
   type AbilityScore = {

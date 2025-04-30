@@ -52,23 +52,27 @@ export default function Status() {
   //UseEffect to load feature data from session storage
   useEffect(() => {
     //Species Data loaded from session storage
-    const raw = SessionStorage.getItem("speciesData");
-    try {
-      const parsed = JSON.parse(raw);
-      console.log("Parsed selected species data:", parsed);
-      setSpeciesData(parsed);
-    } catch (err) {
-      console.error("Failed to parse selected character data:", err);
-    }
+    if (!SessionStorage.getItem("speciesData"))
+      return; //if no species data, do not load anything
+    else {
+      const raw = SessionStorage.getItem("speciesData");
+      try {
+        const parsed = JSON.parse(raw);
+        console.log("Parsed selected species data:", parsed);
+        setSpeciesData(parsed);
+      } catch (err) {
+        console.error("Failed to parse selected character data:", err);
+      }
 
-    //Character Data loaded from session storage, specifically for features
-    const raw2 = SessionStorage.getItem("classFeatures");
-    try {
-      const parsed = JSON.parse(raw2);
-      console.log("Parsed selected classFeatures:", parsed);
-      setClassFeatures(parsed);
-    } catch (err) {
-      console.error("Failed to parse selected classFeatures:", err);
+      //Character Data loaded from session storage, specifically for features
+      const raw2 = SessionStorage.getItem("classFeatures");
+      try {
+        const parsed = JSON.parse(raw2);
+        console.log("Parsed selected classFeatures:", parsed);
+        setClassFeatures(parsed);
+      } catch (err) {
+        console.error("Failed to parse selected classFeatures:", err);
+      }
     }
   }, []);
 
