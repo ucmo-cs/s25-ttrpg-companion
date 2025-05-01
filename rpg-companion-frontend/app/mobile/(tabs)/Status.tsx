@@ -49,13 +49,18 @@ export default function Status() {
   const [speciesData, setSpeciesData] = useState<any[]>([]);
   const [classFeatures, setClassFeatures] = useState<any>([]);
   const [featuresData, setFeaturesData] = useState<any>([]);
+  const [characterData, setCharacterData] = SessionStorage.getItem(
+    "selectedCharacterData"
+  );
+  console.log("Character data:", characterData);
   //UseEffect to load feature data from session storage
   useEffect(() => {
     //Species Data loaded from session storage
     if (!SessionStorage.getItem("speciesData"))
       return; //if no species data, do not load anything
     else {
-      const raw = SessionStorage.getItem("speciesData");
+      const raw =
+        SessionStorage.getItem("speciesData") || characterData.speciesfeatures;
       try {
         const parsed = JSON.parse(raw);
         console.log("Parsed selected species data:", parsed);
@@ -65,7 +70,8 @@ export default function Status() {
       }
 
       //Character Data loaded from session storage, specifically for features
-      const raw2 = SessionStorage.getItem("classFeatures");
+      const raw2 =
+        SessionStorage.getItem("classFeatures") || characterData.classfeatures;
       try {
         const parsed = JSON.parse(raw2);
         console.log("Parsed selected classFeatures:", parsed);

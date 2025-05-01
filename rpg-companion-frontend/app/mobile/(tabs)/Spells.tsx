@@ -8,7 +8,8 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-
+import SessionStorage from "react-native-session-storage";
+import { useState } from "react";
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8; // 80% of screen width
 const SPACING = (width - CARD_WIDTH) / 2;
@@ -78,6 +79,10 @@ export default function Spells() {
     },
   ];
   const sortedData = data.sort((a, b) => parseInt(a.level) - parseInt(b.level));
+  const characterData = useState(
+    SessionStorage.getItem("selectedCharacterData")
+  )[0];
+  console.log("Character data Spells:", characterData.spells);
 
   return (
     <View style={styles.container}>

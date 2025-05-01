@@ -83,26 +83,41 @@ export default function Combat() {
   const [equippedItem, setEquippedItem] = useState<Array<any>>([]);
   const [abilities, setAbilities] = useState<Array<any>>([]);
   const [armor, setArmor] = useState<Array<any>>([]);
+
   useEffect(() => {
-    if (SessionStorage.getItem("equippedItem") != null) {
-      const interval = setInterval(() => {
-        const parsed = SessionStorage.getItem("equippedItem");
-        try {
-          const parsedItems = JSON.parse(parsed) || [];
+    SessionStorage.removeItem("armorEquipped");
 
-          const weapons = parsedItems.filter((item) => item.type === "weapon");
-          const armor = parsedItems.filter((item) => item.type === "armor");
-          SessionStorage.setItem("armorEquipped", JSON.stringify(armor));
-          setEquippedItem(weapons);
-        } catch (err) {
-          console.error("Failed to parse equipped item combat equip:", err);
+    const updateEquipped = () => {
+      try {
+        const stored = SessionStorage.getItem("equippedItem");
+
+        if (!stored) {
+          console.log("No equipped item found in session storage.");
+          setEquippedItem([]);
+          return;
         }
-      }, 1000);
-    } else if (SessionStorage.getItem("equippedItem") === null) {
-      console.log("No equipped item found in session storage.");
-      setEquippedItem([]);
-    }
 
+        const parsedItems =
+          typeof stored === "string" ? JSON.parse(stored) : stored;
+        const weapons = parsedItems.filter((item) => item.type === "weapon");
+        const armor = parsedItems.filter((item) => item.type === "armor");
+
+        SessionStorage.setItem("armorEquipped", JSON.stringify(armor));
+        setEquippedItem(weapons);
+      } catch (err) {
+        console.error("❌ Failed to parse equippedItem in Combat:", err);
+        setEquippedItem([]);
+      }
+    };
+
+    updateEquipped(); // Run once on mount
+
+    const interval = setInterval(updateEquipped, 1000); // Re-check every second
+
+    return () => clearInterval(interval); // Clean up on unmount
+  }, []);
+
+  useEffect(() => {
     const characterAbilities = SessionStorage.getItem("abilityScores");
     try {
       const parsedAbilities = JSON.parse(characterAbilities);
