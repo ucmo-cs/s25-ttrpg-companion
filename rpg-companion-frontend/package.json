@@ -42,7 +42,8 @@
     "react-native-vector-image": "^0.4.5",
     "react-native-web": "^0.19.13",
     "react-native-webview": "13.12.5",
-    "react-navigation-stack": "^2.10.4"
+    "react-navigation-stack": "^2.10.4",
+    "sha2": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
