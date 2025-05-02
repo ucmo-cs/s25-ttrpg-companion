@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View, TextInput, StyleSheet, Button, Alert, Platform, Image, Pressable } from "react-native";
+import { Text, View, TextInput, StyleSheet, Button, Alert, Platform, Image, Pressable, FlatList } from "react-native";
 import GlobalStyles from "../globalstyles";
 import Feather from "@expo/vector-icons/Feather";
 import { Backpack, Swords, Notebook, House, Activity, FlaskConical, } from "lucide-react";
@@ -27,29 +27,191 @@ export default function HomeWeb() {
       } else {
         setCharacter(data);
         setHp(data.hp);
+        setSkillsData(initialSkillsData);
+        calculateSkillsBonus();
+        setInterval(editCharacter , 15000)
       }
     };
     loadCharacter();
   }, []);
 
-  type CharacterData = {
-    name: string;
-    species_id: string;
-    class_id: string;
-    hp: number;
-    ability_scores: {
-      str: number;
-      dex: number;
-      con: number;
-      int: number;
-      wis: number;
-      cha: number;
+  const initialSkillsData = [
+    {
+      skill: "Acrobatics",
+      ability: "Dex",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Arcana",
+      ability: "Int",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Athletics",
+      ability: "Str",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Deception",
+      ability: "Cha",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "History",
+      ability: "Int",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Insight",
+      ability: "Wis",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Intimidation",
+      ability: "Cha",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Investigation",
+      ability: "Int",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Medicine",
+      ability: "Wis",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Nature",
+      ability: "Int",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Perception",
+      ability: "Wis",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Religion",
+      ability: "Int",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Stealth",
+      ability: "Dex",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Sleight of Hand",
+      ability: "Dex",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+    {
+      skill: "Animal Handling",
+      ability: "Wis",
+      bonus: "+0",
+      favorite: false,
+      proficient: false,
+    },
+  ];
+
+ 
+
+  function editCharacter() {
+    console.log("inside editCharacter");
+    const editChar = async () => {
+      try {
+        const response = await fetch(
+          "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/edit-character",
+          {
+            method: "POST",
+            headers: {
+              session_token: SessionStorage.getItem("token"),
+            },
+            body: JSON.stringify(SessionStorage.getItem("selectedCharacterData")),
+          }
+        );
+  
+        console.log("Status:", response.status);
+        // console.log("inventory", character.inventory);
+  
+        if (!response.ok) throw new Error("Failed to submit level-up changes");
+  
+        const data = await response.json();
+        console.log("Character in SessionStorage: ", data);
+        alert("Character Edit Submitted");
+      } catch (error) {
+        console.error("Submission error:", error);
+        alert("Error submitting level-up changes.");
+      }
     };
-    proficiency_bonus: number;
-    speed: number;
-    armor_class: number;
-    inventory: JSON; // or type this properly
-  };
+  }
+
+  function calculateSkillsBonus(){
+    let count = 0;
+    let character = SessionStorage.getItem("selectedCharacterData");
+    while (initialSkillsData[count]){
+      let bon = 0;
+      switch(initialSkillsData[count].ability){
+        case "Str":
+          bon = Math.floor((character.ability_scores.str - 10) / 2)
+          break;
+        case "Dex":
+          bon = Math.floor((character.ability_scores.dex - 10) / 2)
+          break;
+        case "Int":
+          bon = Math.floor((character.ability_scores.int - 10) / 2)
+          break;
+        case "Wis":
+          bon = Math.floor((character.ability_scores.wis - 10) / 2)
+          break;
+        case "Cha":
+          bon = Math.floor((character.ability_scores.con - 10) / 2)
+          break;
+        case "Con":
+          bon = Math.floor((character.ability_scores.cha - 10) / 2)
+          break;
+      }
+      if (bon > -1)
+      initialSkillsData[count].bonus = "+" + bon.toString();
+      else
+      initialSkillsData[count].bonus = bon.toString();
+      count++;
+    }
+    setSkillsData(initialSkillsData);
+    console.log(skillsData);
+  }
+
+  const [skillsData, setSkillsData] = useState(initialSkillsData);
+
 
   const minusHP = () => {
     if (hp <= 0) {
@@ -177,8 +339,15 @@ export default function HomeWeb() {
                 <Text style={styles.skill}>Bonus</Text>
               </View>
               <View style={styles.skillsBody}>
-
-
+                <View style={{ flex: 1, maxHeight: "100%" }}>
+                  <FlatList data={skillsData} keyExtractor={(item, index) => index.toString()} renderItem={({item}) => 
+                    <View style={styles.skillRow}>
+                      <Text style={styles.skill}>{item.skill}</Text>
+                      <Text style={styles.skill}>{item.ability}</Text>
+                      <Text style={styles.skill}>{item.bonus}</Text>
+                    </View>}>
+                  </FlatList>
+                </View>
                 {/* Dynamically render skills here */}
 
                 {/* <View style={styles.skillRow}>
@@ -344,6 +513,8 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     flexDirection: "row",
+    overflowX:"scroll"
+ 
   },
   split: {
     flex: 1,
@@ -460,7 +631,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     flexDirection: "row",
-    minWidth: 300,
+    minWidth: 400,
     overflow: "hidden"
   },
   healthContainer: {

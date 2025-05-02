@@ -441,12 +441,11 @@ export default function CharacterCreation() {
     
           fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/save-image", {
               method: "POST",
-              // mode: "no-cors",
               headers: {
                   "user_uid" : user_uid,
                   "character_uid" : character_uid,
                   "session_token" : "cooper_is_slow",
-                  "content-type" : imageType
+                  // "content-type" : imageType
               },
               body: image
           })
