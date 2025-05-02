@@ -9,13 +9,13 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import SessionStorage from "react-native-session-storage";
 import { Circle } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../globalstyles";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 const globalText = {
   color: "white",
@@ -91,8 +91,10 @@ export default function CharacterCreation() {
     },
   };
   const [characterData, setCharacterData] = useState<any>(initialCharacterData);
-  const [image, setImage] = useState(new Blob([""], { type: "application/octet-stream" }));
-  const [imageType, setImageType] = useState(''); 
+  const [image, setImage] = useState(
+    new Blob([""], { type: "application/octet-stream" })
+  );
+  const [imageType, setImageType] = useState("");
 
   const handleChange = (key: string, value: string) => {
     if (["str", "dex", "con", "int", "wis", "cha"].includes(key)) {
@@ -117,6 +119,22 @@ export default function CharacterCreation() {
     }
   };
 
+  //Starting equipment
+  const parseStartingEquipment = (equipmentString: string, allItems: any[]) => {
+    const itemNames = equipmentString
+      .replace(/;/g, "") // remove semicolons
+      .split(",")
+      .map((name) => name.trim());
+
+    const matchedItems = itemNames
+      .map((name) =>
+        allItems.find((item) =>
+          name.toLowerCase().includes(item.name.toLowerCase())
+        )
+      )
+      .filter(Boolean);
+    return matchedItems;
+  };
   //Set session token and user uid from session storage
   const user_uid = SessionStorage.getItem("userUid");
   // console.log("Session token:", session_token);
@@ -150,16 +168,48 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Session_Token: SessionStorage.getItem('token'),
+            Session_Token: SessionStorage.getItem("token"),
           },
           body: JSON.stringify(payload),
         }
       );
       const data = await response.json();
       console.log("📬 Server Response:", data);
-      uploadImage(data.character_uid)
+      let currentCharacters = SessionStorage.getItem("characters");
+      if (typeof currentCharacters === "string") {
+        try {
+          currentCharacters = JSON.parse(currentCharacters);
+        } catch {
+          currentCharacters = [];
+          console.log(
+            "Error parsing characters from session storage:",
+            currentCharacters
+          );
+        }
+      } else if (!Array.isArray(currentCharacters)) {
+        currentCharacters = [];
+        console.log(
+          "Error parsing characters from session storage:",
+          currentCharacters
+        );
+      }
+      const newCharacter = {
+        character_name: characterData.character.name,
+        character_uid: data.character_uid,
+      };
+      const newCharacterList = [...(currentCharacters || []), newCharacter];
+      console.log("New Character List:", newCharacterList);
+      SessionStorage.setItem("characters", JSON.stringify(newCharacterList));
+      uploadImage(data.character_uid);
       SessionStorage.setItem("token", data.session_token);
+      console.log("Character List", SessionStorage.getItem("characters"));
       alert("Character created successfully!");
+      console.log("Character Data:", characterData.character);
+      SessionStorage.setItem(
+        "selectedCharacterData",
+        JSON.stringify(characterData.character)
+      );
+      router.replace("/mobile/(tabs)/HomeMobile");
       setCharacterData(initialCharacterData); // Reset the form after submission
     } catch (error) {
       console.error(error);
@@ -188,13 +238,12 @@ export default function CharacterCreation() {
   const [loadingSpells, setLoadingSpells] = useState(false);
   const fetchClassData = async () => {
     let ctype;
-    if (Platform.OS === "ios" || Platform.OS === "android"){
-      ctype = {"Content-Type" : "application/json"};
+    if (Platform.OS === "ios" || Platform.OS === "android") {
+      ctype = { "Content-Type": "application/json" };
       console.log("Ctype: ", ctype);
-    }
-    else{
+    } else {
       ctype = null;
-      console.log("Ctype: ",  ctype);
+      console.log("Ctype: ", ctype);
     }
     try {
       const response = await fetch(
@@ -203,7 +252,7 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             ...(ctype || {}),
-            Session_Token: SessionStorage.getItem('token'),
+            Session_Token: SessionStorage.getItem("token"),
           },
           body: JSON.stringify({
             user_uid: user_uid,
@@ -227,7 +276,7 @@ export default function CharacterCreation() {
       if (data.spells) {
         setSpellData(data.spells || {});
       }
-      console.log("My Spell Data 1", spellData);
+      console.log("My Spell Data 1", data.spells);
       console.log("Fighter Class Data", data.classes.fighter);
       console.log("Wizard Class Data", data.classes.wizard);
       console.log("Class Data", classData);
@@ -245,10 +294,10 @@ export default function CharacterCreation() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Session_Token: SessionStorage.getItem('token'),
+            Session_Token: SessionStorage.getItem("token"),
           },
-          body: JSON.stringify({ 
-            user_uid: user_uid 
+          body: JSON.stringify({
+            user_uid: user_uid,
           }),
         }
       );
@@ -379,7 +428,7 @@ export default function CharacterCreation() {
         ),
 
         skill_proficiencies: selectedSkills,
-        inventory: [filteredInventory],
+        inventory: filteredInventory,
         starting_equipment: {
           option: selectedEquipment,
           items: selectedEquipmentItems,
@@ -393,7 +442,7 @@ export default function CharacterCreation() {
         },
         ...(isSpellcaster && {
           cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
-          spell_names: classData?.[currentClassId]?.spell_names || [],
+          spells: spellData || [],
           spell_slots: classData?.[currentClassId]?.spell_slots || [],
         }),
       },
@@ -871,10 +920,7 @@ export default function CharacterCreation() {
             >
               <Text style={styles.buttonText}>Create Character</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => pickImage()}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => pickImage()}>
               <Text style={styles.buttonText}>Upload Profile Picture</Text>
             </TouchableOpacity>
             <TouchableOpacity

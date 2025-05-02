@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { router } from "expo-router";
 import GlobalStyles from "./globalstyles";
 import SessionStorage from "react-native-session-storage";
-
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { Trash2 } from "lucide-react-native";
-
 import {
   Image,
   FlatList,
@@ -29,6 +29,23 @@ export default function CharacterSelect() {
   const [characters, setCharacters] = useState(
     SessionStorage.getItem("characters")
   );
+  useFocusEffect(
+    useCallback(() => {
+      const stored = SessionStorage.getItem("characters");
+      if (typeof stored === "string") {
+        try {
+          setCharacters(JSON.parse(stored));
+        } catch {
+          setCharacters([]);
+        }
+      } else if (Array.isArray(stored)) {
+        setCharacters(stored);
+      } else {
+        setCharacters([]);
+      }
+    }, [])
+  );
+
   const userUid = SessionStorage.getItem("userUid");
   const [trashColor, setTrashColor] = useState("#af1f31");
   const nav = Platform.select({
@@ -160,17 +177,19 @@ export default function CharacterSelect() {
       }
 
       const data = await response.json();
-      if (Platform.OS === "ios" || Platform.OS === "android"){
-        SessionStorage.setItem("selectedCharacterData",JSON.stringify(data.character));
-      }
-      else{
-        SessionStorage.setItem("selectedCharacterData" ,data.character);
+      if (Platform.OS === "ios" || Platform.OS === "android") {
+        SessionStorage.setItem(
+          "selectedCharacterData",
+          JSON.stringify(data.character)
+        );
+      } else {
+        SessionStorage.setItem("selectedCharacterData", data.character);
       }
       console.log("Selected Character Data: ", data.character);
       SessionStorage.setItem("token", data.session_token);
       SessionStorage.setItem(
         "charInventory",
-        JSON.stringify(data.character.starting_equipment?.[0] || [])
+        JSON.stringify(data.character.inventory || [])
       );
       SessionStorage.setItem(
         "classFeatures",

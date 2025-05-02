@@ -17,37 +17,148 @@ const globalText = {
 };
 
 export default function Inventory() {
+  const knownItems: InventoryItem[] = [
+    {
+      name: "Chain Mail",
+      type: "armor",
+      armor_class: 16,
+      attributes: ["Heavy"],
+      description: "A sturdy set of interlocking metal rings.",
+    },
+    {
+      name: "Greatsword",
+      type: "weapon",
+      damage_type: "2d6",
+      properties: "Heavy, Two-Handed",
+      attributes: ["Slashing"],
+      description: "A massive two-handed sword.",
+    },
+    {
+      name: "Flail",
+      type: "weapon",
+      damage_type: "1d8",
+      properties: "Martial Melee Weapon",
+      attributes: ["Bludgeoning"],
+      description: "A spiked ball on a chain.",
+    },
+    {
+      name: "Javelin",
+      type: "weapon",
+      damage_type: "1d6",
+      properties: "Thrown, Range (30/120)",
+      attributes: ["Piercing"],
+      description: "A throwing spear.",
+    },
+    {
+      name: "Dungeoneer’s Pack",
+      type: "misc",
+      attributes: [],
+      description: "A pack containing adventuring gear.",
+    },
+    {
+      name: "Quiver",
+      type: "misc",
+      attributes: [],
+      description: "A leather container for arrows.",
+    },
+    {
+      name: "Longbow",
+      type: "weapon",
+      damage_type: "1d8",
+      properties: "Two-Handed, Ranged",
+      attributes: ["Piercing"],
+      description: "A large bow favored by archers.",
+    },
+  ];
+
+  type InventoryItem = {
+    name: string;
+    type: "weapon" | "armor" | "misc";
+    properties?: string;
+    damage_type?: string;
+    armor_class?: number;
+    attributes: string[];
+    description: string;
+  };
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [characterData, setCharacterData] = useState(
+    SessionStorage.getItem("selectedCharacterData")
+  );
+  console.log("Character data Inventory:", characterData.inventory);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const parseStartingEquipment = (itemsString: string): InventoryItem[] => {
+    const cleaned = itemsString.replace(/and\s+/g, "").replace(/;/g, "");
+    const splitItems = cleaned.split(",").map((item) => item.trim());
+
+    const parsedItems: InventoryItem[] = [];
+
+    splitItems.forEach((entry) => {
+      const match = knownItems.find((i) =>
+        entry.toLowerCase().includes(i.name.toLowerCase())
+      );
+
+      if (match) {
+        // Handle multiples like "8 Javelins"
+        const quantityMatch = entry.match(/^(\d+)\s+(.*)/);
+        if (quantityMatch) {
+          const count = parseInt(quantityMatch[1]);
+          for (let i = 0; i < count; i++) {
+            parsedItems.push({ ...match });
+          }
+        } else {
+          parsedItems.push({ ...match });
+        }
+      } else {
+        // Fallback for things like "4 GP"
+        parsedItems.push({
+          name: entry,
+          type: "misc",
+          attributes: [],
+          description: entry,
+        });
+      }
+    });
+
+    return parsedItems;
+  };
 
   useEffect(() => {
-    SessionStorage.removeItem("equippedItem");
-    const parsed = SessionStorage.getItem("charInventory");
-    if (parsed) {
-      try {
-        const flat = JSON.parse(parsed);
-        const safeInventory = Array.isArray(flat) ? flat : [flat];
-        setInventory(safeInventory);
-        console.log("Parsed inventory:", safeInventory);
-      } catch (err) {
-        console.error("Failed to parse inventory:", err);
-        setInventory([]);
-      }
-    } else if (parsed === null) {
-      console.log("No inventory found in session storage.");
+    const rawData = SessionStorage.getItem("selectedCharacterData");
+    if (!rawData) return;
+
+    try {
+      const parsedCharacter =
+        typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+      setCharacterData(parsedCharacter);
+
+      const startingItems = parsedCharacter.starting_equipment?.items || "";
+      const parsedInventory = parseStartingEquipment(startingItems);
+
+      setInventory(parsedInventory);
+      SessionStorage.setItem("charInventory", JSON.stringify(parsedInventory));
+    } catch (err) {
+      console.error("Failed to parse inventory or character:", err);
       setInventory([]);
     }
+  }, []);
 
-    const raw2 = SessionStorage.getItem("selectedCharacterData");
+  //Starting with empty inventory and then setting it from session storage
+  useEffect(() => {
+    const parsed =
+      SessionStorage.getItem("charInventory") || characterData.inventory;
+
+    const raw2 = characterData;
     try {
       console.log(raw2);
       const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
-      console.log("Parsed selected character data:", parsed);
+      console.log("Parsed selected character data:", flat);
     } catch (err) {
       console.error("Failed to parse selected character data:", err);
     }
   }, []);
-  const [inventory, setInventory] = useState<Array<any>>([]);
+
   const handleItemPress = (myItem) => {
     setSelectedItem(myItem);
     setModalVisible(true);

@@ -192,30 +192,30 @@ export default function HomeMobile() {
   //Calculating the equipped items and armor class
   const [armor, setArmor] = useState<Array<any>>([]);
   useEffect(() => {
-    if (armor.length == null) return;
-
-    const interval = setInterval(() => {
+    const updateArmor = () => {
       const parsed = SessionStorage.getItem("armorEquipped");
-      if (!parsed) {
-        return;
-      }
+      if (!parsed) return;
+
       try {
         const armorData = JSON.parse(parsed);
-        if (!Array.isArray(armorData)) {
-          return;
+        if (Array.isArray(armorData)) {
+          setArmor(armorData);
         }
-        setArmor(armorData);
       } catch (err) {
-        console.error("Failed to parse equipped item armordata:", err);
+        console.error("Failed to parse equipped armor:", err);
       }
-    }, 1000);
-    return () => clearInterval(interval);
+    };
+
+    updateArmor(); // Call once immediately
+
+    const interval = setInterval(updateArmor, 3000); // Lower frequency to reduce log spam
+    return () => clearInterval(interval); // Clean up on unmount
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      try{
-        if (SessionStorage.getItem('editBool') == 'start'){
+      try {
+        if (SessionStorage.getItem("editBool") == "start") {
           setEditCharListVisible(true);
         }
       } catch (err) {
@@ -265,6 +265,7 @@ export default function HomeMobile() {
 
   //Character traits from session storage i.e. species features/class features
   const characterRaw = SessionStorage.getItem("selectedCharacterData");
+  console.log("Character Raw", characterRaw);
   const character = characterRaw ? JSON.parse(characterRaw) : {};
   const speciesFeatures = character.features || [];
   console.log("Species Features", speciesFeatures);
@@ -470,7 +471,7 @@ export default function HomeMobile() {
       character_uid: character_uid,
       character: {
         level: level,
-        name:character.name,
+        name: character.name,
         hp: character.hp,
         max_hp: character.max_hp,
         armor_class: character.armor_class,
@@ -527,7 +528,7 @@ export default function HomeMobile() {
         int: tempScores["Int"],
         wis: tempScores["Wis"],
         cha: tempScores["Cha"],
-      };    
+      };
     }
 
     //Always send the level up
@@ -563,11 +564,10 @@ export default function HomeMobile() {
     }
   };
   const handleClose = () => {
-    SessionStorage.setItem('editBool', 'end')
+    SessionStorage.setItem("editBool", "end");
     setEditCharListVisible(false);
     submitLevelUp();
   };
-
 
   return (
     <View style={styles.container}>
