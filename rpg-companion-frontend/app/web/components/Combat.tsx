@@ -97,7 +97,7 @@ const Combat = (props: CombatProps) => {
   function getItemType(item) {
     console.log("The item in question" + item);
     item = item.type.toLowerCase()
-    if (item.includes("sword") || item.includes("melee")) {
+    if (item.includes("sword") || item.includes("melee") || item.includes("attack")) {
       return backgroundImages.sword;
     } else if (item.includes("bow")) {
       return backgroundImages.bow;
@@ -113,12 +113,12 @@ const Combat = (props: CombatProps) => {
 
     <View style={styles.card}>
       <Text style={[styles.itemName, { textAlign: "center", backgroundColor: "rgba(0,0,0,0.2)", flex: 0.1, width: "100%", }]}>{item.type}</Text>
-      <ImageBackground resizeMode="stretch" tintColor={"rgba(255,255,255,0.3"} blurRadius={8} style={[styles.background, { flex: 0.9 ,}]} source={getItemType(item)}>
+      <ImageBackground resizeMode="stretch" tintColor={"rgba(255,255,255,0.3"} blurRadius={8} style={[styles.background, { flex: 0.9, }]} source={getItemType(item)}>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.hitOrDamage}>Hit: {item.hit}</Text>
             <Text style={styles.hitOrDamage}>Damage: {item.damage}</Text>
-            <Text style={[styles.hitOrDamage, {fontSize:12}]}>{item.description}</Text>
+            <Text style={[styles.hitOrDamage, { fontSize: 12 }]}>{item.description}</Text>
 
           </ScrollView>
         </View>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     flex: 0.5,
     backgroundColor: "rgba(0,0,0,0.3)",
     margin: 2,
-    padding:5,
+    padding: 5,
     borderRadius: 15,
     fontSize: 30,
 
