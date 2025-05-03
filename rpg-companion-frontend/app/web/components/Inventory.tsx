@@ -14,7 +14,7 @@ const Inventory = (props: InventoryProps) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    const parsed = SessionStorage.getItem("charInventory");
+    const parsed = SessionStorage.getItem("selectedCharacterData").inventory;
     try {
       const flat = Array.isArray(parsed[0]) ? parsed[0] : parsed;
       setInventory(flat);
@@ -66,8 +66,8 @@ const Inventory = (props: InventoryProps) => {
   <Text style={styles.pageHeader}>Inventory Screen</Text>
 
   <ScrollView style={styles.staticContainer}>
-    {inventory.map((item, index) => (
-      <View key={index} style={styles.itemContainer}>
+    {inventory.map((item) => (
+      <View key={item} style={styles.itemContainer}>
         <Pressable
           onPress={() =>
             handleItemPress({
