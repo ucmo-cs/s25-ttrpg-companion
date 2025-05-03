@@ -14,6 +14,7 @@ import { router } from "expo-router";
 export default function HomeWeb() {
 
 
+
   const [character, setCharacter] = useState(SessionStorage.getItem("selectedCharacterData"));
   const [hp, setHp] = useState(0);
   const [tab, setTab] = useState("notes");
@@ -23,11 +24,19 @@ export default function HomeWeb() {
   const [abilityPointsUsed, setAbilityPointsUsed] = useState(0);
   const [tempScores, setTempScores] = useState<{ [key: string]: number }>({});
   const [subclass, setSubclass] = useState("");
-  const [abilityScores, setAbilityScores] = useState(character.ability_scores);
+  const [abilityScores, setAbilityScores] = useState<AbilityScore[]>([]);
+  const [level, setLevel] = useState(-1);
   const userUID = SessionStorage.getItem("userUid")
+
 
   const isAbilityScoreLevel = character.level % 4 === 0;
 
+
+  type AbilityScore = {
+    title: string;
+    modifier: string;
+    score: number;
+  };
 
 
   useEffect(() => {
@@ -41,11 +50,51 @@ export default function HomeWeb() {
         setHp(character.hp);
         setSkillsData(initialSkillsData);
         calculateSkillsBonus();
-        setInterval(shouldEditCharacter, 15000)
+        setInterval(shouldEditCharacter, 15000);
+        setLevel(character.level);
       }
     };
     loadCharacter();
-  }, []);
+    const updated_ability_scores = [
+      {
+        title: "Str",
+        modifier: calculateBonus(Number(character.ability_scores.str)),
+        score: character.ability_scores.str,
+      },
+      {
+        title: "Dex",
+        modifier: calculateBonus(Number(character.ability_scores.dex)),
+        score: character.ability_scores.dex,
+      },
+      {
+        title: "Con",
+        modifier: calculateBonus(Number(character.ability_scores.con)),
+        score: character.ability_scores.con,
+      },
+      {
+        title: "Int",
+        modifier: calculateBonus(Number(character.ability_scores.int)),
+        score: character.ability_scores.int,
+      },
+      {
+        title: "Wis",
+        modifier: calculateBonus(Number(character.ability_scores.wis)),
+        score: character.ability_scores.wis,
+      },
+      {
+        title: "Cha",
+        modifier: calculateBonus(Number(character.ability_scores.cha)),
+        score: character.ability_scores.cha,
+      },
+    ];
+    setAbilityScores(updated_ability_scores);
+  }
+    , []);
+
+  const calculateBonus = (score) => {
+    const modifier = Math.floor((score - 10) / 2);
+    return (modifier >= 0 ? "+" : "") + modifier.toString();
+  };
 
   const initialSkillsData = [
     {
@@ -293,7 +342,10 @@ export default function HomeWeb() {
   }
 
   function handleLevelUp() {
+    setLevel(level + 1);
+    character.level = level;
     setLevelUpModal(true)
+    console.log("Character.level:", character.level)
   }
 
   const renderTab = () => {
@@ -325,7 +377,7 @@ export default function HomeWeb() {
       user_uid: userUID,
       character_uid: character.character_uid,
       character: {
-        level: (character.level + 1),
+        level: (level),
         name: character.name,
         hp: character.hp,
         max_hp: character.max_hp,
@@ -399,7 +451,7 @@ export default function HomeWeb() {
             // Session_Token: session_token,
             session_token: SessionStorage.getItem('token'),
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(character),
         }
       );
 
@@ -463,6 +515,7 @@ export default function HomeWeb() {
                     <TextInput
                       style={styles.formControl}
                       placeholder="Enter Subclass"
+                      placeholderTextColor={"gray"}
                       value={subclass}
                       onChangeText={setSubclass}
                     ></TextInput>
@@ -473,8 +526,8 @@ export default function HomeWeb() {
 
               {/* <Text style={styles.AbilityScores}>Ability Scores</Text> */}
               {isAbilityScoreLevel && (
-                <View style={styles.abilityScoreWrapper}>
-                  <Text style={styles.header}>Ability Score Improvement</Text>
+                <View style={styles.abilityScoreWrapper} key={"isAbilityScoreLevel"}>
+                  <Text style={styles.editheader}>Ability Score Improvement</Text>
                   <View style={styles.abilityRow}>
                     {abilityScores.map((ability) => (
                       <View key={ability.title} style={styles.abilityBox}>
@@ -510,7 +563,7 @@ export default function HomeWeb() {
             </View>
           </ScrollView>
           <Pressable onPress={handleClose}>
-            <Text style={styles.closeButton}>Close</Text>
+            <Text style={styles.closeButton}>Save</Text>
           </Pressable>
         </View>
 
@@ -743,6 +796,12 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
+  editheader: {
+    color: "white",
+    fontSize: 20,
+    padding: 5,
+    textAlign: "center",
+  },
   buttonText: {
     color: "white",
     alignSelf: "center",
@@ -762,6 +821,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formControl: {
+    color: "white",
     padding: 10,
     margin: 10,
     fontSize: 24,
@@ -791,8 +851,9 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   abilityRow: {
+    color: "white",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginBottom: 12,
     flexWrap: "wrap",
   },
@@ -801,6 +862,7 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlign: "center",
     marginTop: 7,
+    color: "white"
   },
   pfp: {
     height: 80,
@@ -821,6 +883,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     width: 100,
     textAlign: "center",
+    color: "white"
   },
   resetButton: {
     color: "red",
@@ -835,7 +898,12 @@ const styles = StyleSheet.create({
     overflowX: "scroll"
   },
   abilityScoreWrapper: {
-    marginBottom: 5,
+    margin: 15,
+    borderColor: "white",
+    borderWidth: 2,
+    borderRadius: 15,
+    width: "80%",
+
   },
   split: {
     flex: 1,
@@ -847,6 +915,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 4,
     marginTop: 4,
+    color: "white"
   },
   container: {
     flex: 1,
@@ -862,12 +931,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   modalView: {
-    flex: 1,
+    alignSelf: "center",
+    flex: 0.8,
+    width: "80%",
+    borderColor: "white",
+    borderWidth: 2,
     backgroundColor: "#121427",
     padding: 15,
     marginTop: 50,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 15
   },
   button: {
     backgroundColor: "#6B728C",
@@ -881,8 +953,10 @@ const styles = StyleSheet.create({
   abilityBox: {
     alignItems: "center",
     marginHorizontal: 8,
+    color: "white"
   },
   ability: {
+    color: "white",
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
@@ -1019,10 +1093,14 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     color: "#A8FFFC",
+    width: 300,
     marginTop: 10,
     fontSize: 20,
     textAlign: "center",
     marginBottom: 10,
+    borderColor: "white",
+    borderWidth: 2,
+    alignSelf: "center"
   },
   dynamicSelector: {
     flex: 0.15,
