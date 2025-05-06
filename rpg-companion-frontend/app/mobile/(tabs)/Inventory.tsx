@@ -386,7 +386,7 @@ export default function Inventory() {
           <Text style={styles.itemText}>No items in inventory</Text>
         )}
       </ScrollView>
-      {/* <View>
+      <View>
         <TouchableOpacity
           style={styles.equipContainer}
           onPress={() => addItemModal()}
@@ -398,8 +398,9 @@ export default function Inventory() {
           onClose={handleCloseModal}
           inventory={inventory}
           characterData={characterData}
+          knownItems={knownItems}
         />
-      </View> */}
+      </View>
     </View>
   );
 }

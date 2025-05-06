@@ -15,11 +15,18 @@ const globalText = {
   color: "white",
   fontFamily: "Sora",
 };
-const InventoryModal = ({ visible, onClose, inventory, characterData }) => {
+const InventoryModal = ({
+  visible,
+  onClose,
+  inventory,
+  characterData,
+  knownItems,
+}) => {
   const [modalVisible, setModalVisible] = useState(visible);
   const [characterInventory, setCharacterInventory] = useState(inventory);
   const [character, setCharacter] = useState(characterData);
 
+  console.log("Known Items: ", knownItems);
   console.log("Character Data: ", characterData);
   const character_uid = characterData.character_uid;
   const user_uid = SessionStorage.getItem("userUid");
@@ -140,8 +147,32 @@ const InventoryModal = ({ visible, onClose, inventory, characterData }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalTextHeader}>Add New Item</Text>
-
+          <Picker
+            selectedValue={newItem.name}
+            onValueChange={(value) => {
+              const selected = knownItems.find((i) => i.name === value);
+              if (selected) setNewItem({ ...selected, quantity: 1 });
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select Item..." value="" />
+            {knownItems.map((item, idx) => (
+              <Picker.Item key={idx} label={item.name} value={item.name} />
+            ))}
+          </Picker>
+          <Text style={styles.modalText}>Item Quantity</Text>
           <TextInput
+            keyboardType="numeric"
+            placeholder="Item Quantity"
+            style={styles.input}
+            placeholderTextColor="#aaa"
+            value={newItem.quantity?.toString()}
+            onChangeText={(text) =>
+              setNewItem({ ...newItem, quantity: parseInt(text) })
+            }
+          />
+
+          {/* <TextInput
             placeholder="Item Name"
             style={styles.input}
             placeholderTextColor="#aaa"
@@ -237,7 +268,7 @@ const InventoryModal = ({ visible, onClose, inventory, characterData }) => {
                 <Text style={styles.attributeText}>{prop}</Text>
               </View>
             ))}
-          </View>
+          </View> */}
           <View
             style={{ flexDirection: "row", marginBottom: 10, marginRight: 10 }}
           >
