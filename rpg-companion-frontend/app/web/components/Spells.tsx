@@ -7,22 +7,17 @@ export default function SpellCarousel() {
 
   useEffect(() => {
     async function loadSpells() {
-      // 1) fetch raw
       const raw = await SessionStorage.getItem("selectedCharacterData");
-      // 2) parse if needed (SessionStorage often returns a string)
       const character = typeof raw === 'string' ? JSON.parse(raw) : raw;
       if (!character) return console.warn("No character data");
 
-      // 3) safely drill into spells
       const spellsByLevel = character.spells;
       if (!spellsByLevel) return console.warn("No spells field");
 
-      // 4) pick the right level
       const levelKey = `Level ${character.level}`;
       const levelObj = spellsByLevel[levelKey];
       if (!levelObj) return console.warn(`No spells for ${levelKey}`);
 
-      // 5) turn { spellName: {…}, … } into [ [spellName, details], … ]
       setEntries(Object.entries(levelObj));
     }
 
@@ -84,11 +79,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#f1f5f9',
+    color: '#A8FFFC',
     marginBottom: 12,
   },
   description: {
     fontSize: 18,
-    color: '#cbd5e1',
+    color: 'white',
   },
 });

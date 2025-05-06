@@ -256,14 +256,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#3E4A59",
   },
   featureTitle: {
+    color: "#A8FFFC",
     marginTop: 5,
     fontSize: 18,
-    fontWeight: "900"
+    fontWeight: "700"
   },
   featureSubtitle: {
     marginTop: 5,
     fontSize: 16.5,
-    fontWeight: "500"
+    fontWeight: "500",
+    color: "#A8FFFC",
   },
   featureContent: {
     alignItems: "center",
@@ -280,6 +282,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#3E4A59",
     borderRadius: 10,
     textAlign: "left",
+    color: "white"
+
   },
   subTraitTitle: {
     ...globalText,
