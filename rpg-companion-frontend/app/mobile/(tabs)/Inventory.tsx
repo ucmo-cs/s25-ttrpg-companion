@@ -11,6 +11,7 @@ import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import ItemModal from "../ItemModal";
 import SessionStorage from "react-native-session-storage";
+import InventoryModal from "../InventoryModal";
 const globalText = {
   color: "white",
   fontFamily: "Sora",
@@ -175,7 +176,7 @@ export default function Inventory() {
             parsedItems.push({ ...match });
           }
         } else {
-          parsedItems.push({ ...match });
+          parsedItems.push({ ...match, quantity: 1 });
         }
       } else {
         parsedItems.push({
@@ -184,6 +185,7 @@ export default function Inventory() {
           attributes: [],
           description: entry,
           equippable: false,
+          quantity: 1,
         });
       }
     });
@@ -314,6 +316,10 @@ export default function Inventory() {
       return false;
     }
   };
+
+  const addItemModal = () => {
+    setModalVisible(true);
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Inventory Screen</Text>
@@ -352,9 +358,10 @@ export default function Inventory() {
               <View style={styles.itemContent}>
                 <Text style={styles.itemText}>{item.name}</Text>
                 <Text style={styles.itemText}>{item.properties}</Text>
-                {item.quantity > 1 && (
+                {(item.quantity ?? 1) > 1 && (
                   <Text style={styles.itemText}>Quantity: {item.quantity}</Text>
                 )}
+
                 <View style={styles.attributesContainer}>
                   {item.attributes?.map((attr, i) => (
                     <View style={styles.attributesTextContainer}>
@@ -379,6 +386,20 @@ export default function Inventory() {
           <Text style={styles.itemText}>No items in inventory</Text>
         )}
       </ScrollView>
+      {/* <View>
+        <TouchableOpacity
+          style={styles.equipContainer}
+          onPress={() => addItemModal()}
+        >
+          <Text style={styles.equipButton}>Add Item</Text>
+        </TouchableOpacity>
+        <InventoryModal
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          inventory={inventory}
+          characterData={characterData}
+        />
+      </View> */}
     </View>
   );
 }
