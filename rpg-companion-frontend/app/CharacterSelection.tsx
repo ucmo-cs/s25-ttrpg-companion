@@ -52,6 +52,9 @@ export default function CharacterSelect() {
     android: () => router.navigate("/mobile/(tabs)/HomeMobile"),
     ios: () => router.navigate("/mobile/HomeMobile"),
     default: () => router.navigate("/web/HomeWeb"),
+    // default: () => router.navigate("/mobile/HomeMobile"),
+
+
   });
 
   const deleteCharacterMobileHandler = (key) => {
@@ -184,6 +187,7 @@ export default function CharacterSelect() {
         );
       } else {
         SessionStorage.setItem("selectedCharacterData", data.character);
+
       }
       console.log("Selected Character Data: ", data.character);
       SessionStorage.setItem("token", data.session_token);

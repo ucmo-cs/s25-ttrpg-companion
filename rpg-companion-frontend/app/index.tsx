@@ -71,7 +71,7 @@ export default function CustomLogin() {
       //This is how we can decide which code excutes per platform
       const nav =
         () => router.navigate("/CharacterSelection")
-      ;
+        ;
       nav();
     } catch (error) {
       console.log("Login Failed", error);
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#6B728C",
     borderColor: "#6B728C",
     textAlign: "center",
+    justifyContent: "center",
     color: "white",
     borderWidth: 2,
     margin: "2.5%",
