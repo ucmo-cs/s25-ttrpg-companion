@@ -11,6 +11,7 @@ import { Sword, Wand, Axe, Circle, Zap } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import ItemModal from "../ItemModal";
 import SessionStorage from "react-native-session-storage";
+import InventoryModal from "../InventoryModal";
 const globalText = {
   color: "white",
   fontFamily: "Sora",
@@ -24,6 +25,7 @@ export default function Inventory() {
       armor_class: 16,
       attributes: ["Heavy"],
       description: "A sturdy set of interlocking metal rings.",
+      equippable: true,
     },
     {
       name: "Greatsword",
@@ -32,6 +34,16 @@ export default function Inventory() {
       properties: "Heavy, Two-Handed",
       attributes: ["Slashing"],
       description: "A massive two-handed sword.",
+      equippable: true,
+    },
+    {
+      name: "Dagger",
+      type: "weapon",
+      damage_type: "1d4",
+      properties: "Light, Finesse, Thrown (20/60)",
+      attributes: ["Piercing"],
+      description: "A throwable light dagger.",
+      equippable: true,
     },
     {
       name: "Flail",
@@ -40,6 +52,7 @@ export default function Inventory() {
       properties: "Martial Melee Weapon",
       attributes: ["Bludgeoning"],
       description: "A spiked ball on a chain.",
+      equippable: true,
     },
     {
       name: "Javelin",
@@ -48,18 +61,28 @@ export default function Inventory() {
       properties: "Thrown, Range (30/120)",
       attributes: ["Piercing"],
       description: "A throwing spear.",
+      equippable: true,
     },
     {
       name: "Dungeoneer’s Pack",
       type: "misc",
       attributes: [],
       description: "A pack containing adventuring gear.",
+      equippable: false,
+    },
+    {
+      name: "Scholar's Pack",
+      type: "misc",
+      attributes: [],
+      description: "A pack containing adventuring gear.",
+      equippable: false,
     },
     {
       name: "Quiver",
       type: "misc",
       attributes: [],
       description: "A leather container for arrows.",
+      equippable: true,
     },
     {
       name: "Longbow",
@@ -68,6 +91,39 @@ export default function Inventory() {
       properties: "Two-Handed, Ranged",
       attributes: ["Piercing"],
       description: "A large bow favored by archers.",
+      equippable: true,
+    },
+    {
+      name: "Robe",
+      type: "armor",
+      armor_class: 11,
+      attributes: ["Light"],
+      description: "Armor made of cloth.",
+      equippable: true,
+    },
+    {
+      name: "Quarterstaff",
+      type: "weapon",
+      damage_type: "1d6",
+      properties: "Versatile (1d8)",
+      attributes: ["Topple", "Bludgeoning"],
+      description: "A sturdy wooden staff.",
+      equippable: true,
+    },
+    {
+      name: "Spellbook",
+      type: "misc",
+      attributes: ["Magic"],
+      description: "A spellbook for storing spells.",
+      equippable: true,
+    },
+    {
+      name: "GP",
+      type: "misc",
+      attributes: ["Magic"],
+      description: "Money in the form of gold pieces.",
+      equippable: true,
+      quantity: 1,
     },
   ];
 
@@ -75,10 +131,12 @@ export default function Inventory() {
     name: string;
     type: "weapon" | "armor" | "misc";
     properties?: string;
+    quantity?: number;
     damage_type?: string;
     armor_class?: number;
-    attributes: string[];
+    attributes?: string[];
     description: string;
+    equippable: boolean;
   };
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -93,14 +151,24 @@ export default function Inventory() {
     const splitItems = cleaned.split(",").map((item) => item.trim());
 
     const parsedItems: InventoryItem[] = [];
+    let goldCount = 0;
 
     splitItems.forEach((entry) => {
       const match = knownItems.find((i) =>
         entry.toLowerCase().includes(i.name.toLowerCase())
       );
 
+      if (entry.toLowerCase().includes("gp")) {
+        const goldMatch = entry.match(/(\d+)\s*gp/i);
+        if (goldMatch) {
+          goldCount += parseInt(goldMatch[1]);
+        } else {
+          goldCount += 1; // default if not specified
+        }
+        return; // skip adding now, we’ll push one entry later
+      }
+
       if (match) {
-        // Handle multiples like "8 Javelins"
         const quantityMatch = entry.match(/^(\d+)\s+(.*)/);
         if (quantityMatch) {
           const count = parseInt(quantityMatch[1]);
@@ -108,18 +176,30 @@ export default function Inventory() {
             parsedItems.push({ ...match });
           }
         } else {
-          parsedItems.push({ ...match });
+          parsedItems.push({ ...match, quantity: 1 });
         }
       } else {
-        // Fallback for things like "4 GP"
         parsedItems.push({
           name: entry,
           type: "misc",
           attributes: [],
           description: entry,
+          equippable: false,
+          quantity: 1,
         });
       }
     });
+
+    if (goldCount > 0) {
+      parsedItems.push({
+        name: "GP",
+        type: "misc",
+        attributes: [],
+        description: `${goldCount} Gold Piece${goldCount > 1 ? "s" : ""}`,
+        equippable: false,
+        quantity: goldCount,
+      });
+    }
 
     return parsedItems;
   };
@@ -183,6 +263,12 @@ export default function Inventory() {
       if (item.name.toLowerCase().includes("leather")) return "tshirt-v";
       return "shield";
     }
+    if (item.name.toLowerCase().includes("spellbook")) return "book-open";
+    if (item.name.toLowerCase().includes("quiver")) return "quiver";
+    if (item.name.toLowerCase().includes("robe")) return "tshirt-crew";
+    if (item.name.toLowerCase().includes("pack")) return "sack";
+    if (item.name.toLowerCase().includes("javelin")) return "spear";
+    if (item.name.toLowerCase().includes("gp")) return "hand-coin";
 
     return "help-circle"; // fallback
   };
@@ -230,6 +316,10 @@ export default function Inventory() {
       return false;
     }
   };
+
+  const addItemModal = () => {
+    setModalVisible(true);
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.pageHeader}>Inventory Screen</Text>
@@ -243,7 +333,12 @@ export default function Inventory() {
                   handleItemPress({
                     ...item,
                     icon: getIconForItem(item),
-                    description: item.description || "No description available",
+                    description:
+                      item.name === "GP"
+                        ? `${item.quantity || 0} Gold Piece${
+                            item.quantity === 1 ? "" : "s"
+                          }`
+                        : item.description || "No description available",
                   })
                 }
               >
@@ -263,6 +358,10 @@ export default function Inventory() {
               <View style={styles.itemContent}>
                 <Text style={styles.itemText}>{item.name}</Text>
                 <Text style={styles.itemText}>{item.properties}</Text>
+                {(item.quantity ?? 1) > 1 && (
+                  <Text style={styles.itemText}>Quantity: {item.quantity}</Text>
+                )}
+
                 <View style={styles.attributesContainer}>
                   {item.attributes?.map((attr, i) => (
                     <View style={styles.attributesTextContainer}>
@@ -271,20 +370,36 @@ export default function Inventory() {
                   ))}
                 </View>
               </View>
-              <TouchableOpacity
-                style={styles.equipContainer}
-                onPress={() => addToCombat(item)}
-              >
-                <Text style={styles.equipButton}>
-                  {isEquipped(item) ? "Unequip" : "Equip"}
-                </Text>
-              </TouchableOpacity>
+              {item.equippable && (
+                <TouchableOpacity
+                  style={styles.equipContainer}
+                  onPress={() => addToCombat(item)}
+                >
+                  <Text style={styles.equipButton}>
+                    {isEquipped(item) ? "Unequip" : "Equip"}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           ))
         ) : (
           <Text style={styles.itemText}>No items in inventory</Text>
         )}
       </ScrollView>
+      {/* <View>
+        <TouchableOpacity
+          style={styles.equipContainer}
+          onPress={() => addItemModal()}
+        >
+          <Text style={styles.equipButton}>Add Item</Text>
+        </TouchableOpacity>
+        <InventoryModal
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          inventory={inventory}
+          characterData={characterData}
+        />
+      </View> */}
     </View>
   );
 }

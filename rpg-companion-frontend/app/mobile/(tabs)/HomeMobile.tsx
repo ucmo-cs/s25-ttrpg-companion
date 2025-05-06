@@ -267,7 +267,7 @@ export default function HomeMobile() {
   const characterRaw = SessionStorage.getItem("selectedCharacterData");
   console.log("Character Raw", characterRaw);
   const character = characterRaw ? JSON.parse(characterRaw) : {};
-  const speciesFeatures = character.features || [];
+  const speciesFeatures = character.features.speciesfeatures || [];
   console.log("Species Features", speciesFeatures);
   const traitsKey = Object.keys(speciesFeatures).find((key) =>
     key.includes("_traits")
@@ -275,9 +275,14 @@ export default function HomeMobile() {
   const traits = traitsKey ? speciesFeatures[traitsKey] : speciesFeatures;
   console.log("Traits", traits);
   console.log("Spell Data", character.features || []);
+  const subspeciesFeatures = character.features.subspeciesfeatures || [];
   useEffect(() => {
     const safeTraits = traits || {};
     SessionStorage.setItem("speciesData", JSON.stringify(safeTraits));
+    SessionStorage.setItem(
+      "subSpeciesData",
+      JSON.stringify(subspeciesFeatures)
+    );
   }, [traits]);
 
   //Ability scores and caluclated skills
@@ -291,6 +296,7 @@ export default function HomeMobile() {
   const [skillsData, setSkillsData] = useState(initialSkillsData);
   const [calculatedSkills, setCalculatedSkills] = useState(initialSkillsData);
   useEffect(() => {
+    console.log("Character", characterRaw);
     const rawData = character.ability_scores;
     const updated_ability_scores = [
       {

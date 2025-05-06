@@ -46,7 +46,10 @@ const features = [
 ];
 
 export default function Status() {
-  const [speciesData, setSpeciesData] = useState<any[]>([]);
+  const [speciesData, setSpeciesData] = useState<Record<string, string>>({});
+  const [subSpeciesData, setSubSpeciesData] = useState<Record<string, string>>(
+    {}
+  );
   const [classFeatures, setClassFeatures] = useState<any>([]);
   const [featuresData, setFeaturesData] = useState<any>([]);
   const [characterData, setCharacterData] = SessionStorage.getItem(
@@ -59,15 +62,31 @@ export default function Status() {
     if (!SessionStorage.getItem("speciesData"))
       return; //if no species data, do not load anything
     else {
-      const raw =
+      let parsedSpecies =
         SessionStorage.getItem("speciesData") || characterData.speciesfeatures;
-      try {
-        const parsed = JSON.parse(raw);
-        console.log("Parsed selected species data:", parsed);
-        setSpeciesData(parsed);
-      } catch (err) {
-        console.error("Failed to parse selected character data:", err);
+      console.log("Parsed species features:", parsedSpecies);
+      if (typeof parsedSpecies === "string") {
+        try {
+          parsedSpecies = JSON.parse(parsedSpecies);
+        } catch (e) {
+          console.error("Failed to parse species features", e);
+          parsedSpecies = {};
+        }
       }
+      setSpeciesData(parsedSpecies);
+
+      let subSpeciesData =
+        SessionStorage.getItem("subSpeciesData") ||
+        characterData.subspeciesfeatures;
+      if (typeof subSpeciesData === "string") {
+        try {
+          subSpeciesData = JSON.parse(subSpeciesData);
+        } catch (e) {
+          console.error("Failed to parse sub species features", e);
+          subSpeciesData = {};
+        }
+      }
+      setSubSpeciesData(subSpeciesData);
 
       //Character Data loaded from session storage, specifically for features
       const raw2 =
@@ -91,6 +110,14 @@ export default function Status() {
       icon: <Star color="white" size={50} />,
       description: value,
     }));
+    const subSpeciesFeatures = Object.entries(subSpeciesData).map(
+      ([key, value]) => ({
+        title: "Sub Species Feature",
+        subtitle: key,
+        icon: <Star color="white" size={50} />,
+        description: value,
+      })
+    );
 
     const parsedclassFeatures =
       classFeatures.flatMap((featureGroup: any) =>
@@ -101,7 +128,12 @@ export default function Status() {
           description: value,
         }))
       ) || [];
-    const allFeatures = [...speciesFeatures, ...parsedclassFeatures];
+
+    const allFeatures = [
+      ...speciesFeatures,
+      ...parsedclassFeatures,
+      ...subSpeciesFeatures,
+    ];
     setFeaturesData(allFeatures);
     console.log("Updated features data:", allFeatures);
   }, [speciesData, classFeatures]);

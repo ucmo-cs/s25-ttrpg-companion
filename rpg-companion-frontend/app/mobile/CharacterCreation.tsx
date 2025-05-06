@@ -143,25 +143,73 @@ export default function CharacterCreation() {
   //This function is called when the user presses the "Create Character" button
   const submitCharacter = async () => {
     try {
-      const payload = buildPayload();
-      console.log("🧾 PAYLOAD", JSON.stringify(payload, null, 2));
-      //Filter inventory based on selected options
+      // Filter inventory based on selected options
       const filteredInventory = items.filter((item) =>
         SelectedOptions.includes(item.name)
       );
 
-      //Check selected species and set speed, creature type, size, and features
+      // Find selected species and traits
       const selectedSpecies = species.find(
-        (species) => species.id === characterData.character.species_id
+        (s) => s.id === characterData.character.species_id
       );
 
-      // const selectedSubspecies =
-      //   selectedSpecies.features?.[
-      //     characterData.character.subspecies_id
-      //       ?.toLowerCase()
-      //       .replace(/\s/g, "_") + "_traits"
-      //   ];
+      const baseTraitsKey = Object.keys(selectedSpecies?.features || {}).find(
+        (key) => key.toLowerCase().includes(selectedSpecies.id.toLowerCase())
+      );
+      const baseSpeciesTraits =
+        baseTraitsKey && selectedSpecies?.features?.[baseTraitsKey]
+          ? [selectedSpecies.features[baseTraitsKey]]
+          : [];
 
+      const selectedSubspecies =
+        selectedSpecies?.features?.[
+          characterData.character.subspecies_id
+            ?.toLowerCase()
+            .replace(/\s/g, "_") + "_traits"
+        ];
+
+      const currentClassId = characterData.character.class_id?.toLowerCase();
+      const currentClassFeatures = classData?.[currentClassId]?.features || {};
+      const isSpellcaster = currentClassFeatures.hasOwnProperty("Spellcasting");
+
+      const selectedEquipmentItems = extractEquipmentOptions(
+        currentClassFeatures["Starting Equipment"] || ""
+      )?.find((opt) => opt.label === selectedEquipment)?.items;
+      console.log("Selected Subspecies:", baseSpeciesTraits);
+      // Build payload
+      const payload = {
+        user_uid: user_uid,
+        character: {
+          ...characterData.character,
+          level: characterData.character.level,
+          proficiency_bonus: parseInt(
+            currentClassFeatures["Proficiency Bonus"]?.replace(/\D/g, "") || "2"
+          ),
+          skill_proficiencies: selectedSkills,
+          inventory: filteredInventory,
+          starting_equipment: {
+            option: selectedEquipment,
+            items: selectedEquipmentItems,
+          },
+          features: {
+            classfeatures: [currentClassFeatures],
+            subclassfeatures: [],
+            speciesfeatures: baseSpeciesTraits,
+            ...(selectedSubspecies
+              ? { subspeciesfeatures: selectedSubspecies }
+              : {}),
+          },
+          ...(isSpellcaster && {
+            cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
+            spells: spellData || [],
+            spell_slots: classData?.[currentClassId]?.spell_slots || [],
+          }),
+        },
+      };
+
+      console.log("🧾 Final Payload:", JSON.stringify(payload, null, 2));
+
+      // Submit to API
       const response = await fetch(
         "https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/create-character",
         {
@@ -173,47 +221,40 @@ export default function CharacterCreation() {
           body: JSON.stringify(payload),
         }
       );
+
       const data = await response.json();
       console.log("📬 Server Response:", data);
+
       let currentCharacters = SessionStorage.getItem("characters");
       if (typeof currentCharacters === "string") {
         try {
           currentCharacters = JSON.parse(currentCharacters);
         } catch {
           currentCharacters = [];
-          console.log(
-            "Error parsing characters from session storage:",
-            currentCharacters
-          );
+          console.log("⚠️ Failed to parse current characters.");
         }
-      } else if (!Array.isArray(currentCharacters)) {
-        currentCharacters = [];
-        console.log(
-          "Error parsing characters from session storage:",
-          currentCharacters
-        );
       }
+      if (!Array.isArray(currentCharacters)) currentCharacters = [];
+
       const newCharacter = {
         character_name: characterData.character.name,
         character_uid: data.character_uid,
       };
-      const newCharacterList = [...(currentCharacters || []), newCharacter];
-      console.log("New Character List:", newCharacterList);
+
+      const newCharacterList = [...currentCharacters, newCharacter];
       SessionStorage.setItem("characters", JSON.stringify(newCharacterList));
-      uploadImage(data.character_uid);
       SessionStorage.setItem("token", data.session_token);
-      console.log("Character List", SessionStorage.getItem("characters"));
-      alert("Character created successfully!");
-      console.log("Character Data:", characterData.character);
       SessionStorage.setItem(
         "selectedCharacterData",
         JSON.stringify(characterData.character)
       );
+
+      await uploadImage(data.character_uid);
+      alert("✅ Character created successfully!");
       router.replace("/mobile/(tabs)/HomeMobile");
-      setCharacterData(initialCharacterData); // Reset the form after submission
+      setCharacterData(initialCharacterData);
     } catch (error) {
-      console.error(error);
-      // console.log("Data:", payload);
+      console.error("❌ Character submission failed:", error);
     }
   };
 
@@ -235,7 +276,6 @@ export default function CharacterCreation() {
   const [classFeatures, setClassFeatures] = useState<any>({});
   const [classData, setClassData] = useState<any>({});
   const [spellData, setSpellData] = useState<any>({});
-  const [loadingSpells, setLoadingSpells] = useState(false);
   const fetchClassData = async () => {
     let ctype;
     if (Platform.OS === "ios" || Platform.OS === "android") {
@@ -390,64 +430,66 @@ export default function CharacterCreation() {
     const match = text.match(/Choose \d+: (.*)/);
     return match ? match[1].split(",").map((s) => s.trim()) : [];
   };
-  const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
-  const buildPayload = () => {
-    const filteredInventory = items.filter((item) =>
-      SelectedOptions.includes(item.name)
-    );
+  // const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
+  // const buildPayload = () => {
+  //   const filteredInventory = items.filter((item) =>
+  //     SelectedOptions.includes(item.name)
+  //   );
 
-    const currentClassId = characterData.character.class_id?.toLowerCase();
-    const currentClassFeatures = classData?.[currentClassId]?.features || {};
-    const isSpellcaster = currentClassFeatures.hasOwnProperty("Spellcasting");
+  //   const currentClassId = characterData.character.class_id?.toLowerCase();
+  //   const currentClassFeatures = classData?.[currentClassId]?.features || {};
+  //   const isSpellcaster = currentClassFeatures.hasOwnProperty("Spellcasting");
 
-    const selectedEquipmentItems = extractEquipmentOptions(
-      currentClassFeatures["Starting Equipment"] || ""
-    )?.find((opt) => opt.label === selectedEquipment)?.items;
+  //   const selectedEquipmentItems = extractEquipmentOptions(
+  //     currentClassFeatures["Starting Equipment"] || ""
+  //   )?.find((opt) => opt.label === selectedEquipment)?.items;
 
-    const selectedSpecies = species.find(
-      (s) => s.id === characterData.character.species_id
-    );
+  //   const selectedSpecies = species.find(
+  //     (s) => s.id === characterData.character.species_id
+  //   );
 
-    const selectedSubspecies =
-      selectedSpecies?.features?.[
-        characterData.character.subspecies_id
-          ?.toLowerCase()
-          .replace(/\s/g, "_") + "_traits"
-      ];
+  //   const selectedSubspecies =
+  //     selectedSpecies?.features?.[
+  //       characterData.character.subspecies_id
+  //         ?.toLowerCase()
+  //         .replace(/\s/g, "_") + "_traits"
+  //     ];
+  //   console.log("Selected Subspecies", selectedSubspecies);
 
-    return {
-      user_uid: user_uid,
-      character: {
-        ...characterData.character,
-        level: characterData.character.level,
-        proficiency_bonus: parseInt(
-          classData?.[currentClassId]?.features?.["Proficiency Bonus"]?.replace(
-            /\D/g,
-            ""
-          ) || "2"
-        ),
+  //   return {
+  //     user_uid: user_uid,
+  //     character: {
+  //       ...characterData.character,
+  //       level: characterData.character.level,
+  //       proficiency_bonus: parseInt(
+  //         classData?.[currentClassId]?.features?.["Proficiency Bonus"]?.replace(
+  //           /\D/g,
+  //           ""
+  //         ) || "2"
+  //       ),
 
-        skill_proficiencies: selectedSkills,
-        inventory: filteredInventory,
-        starting_equipment: {
-          option: selectedEquipment,
-          items: selectedEquipmentItems,
-        },
-        features: {
-          classfeatures: [currentClassFeatures],
-          subclassfeatures: [],
-          speciesfeatures: [],
-          // speciesfeatures: traitsKey ? selectedSpecies?.features[traitsKey] : [],
-          // ...(selectedSubspecies ? { subspeciesfeatures: selectedSubspecies } : {}),
-        },
-        ...(isSpellcaster && {
-          cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
-          spells: spellData || [],
-          spell_slots: classData?.[currentClassId]?.spell_slots || [],
-        }),
-      },
-    };
-  };
+  //       skill_proficiencies: selectedSkills,
+  //       inventory: filteredInventory,
+  //       starting_equipment: {
+  //         option: selectedEquipment,
+  //         items: selectedEquipmentItems,
+  //       },
+  //       features: {
+  //         classfeatures: [currentClassFeatures],
+  //         subclassfeatures: [],
+  //         speciesfeatures: [baseSpeciesTraits],
+  //         ...(selectedSubspecies
+  //           ? { subspeciesfeatures: selectedSubspecies }
+  //           : {}),
+  //       },
+  //       ...(isSpellcaster && {
+  //         cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
+  //         spells: spellData || [],
+  //         spell_slots: classData?.[currentClassId]?.spell_slots || [],
+  //       }),
+  //     },
+  //   };
+  // };
 
   const handleClassSelection = (className) => {
     handleChange("class_id", className);
@@ -458,49 +500,48 @@ export default function CharacterCreation() {
     setModalVisible(true);
   };
 
-      const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          allowsEditing: true,
-          aspect: [3, 3],
-          quality: 1,
-          base64: true,
-        });
-    
-        // console.log(result);
-        if (!result.canceled) {
-          const uri = result.assets[0].uri
-          setImageType(result.assets[0].type + "/" + uri.split('.').pop());
-          const response = await fetch(uri); // Fetch the file data
-          const imageBlob = await response.blob(); // Convert the file to a binary blob
-          console.log(imageType);
-          setImage(imageBlob);
-        }
-      };
-    
-    
-      const uploadImage = async (character_uid) => {
-        //   file = await compressImage(file, 100)
-    
-          if(!image){
-              console.log("No File Selected")
-              return
-          }
-    
-          fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/save-image", {
-              method: "POST",
-              headers: {
-                  "user_uid" : user_uid,
-                  "character_uid" : character_uid,
-                  "session_token" : "cooper_is_slow",
-                  // "content-type" : imageType
-              },
-              body: image
-          })
-          .then(response => response.json())
-          .then(data => console.log(data))
-      }
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [3, 3],
+      quality: 1,
+      base64: true,
+    });
+
+    // console.log(result);
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setImageType(result.assets[0].type + "/" + uri.split(".").pop());
+      const response = await fetch(uri); // Fetch the file data
+      const imageBlob = await response.blob(); // Convert the file to a binary blob
+      console.log(imageType);
+      setImage(imageBlob);
+    }
+  };
+
+  const uploadImage = async (character_uid) => {
+    //   file = await compressImage(file, 100)
+
+    if (!image) {
+      console.log("No File Selected");
+      return;
+    }
+
+    fetch("https://fmesof4kvl.execute-api.us-east-2.amazonaws.com/save-image", {
+      method: "POST",
+      headers: {
+        user_uid: user_uid,
+        character_uid: character_uid,
+        session_token: "cooper_is_slow",
+        // "content-type" : imageType
+      },
+      body: image,
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  };
 
   return (
     <View style={GlobalStyles.page}>
