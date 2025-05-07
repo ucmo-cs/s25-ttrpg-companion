@@ -82,10 +82,7 @@ export default function CustomLogin() {
   return (
     <View style={GlobalStyles.page}>
       <View>
-        <Text style={styles.title}>TTRPG Companion App</Text>
-      </View>
-      <View>
-        <Text style={styles.heading}>Welcome!</Text>
+        <Text style={styles.title}>Crititcal Miss</Text>
       </View>
       <View style={styles.loginContainer}>
         <TextInput
@@ -144,7 +141,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
       },
       android: {
-        fontSize: 30,
+        fontSize: 28,
       },
       default: {
         fontSize: 60,

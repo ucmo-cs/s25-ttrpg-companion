@@ -430,67 +430,6 @@ export default function CharacterCreation() {
     const match = text.match(/Choose \d+: (.*)/);
     return match ? match[1].split(",").map((s) => s.trim()) : [];
   };
-  // const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
-  // const buildPayload = () => {
-  //   const filteredInventory = items.filter((item) =>
-  //     SelectedOptions.includes(item.name)
-  //   );
-
-  //   const currentClassId = characterData.character.class_id?.toLowerCase();
-  //   const currentClassFeatures = classData?.[currentClassId]?.features || {};
-  //   const isSpellcaster = currentClassFeatures.hasOwnProperty("Spellcasting");
-
-  //   const selectedEquipmentItems = extractEquipmentOptions(
-  //     currentClassFeatures["Starting Equipment"] || ""
-  //   )?.find((opt) => opt.label === selectedEquipment)?.items;
-
-  //   const selectedSpecies = species.find(
-  //     (s) => s.id === characterData.character.species_id
-  //   );
-
-  //   const selectedSubspecies =
-  //     selectedSpecies?.features?.[
-  //       characterData.character.subspecies_id
-  //         ?.toLowerCase()
-  //         .replace(/\s/g, "_") + "_traits"
-  //     ];
-  //   console.log("Selected Subspecies", selectedSubspecies);
-
-  //   return {
-  //     user_uid: user_uid,
-  //     character: {
-  //       ...characterData.character,
-  //       level: characterData.character.level,
-  //       proficiency_bonus: parseInt(
-  //         classData?.[currentClassId]?.features?.["Proficiency Bonus"]?.replace(
-  //           /\D/g,
-  //           ""
-  //         ) || "2"
-  //       ),
-
-  //       skill_proficiencies: selectedSkills,
-  //       inventory: filteredInventory,
-  //       starting_equipment: {
-  //         option: selectedEquipment,
-  //         items: selectedEquipmentItems,
-  //       },
-  //       features: {
-  //         classfeatures: [currentClassFeatures],
-  //         subclassfeatures: [],
-  //         speciesfeatures: [baseSpeciesTraits],
-  //         ...(selectedSubspecies
-  //           ? { subspeciesfeatures: selectedSubspecies }
-  //           : {}),
-  //       },
-  //       ...(isSpellcaster && {
-  //         cantrips_known: currentClassFeatures["Cantrips Known"] || 0,
-  //         spells: spellData || [],
-  //         spell_slots: classData?.[currentClassId]?.spell_slots || [],
-  //       }),
-  //     },
-  //   };
-  // };
-
   const handleClassSelection = (className) => {
     handleChange("class_id", className);
 
@@ -623,13 +562,6 @@ export default function CharacterCreation() {
                   ))}
                 </Picker>
               )}
-              {/* <TextInput
-                placeholder="Class"
-                style={styles.formControl}
-                placeholderTextColor="#ccc"
-                value={characterData.character.class_id}
-                onChangeText={(text) => handleChange("class_id", text)}
-              /> */}
               <Picker
                 selectedValue={characterData.character.class_id}
                 onValueChange={(itemValue, itemIndex) =>
@@ -644,8 +576,6 @@ export default function CharacterCreation() {
                 <Picker.Item label="Fighter" value="Fighter" key="Fighter" />
                 <Picker.Item label="Wizard" value="Wizard" key="Wizard" />
               </Picker>
-
-              {/* Modal for class features */}
 
               <Modal
                 visible={modalVisible}
@@ -818,15 +748,6 @@ export default function CharacterCreation() {
                   </View>
                 </ScrollView>
               </Modal>
-
-              {/* <TouchableOpacity
-                onPress={() => {
-                  console.log("Button Press");
-                }}
-              >
-                <Text style={styles.formControl}>Wizard</Text>
-                <Text style={styles.formControl}>Fighter</Text>
-              </TouchableOpacity> */}
               <TextInput
                 style={[styles.formControl, { height: 100 }]}
                 placeholderTextColor="#ccc"
@@ -963,22 +884,6 @@ export default function CharacterCreation() {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => pickImage()}>
               <Text style={styles.buttonText}>Upload Profile Picture</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                { backgroundColor: "#4A5568", marginTop: 10 },
-              ]}
-              onPress={() => {
-                console.log("Character Data:", characterData);
-                console.log("Selected Options:", SelectedOptions);
-                console.log("Class Features:", classFeatures);
-                console.log("Class Data:", classData);
-                console.log("Spell Data:", spellData);
-                alert("Check console for payload data.");
-              }}
-            >
-              <Text style={styles.buttonText}>Log Payload (Debug)</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>

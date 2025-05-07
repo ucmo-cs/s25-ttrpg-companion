@@ -492,16 +492,11 @@ export default function HomeWeb() {
                 placeholder={`Name: ${character.name}`}
                 style={styles.formControl}
                 placeholderTextColor="#ccc"
-              // value={character.name}
-              //  onChangeText={(text) => handleChange("name", text)}
               />
               <TextInput
                 value={`Level: ${character.level}`}
                 style={styles.formControl}
                 placeholderTextColor="#ccc"
-              // editable={false}
-              // value={character.name}
-              //  onChangeText={(text) => handleChange("name", text)}
               />
 
               <Pressable style={styles.button} onPress={handleLevelUp}>
@@ -521,10 +516,8 @@ export default function HomeWeb() {
                     ></TextInput>
                   )}
                 </View>
-                // </View>
               )}
 
-              {/* <Text style={styles.AbilityScores}>Ability Scores</Text> */}
               {isAbilityScoreLevel && (
                 <View style={styles.abilityScoreWrapper} key={"isAbilityScoreLevel"}>
                   <Text style={styles.editheader}>Ability Score Improvement</Text>
@@ -546,9 +539,6 @@ export default function HomeWeb() {
                         </Pressable>
                       </View>
                     ))}
-                    {/* <View style={styles.}> */}
-
-                    {/* </View> */}
                   </View>
                   {abilityPointsUsed >= 2 && (
                     <Text style={styles.warningText}>
@@ -671,15 +661,6 @@ export default function HomeWeb() {
                     </View>}>
                   </FlatList>
                 </View>
-                {/* Dynamically render skills here */}
-
-                {/* <View style={styles.skillRow}>
-                  <Text style={styles.skill}>Investigation</Text>
-                  <Text style={styles.skill}>Intelligence</Text>
-                  <Text style={styles.skill}>+2</Text>
-                </View>
-                 */}
-
               </View>
             </View>
 

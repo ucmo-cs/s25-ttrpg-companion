@@ -685,40 +685,8 @@ export default function HomeMobile() {
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
           </View>
-          {/* </View> */}
-          {/* <Text style={styles.modalText}>Edit Character</Text>
-            <View style={styles.row}>
-              <Text style={styles.editCharSubtitle}>Character Name: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                placeholder={character.name}
-                placeholderTextColor="#ccc"
-              ></TextInput>
-            </View>
-            <View style={styles.row}> 
-              {/*at level 3 they get their subclass *
-              <Text style={styles.editCharSubtitle}>Level: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                placeholder={character.level.toString()}
-                placeholderTextColor="#ccc"
-                keyboardType="numeric"
-              ></TextInput>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.editCharSubtitle}>Max Hp: </Text>
-              <TextInput
-                style={styles.editCharTextInput}
-                // placeholder={character.max_hp.toString()}
-                placeholderTextColor="#ccc"
-                keyboardType="numeric"
-              ></TextInput>
-            </View> */}
-          {/* </View> */}
         </Modal>
       </View>
-      {/* </View> */}
-
       <View style={styles.iconContainer}>
         <View style={styles.iconWrapper}>
           <Circle size={70} strokeWidth={1} color={"white"} fill="#3E4A59" />

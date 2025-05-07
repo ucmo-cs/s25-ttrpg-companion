@@ -46,6 +46,11 @@ export default function CharacterSelect() {
     }, [])
   );
 
+  useEffect(() => {
+    SessionStorage.setItem("characters", characters);
+    console.log("Characters: ", characters);
+  },[characters])
+
   const userUid = SessionStorage.getItem("userUid");
   const [trashColor, setTrashColor] = useState("#af1f31");
   const nav = Platform.select({
@@ -116,8 +121,6 @@ export default function CharacterSelect() {
         (characters) => characters.character_uid != key
       );
     });
-    sessionStorage.setItem("characters", characters);
-    console.log(characters);
   };
 
   const selectCharacterHandler = (key) => {
@@ -199,6 +202,7 @@ export default function CharacterSelect() {
         "classFeatures",
         JSON.stringify(data.character.features?.classfeatures || [])
       );
+      SessionStorage.setItem("spells", JSON.stringify(data.character.spells || []))
       SessionStorage.setItem("characterUid", key);
       console.log("Character Recieved", data.character);
       console.log("Session Token Recieved: " + data.session_token);
